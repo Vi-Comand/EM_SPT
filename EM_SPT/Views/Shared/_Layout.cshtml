@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - EM_SPT</title>
+    <title>@ViewData["Title"]</title>
 
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
@@ -27,7 +27,7 @@
                 <form method="post" class="navbar" style="margin:initial; display:contents">
                     <button type="submit" class="btn btn-outline-success" style="margin:5px;" asp-controller="Home" asp-action="Index">Главная</button>
                     <br />
-                    <button type="submit" class="btn btn-outline-success" style="margin:5px;" asp-controller="lk" asp-action="lk">Личный кабинет</button>
+                    <button type="submit" class="btn btn-outline-success" style="margin:5px;" asp-controller="Home" asp-action="Anketa_a">Анкетирование</button>
                     <br />
                     <button type="submit" class="btn btn-outline-success" style="margin:5px;" asp-controller="Home" asp-action="Info">Информация</button>
                     <br />
@@ -52,7 +52,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; 2019 - EM_SPT</p>
+            <p>&copy; 2019 - ВиКоманда</p>
         </footer>
     </div>
 

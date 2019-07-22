@@ -21,6 +21,17 @@ namespace EM_SPT.Controllers
             return View();
         }
 
+        public IActionResult Adm_klass()
+        {
+
+            return View();
+        }
+        public IActionResult Adm_oo()
+        {
+
+            return View();
+        }
+
         public IActionResult Info()
         {
 

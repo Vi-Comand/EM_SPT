@@ -4036,6 +4036,10 @@ input[type="button"].btn-block {
         content: "Browse";
     }
 
+    .custom-file-input:lang(ru) ~ .custom-file-label::after {
+        content: "Просмотреть";
+    }
+
     .custom-file-input ~ .custom-file-label[data-browse]::after {
         content: attr(data-browse);
     }

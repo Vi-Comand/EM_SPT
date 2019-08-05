@@ -153,13 +153,13 @@ sup {
 }
 
 a {
-    color: #007bff;
+    color: #1a8232;
     text-decoration: none;
     background-color: transparent;
 }
 
     a:hover {
-        color: #0056b3;
+        color: #0c481a;
         text-decoration: underline;
     }
 
@@ -2048,9 +2048,26 @@ pre {
 .form-control:focus {
     color: #495057;
     background-color: #fff;
-    border-color: #80bdff;
+    border-color: #28a745;
     outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    box-shadow: 0 0 0 0.2rem #b2e4be;
+}
+
+
+.form-control option:hover, option:focus {
+    border-color: #28a745;
+    background: #71f790;
+}
+
+.form-control option:checked {
+    background: #28a745;
+    color: black;
+}
+
+.form-control:optional {
+    border-color: #28a745;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem #b2e4be;
 }
 
 .form-control::-webkit-input-placeholder {
@@ -3948,9 +3965,9 @@ input[type="button"].btn-block {
 }
 
     .custom-select:focus {
-        border-color: #80bdff;
+        border-color: #b2e4be;
         outline: 0;
-        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        box-shadow: 0 0 0 0.2rem #b2e4be;
     }
 
         .custom-select:focus::-ms-value {
@@ -4017,6 +4034,10 @@ input[type="button"].btn-block {
 
     .custom-file-input:lang(en) ~ .custom-file-label::after {
         content: "Browse";
+    }
+
+    .custom-file-input:lang(ru) ~ .custom-file-label::after {
+        content: "Просмотреть";
     }
 
     .custom-file-input ~ .custom-file-label[data-browse]::after {

@@ -17,42 +17,44 @@
 
     <form>
         <div class="form-row shadow p-3 mb-5 bg-white rounded">
-            @if (Model.klass_n == "")
-            {
-                <div class="alert alert-success col-md-12" role="alert">Установите номер класса или курс(если это СПО или ВУЗ)</div>
-                <div class="form-group col-md-4">
-                    <label for="inputState">№ класса</label>
-                    <select id="inputState" asp-for="klass_n" class="form-control">
-                        <option value="" selected>Выберите № класса</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                        <option value="11">11</option>
-                        <option value="12">12</option>
-                        <option value="1 курс">1 курс</option>
-                        <option value="2 курс">2 курс</option>
-                        <option value="3 курс">3 курс</option>
-                        <option value="4 курс">4 курс</option>
-                        <option value="5 курс">5 курс</option>
-                    </select>
+            @*@if (Model.klass_n == "")
+                {*@
+            <div class="alert alert-success col-md-12" role="alert">Установите номер класса или курс(если это СПО или ВУЗ)</div>
+            <div class="form-group col-md-4">
+                <label for="inputState">№ класса</label>
+                <select id="inputState" asp-for="klass_n" class="form-control" required>
+                    <option value="" selected>Выберите № класса</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="1 курс">1 курс</option>
+                    <option value="2 курс">2 курс</option>
+                    <option value="3 курс">3 курс</option>
+                    <option value="4 курс">4 курс</option>
+                    <option value="5 курс">5 курс</option>
+                </select>
 
-                </div>
-                <button type="submit" class="btn btn-outline-success" style="margin:5px;" asp-controller="Home" asp-action="About">Сохранить</button>
+            </div>
+            <button type="submit" class="btn btn-outline-success" style="margin:5px;" asp-controller="Home" asp-action="About">Сохранить</button>
 
-            }
-            else
-            {
-                <button type="submit" class="btn btn-outline-success" style="margin:5px;" asp-controller="Home" asp-action="About">Изменить номер класс</button>
-                <button type="submit" class="btn btn-outline-success" style="margin:5px;" asp-controller="Home" asp-action="About">Просмотреть учеников</button>
+            @*}
+                else
+                {*@
+            <button type="submit" class="btn btn-outline-success" style="margin:5px;" asp-controller="Home" asp-action="About">Изменить номер класса</button>
+            <button type="submit" class="btn btn-outline-success" style="margin:5px;" asp-controller="Home" asp-action="About">Добавить учеников</button>
+            <input type="text" class="btn btn-outline-success" />
+            <button type="submit" class="btn btn-outline-success" style="margin:5px;" asp-controller="Home" asp-action="About">Просмотреть учеников</button>
 
-            }
+            @* } *@
         </div>
     </form>
 </body>

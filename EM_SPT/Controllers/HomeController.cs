@@ -26,6 +26,27 @@ namespace EM_SPT.Controllers
             return View("anketa_a");
         }
 
+        public IActionResult Adm_klass()
+        {
+
+            return View();
+        }
+        public IActionResult Adm_oo()
+        {
+
+            return View();
+        }
+        public IActionResult Adm_mo()
+        {
+
+            return View();
+        }
+        public IActionResult Adm_full()
+        {
+
+            return View();
+        }
+
         public IActionResult Info()
         {
 

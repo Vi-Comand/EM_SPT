@@ -25,20 +25,20 @@
             <div class="collapse navbar-collapse text-left " id="navbarNav">
 
                 <form method="post" class="navbar" style="margin:initial; display:contents">
-                    <button type="submit" class="btn btn-outline-success" style="margin:5px;" asp-controller="Home" asp-action="Index">Главная</button>
+                    <button type="submit" class="btn btn-outline-success" style="margin:5px; margin-left:0px;" asp-controller="Home" asp-action="Index">Главная</button>
                     <br />
-                    <button type="submit" class="btn btn-outline-success" style="margin:5px;" asp-controller="Home" asp-action="Anketa_a">Анкетирование</button>
+                    <button type="submit" class="btn btn-outline-success" style="margin:5px; margin-left:0px;" asp-controller="Home" asp-action="Anketa_a">Анкетирование</button>
                     <br />
-                    <button type="submit" class="btn btn-outline-success" style="margin:5px;" asp-controller="Home" asp-action="Info">Информация</button>
+                    <button type="submit" class="btn btn-outline-success" style="margin:5px; margin-left:0px;" asp-controller="Home" asp-action="Info">Информация</button>
                     <br />
                     @if (User.Identity.IsAuthenticated == false)
                     {
-                        <button type="submit" class="btn btn-outline-info" style="margin-left:auto;" asp-controller="Account" asp-action="login">Войти</button>
+                        <button type="submit" class="btn btn-outline-info" style="margin:5px; margin-left:auto;" asp-controller="Account" asp-action="login">Войти</button>
                         <br />
                     }
                     else
                     {
-                        <button type="submit" class="btn btn-outline-info" style="margin-left:auto; " asp-controller="Account" asp-action="Logout"> Выйти</button>
+                        <button type="submit" class="btn btn-outline-info" style="margin:5px; margin-left:auto; " asp-controller="Account" asp-action="Logout"> Выйти</button>
                     }
                 </form>
             </div>
@@ -59,6 +59,8 @@
     <environment include="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        @*<script src="~/lib/bootstrap/dist/js/npm.js"></script>*@
+
 
     </environment>
     @* <environment exclude="Development">

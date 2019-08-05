@@ -1,8 +1,12 @@
 ﻿using EM_SPT.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,11 +18,12 @@ namespace EM_SPT.Controllers
         {
             return View();
         }
-
+        private DataContext db = new DataContext();
         public IActionResult Anketa_a()
         {
-
-            return View();
+            //  CompositeModel model = new CompositeModel();
+            // model.Ans = new answer();
+            return View("anketa_a");
         }
 
         public IActionResult Info()
@@ -37,5 +42,20 @@ namespace EM_SPT.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+
+        public async Task<IActionResult> Answer(CompositeModel model)
+        {
+
+            /* CompositeModel model = new CompositeModel();
+             model.Ans = new answer();
+             model.Ans.a1 = 1;*/
+            db.answer.Add(model.Ans);
+            await db.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
+
+
     }
 }

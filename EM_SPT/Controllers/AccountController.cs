@@ -54,7 +54,7 @@ namespace EM_SPT.Controllers
                     numBytesRequested: 256 / 8));
                 string remoteIpAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString();
 
-                user user = await db.User.FirstOrDefaultAsync(u => u.login == model.Login && u.pass == hashed);
+           /*   user user = await db.User.FirstOrDefaultAsync(u => u.login == model.Login && u.pass == hashed);
                 if (user != null)
                 {
 
@@ -62,7 +62,7 @@ namespace EM_SPT.Controllers
                     await Authenticate(model.Login); // аутентификация
 
                     return RedirectToAction("Home", "Index");
-                }
+                }*/
 
 
                 ModelState.AddModelError("", "Некорректные логин и(или) пароль");

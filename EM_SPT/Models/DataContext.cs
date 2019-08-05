@@ -29,13 +29,13 @@ namespace EM_SPT.Models
 
         }
 
-        public DbSet<user> User { get; set; }
-        public DbSet<mo> Mo { get; set; }
-        public DbSet<oo> Oo { get; set; }
-        public DbSet<answer> Answer { get; set; }
-        public DbSet<klass> Klass { get; set; }
-        public DbSet<param> Param { get; set; }
-        public CompositeModel Composite { get; set; }
+        public DbSet<answer> answer { get; set; }
+          public DbSet<mo> mo { get; set; }
+          public DbSet<oo> oo { get; set; }
+
+          public DbSet<klass> klass { get; set; }
+          public DbSet<param> param { get; set; }
+      //  public CompositeModel Composite { get; set; }
 
     }
 }

@@ -45,7 +45,11 @@ namespace EM_SPT
                 {
                     options.LoginPath = new PathString("/Account/Login");
                 });
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            // services.AddMvcCore();
+            services.AddMvc()
+           .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+          
+       
         }
 
 

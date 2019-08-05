@@ -11,51 +11,9 @@ namespace EM_SPT.Models
     public class CompositeModel
     {
         private readonly DataContext _context;
-        /*
-                public int id { get; set; }
-                public int MO { get; set; }
-                public string fam { get; set; }
-                public string ima { get; set; }
-                public string otch { get; set; }
-                public DateTime data_roj { get; set; }
-                public string address_proj { get; set; }
-                public string address_reg { get; set; }
-                public string tel { get; set; }
-                public string Fio_rod { get; set; }
-                public string Fio_rod_zp { get; set; }
-                public string diag { get; set; }
-                public string status { get; set; }
-                public string inter { get; set; }
-                public DateTime data_ust_oborud { get; set; }
-                public string data_sprav { get; set; }
-                public string prikaz { get; set; }
-                public DateTime prikaz_d { get; set; }
-                public int klass { get; set; }
-                public string soh_jit { get; set; }
-                public string soh_baz { get; set; }
-                public string tip_kompl { get; set; }
-                public string prik_o_obrud { get; set; }
-                public string nom_dogov_bvp { get; set; }
-                public string dvig_dogov_bvp { get; set; }
-                public to tehot { get; set; }
-                public uo urot { get; set; }
-                public kurs kursadd { get; set; }
-                public int role { get; set; }
-                public rem remadd { get; set; }
-                public inter intadd { get; set; }
-                public bvp bvpadd { get; set; }
-                public List<kurs> kursi { get; set; }
-                public List<kurs> kurs_per { get; set; }
-                public List<inter> internet { get; set; }
-                public List<rem> remonti { get; set; }
-                public sklad_to sklad { get; set; }
-                //public string status { get; set; }
-                public List<bvp> bvps { get; set; }
-                public string FIO_ped { get; set; }
 
 
-       */
-
+        public answer Ans { get; set; }
         public CompositeModel()
         {
 
@@ -69,11 +27,11 @@ namespace EM_SPT.Models
 
 
 
-
     }
 
     public class answer
     {
+
         public int id { get; set; }
         public int id_user { get; set; }
         public int id_blank { get; set; }

@@ -20,11 +20,10 @@ namespace EM_SPT.Controllers
         {
             return View();
         }
-        public IActionResult Anketa_a()
+        public IActionResult Anketa(CompositeModel model)
         {
-            //  CompositeModel model = new CompositeModel();
-            // model.Ans = new answer();
-            return View("anketa_a");
+
+            return View("anketa_a", model);
         }
 
         public IActionResult Adm_klass()

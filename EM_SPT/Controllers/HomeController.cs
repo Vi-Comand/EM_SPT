@@ -22,8 +22,17 @@ namespace EM_SPT.Controllers
         }
         public IActionResult Anketa(CompositeModel model)
         {
+            var login = HttpContext.User.Identity.Name;
+            int id = db.User.Where(p => p.login == login).First().id_klass;
+            string klass = db.klass.Where(p => p.id == id).First().klass_n;
+            if (klass == "7" || klass == "8" || klass == "9")
+                return View("anketa_a", model);
+            if (klass == "10" || klass == "11")
+                return View("anketa_b", model);
+            else
+                return View("anketa_c", model);
 
-            return View("anketa_a", model);
+
         }
 
         public IActionResult Adm_klass()

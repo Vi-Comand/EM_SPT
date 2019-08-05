@@ -20,7 +20,6 @@ namespace EM_SPT.Controllers
         {
             return View();
         }
-        private DataContext db = new DataContext();
         public IActionResult Anketa_a()
         {
             //  CompositeModel model = new CompositeModel();
@@ -32,7 +31,7 @@ namespace EM_SPT.Controllers
         {
             var login = HttpContext.User.Identity.Name;
             int klass = db.User.Where(p => p.login == login).First().id_klass;
-            klass model = db.Klass.Find(klass);
+            klass model = db.klass.Find(klass);
             return View("Adm_klass", model);
         }
         public IActionResult Adm_oo()

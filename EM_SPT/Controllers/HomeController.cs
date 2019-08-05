@@ -70,10 +70,12 @@ namespace EM_SPT.Controllers
 
         public async Task<IActionResult> Answer(CompositeModel model)
         {
-
+            var login = HttpContext.User.Identity.Name;
+            int id = db.User.Where(p => p.login == login).First().id;
             /* CompositeModel model = new CompositeModel();
              model.Ans = new answer();
              model.Ans.a1 = 1;*/
+            model.Ans.id_user = id;
             db.answer.Add(model.Ans);
             await db.SaveChangesAsync();
 

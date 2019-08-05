@@ -17,6 +17,10 @@
 
     <form>
         <div class="form-row shadow p-3 mb-5 bg-white rounded">
+            <input type="text" asp-for="id" />
+            <input type="text" asp-for="id_oo" />
+            <input type="text" asp-for="klass_n" />
+            <input type="text" asp-for="kod" />
             @if (Model.klass_n == null)
             {
                 <div class="alert alert-success col-md-12" role="alert">Установите номер класса или курс(если это СПО или ВУЗ)</div>
@@ -71,14 +75,14 @@
                         <option value="4 курс">4 курс</option>
                         <option value="5 курс">5 курс</option>
                     </select>
-                    <button type="submit" class="btn btn-outline-success" style="margin:5px;" asp-controller="Home" asp-action="About">Изменить номер класса</button>
+                    <button type="submit" class="btn btn-outline-success" style="margin:5px;" asp-controller="Home" asp-action="nom_klass">Изменить номер класса</button>
                 </label>
                 <label>
                     Введите количество
                     <input type="text" class="btn btn-outline-success" />
-                    <button type="submit" class="btn btn-outline-success" style="margin:5px;" asp-controller="Home" asp-action="About">Добавить учеников</button>
+                    <button type="submit" class="btn btn-outline-success" style="margin:5px;" asp-controller="Home" asp-action="add_user">Добавить учеников</button>
                 </label>
-                <button type="submit" class="btn btn-outline-success" style="margin:5px;" asp-controller="Home" asp-action="About">Просмотреть учеников</button>
+                <button type="submit" class="btn btn-outline-success" style="margin:5px;" asp-controller="Home" asp-action="viev_user">Просмотреть учеников</button>
 
             }
         </div>

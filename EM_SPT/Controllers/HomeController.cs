@@ -34,6 +34,9 @@ namespace EM_SPT.Controllers
             klass model = db.klass.Find(klass);
             return View("Adm_klass", model);
         }
+
+
+
         public IActionResult Adm_oo()
         {
 

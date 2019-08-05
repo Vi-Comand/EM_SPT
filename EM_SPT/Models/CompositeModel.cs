@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace EM_SPT.Models
 
 {
-    public class CompositeModel : PageModel
+    public class CompositeModel
     {
         private readonly DataContext _context;
         /*

@@ -10,6 +10,8 @@ namespace EM_SPT.Controllers
 {
     public class HomeController : Controller
     {
+        private DataContext db = new DataContext();
+
         public IActionResult Index()
         {
             return View();
@@ -23,8 +25,10 @@ namespace EM_SPT.Controllers
 
         public IActionResult Adm_klass()
         {
-
-            return View();
+            var login = HttpContext.User.Identity.Name;
+            int klass = db.User.Where(p => p.login == login).First().id_klass;
+            klass model = db.Klass.Find(klass);
+            return View("Adm_klass", model);
         }
         public IActionResult Adm_oo()
         {

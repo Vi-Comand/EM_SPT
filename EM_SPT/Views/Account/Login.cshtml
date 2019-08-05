@@ -3,51 +3,39 @@
 @{
     ViewData["Title"] = "Войти";
 }
+<body class="gradient">
+    <main class="page hire-me-page">
+        <section class="portfolio-block hire-me">
+            <div class="container">
+                <br />
 
-<main class="page hire-me-page">
-    <section class="portfolio-block hire-me">
-        <div class="container">
-            <div class="heading">
-                <h1>Войти</h1>
+                <form asp-action="Login" asp-controller="Account" asp-anti-forgery="true" class="text-center" style="width: 397px; margin-left: auto; margin-right: auto;" method="post">
+
+
+                    <div class="validation center" asp-validation-summary="ModelOnly" />
+                    <div class="form-row shadow p-3 mb-5 bg-white rounded">
+                        <div class="alert col-md-12">
+                            <label asp-for="Login">Введите Email <b style="color:transparent">__</b> </label>
+                            <input class="btn btn-outline-success" type="text" asp-for="Login" />
+                            <span asp-validation-for="Login" />
+                        </div>
+                        <div class="alert col-md-12">
+                            <label asp-for="Password">Введите пароль</label>
+                            <input class="btn btn-outline-success" asp-for="Password" />
+                            <span asp-validation-for="Password" />
+                        </div>
+                        <div class="col-md-12">
+                            <input type="submit" value="Войти" class="btn btn-outline-success" />
+                        </div>
+                    </div>
+
+
+                    @*<div class="form-group text-center"><label class="d-xl-flex justify-content-xl-start" for="email">Email</label><input asp-for="Email" class="form-control" type="email" name="email" required="" placeholder="ivanov@mail.ru" autofocus="" inputmode="email" id="email"></div>
+                        <div class="form-group"><label class="d-xl-flex justify-content-xl-start" for="message">Пароль</label><input asp-for="Password" class="form-control" type="password" name="pass" required="" id="pass"><a href="#">Забыли пароль</a></div>
+                        <div class="form-group d-xl-flex justify-content-xl-center align-items-xl-center"><button asp-controller="Account"  asp-action="Login" class=" text-center d-xl-flex justify-content-xl-center align-items-xl-center" type="submit">Войти</button></div>*@
+                </form>
+
             </div>
-
-
-
-
-
-
-            <form asp-action="Login" asp-controller="Account" asp-anti-forgery="true" class="text-center" style="width: 397px;" method="post">
-
-
-                <div class="validation" asp-validation-summary="ModelOnly" />
-                <div>
-                    <div class="form-group">
-                        <label asp-for="Login">Введите Email</label>
-                        <input type="text" asp-for="Login" />
-                        <span asp-validation-for="Login" />
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Password">Введите пароль</label>
-                        <input asp-for="Password" />
-                        <span asp-validation-for="Password" />
-                    </div>
-                    <div class="form-group">
-                        <input type="submit" value="Войти" class="btn" />
-                    </div>
-                </div>
-
-
-
-
-
-
-
-
-                @*<div class="form-group text-center"><label class="d-xl-flex justify-content-xl-start" for="email">Email</label><input asp-for="Email" class="form-control" type="email" name="email" required="" placeholder="ivanov@mail.ru" autofocus="" inputmode="email" id="email"></div>
-                    <div class="form-group"><label class="d-xl-flex justify-content-xl-start" for="message">Пароль</label><input asp-for="Password" class="form-control" type="password" name="pass" required="" id="pass"><a href="#">Забыли пароль</a></div>
-                    <div class="form-group d-xl-flex justify-content-xl-center align-items-xl-center"><button asp-controller="Account"  asp-action="Login" class=" text-center d-xl-flex justify-content-xl-center align-items-xl-center" type="submit">Войти</button></div>*@
-            </form>
-
-        </div>
-    </section>
-</main>
+        </section>
+    </main>
+</body>

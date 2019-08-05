@@ -41,7 +41,7 @@ namespace EM_SPT.Controllers
                 string password = model.Password;
 
                 // generate a 128-bit salt using a secure PRNG
-                string a = "ВДСоль";
+                string a = "Соль";
 
                 byte[] salt = Encoding.Default.GetBytes(a);
 
@@ -53,15 +53,30 @@ namespace EM_SPT.Controllers
                     iterationCount: 10000,
                     numBytesRequested: 256 / 8));
                 string remoteIpAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString();
-
-                user user = await db.User.FirstOrDefaultAsync(u => u.login == model.Login && u.pass == hashed);
+                user user = new user();
+                try
+                {
+                    user = await db.User.FirstOrDefaultAsync(u => u.login == model.Login && u.pass == hashed);
+                }
+                catch (Exception ex)
+                {
+                    ex.Message.ToString();
+                }
                 if (user != null)
                 {
 
 
                     await Authenticate(model.Login); // аутентификация
+                    if (user.role == 1)
+                    { return RedirectToAction("adm_klass", "Home"); }
+                    if (user.role == 2)
+                    { return RedirectToAction("adm_oo", "Home"); }
+                    if (user.role == 3)
+                    { return RedirectToAction("adm_mo", "Home"); }
+                    if (user.role == 4)
+                    { return RedirectToAction("adm_full", "Home"); }
+                    else { return RedirectToAction("", ""); }
 
-                    return RedirectToAction("Home", "Index");
                 }
 
 

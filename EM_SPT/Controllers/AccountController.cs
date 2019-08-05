@@ -75,7 +75,7 @@ namespace EM_SPT.Controllers
                     { return RedirectToAction("adm_mo", "Home"); }
                     if (user.role == 4)
                     { return RedirectToAction("adm_full", "Home"); }
-                    else { return RedirectToAction("anketa_a", "Home"); }
+                    else { return RedirectToAction("Index", "Home"); }
 
                 }
 

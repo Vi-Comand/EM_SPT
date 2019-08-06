@@ -193,6 +193,7 @@ namespace EM_SPT.Models
         public int role { get; set; }
         public string login { get; set; }
         public string pass { get; set; }
+        public int test { get; set; }
         //  public string last_date_autor { get; set; }
     }
     public class klass

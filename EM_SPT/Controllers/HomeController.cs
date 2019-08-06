@@ -42,12 +42,21 @@ namespace EM_SPT.Controllers
         public IActionResult Adm_klass()
         {
             var login = HttpContext.User.Identity.Name;
-            int klass = db.User.Where(p => p.login == login).First().id_klass;
-            klass model = db.klass.Find(klass);
-            return View("Adm_klass", model);
+            LKAdmKlass lk = new LKAdmKlass();
+            var klass = db.User.Where(p => p.login == login).First().id_klass;
+            lk.klass = db.klass.Find(klass);
+            lk.LKuser = db.User.Where(p => p.id_klass == klass && p.role == 0).ToList();
+            return View("Adm_klass", lk);
         }
 
-
+        public IActionResult Nom_klass(LKAdmKlass lKAdmKlass)
+        {
+            klass kl = db.klass.Find(lKAdmKlass.klass.id);
+            kl.klass_n = lKAdmKlass.klass.klass_n;
+            db.Entry(kl).State = EntityState.Modified;
+            db.SaveChanges();
+            return RedirectToAction("Adm_klass");
+        }
 
         public IActionResult Adm_oo()
         {

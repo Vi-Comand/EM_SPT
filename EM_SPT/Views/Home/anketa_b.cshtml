@@ -18,6 +18,36 @@
 <body class="gradient">
 
     <form method="post" asp-controller="Home" asp-action="Answer">
+        <p><input type="hidden" asp-for="Ans.sek" id="idClock"></p>
+        <script language="JavaScript" type="text/javascript">
+            var i = 0;
+            function SimpleClock() {
+
+                i++;
+
+                //отрисовываем время на странице
+                //document.getElementById('idClock').innerHTML = i;
+
+
+                input = document.getElementById('idClock'); // целевой тег <input>
+
+                idClock.value = i;
+                //выполняем все это каждую секунду
+                timer = setTimeout("SimpleClock()", 1000);
+
+
+            }
+
+            //для первого запуска
+            SimpleClock();
+
+        </script>
+
+
+
+
+        <input type="hidden" asp-for="Ans.vozr" />
+        <input type="hidden" asp-for="Ans.pol" />
         <div class="shadow p-3 mb-5 bg-white rounded"><div class="alert alert-success" role="alert">1. Мое слово всегда совпадает с делом.</div><div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q1a1' asp-for='Ans.a1' value='0' class='custom-control-input' qwe><label class='custom-control-label' for='q1a1'>НЕТ</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q1a2' asp-for='Ans.a1' value='1' class='custom-control-input'><label class='custom-control-label' for='q1a2'>Скорее НЕТ, чем ДА</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q1a3' asp-for='Ans.a1' value='2' class='custom-control-input'><label class='custom-control-label' for='q1a3'>Скорее ДА, чем НЕТ</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q1a4' asp-for='Ans.a1' value='3' class='custom-control-input'><label class='custom-control-label' for='q1a4'>ДА</label></div></div></div>
         <div class="shadow p-3 mb-5 bg-white rounded"><div class="alert alert-success" role="alert">2. Если я хочу что-нибудь сделать, но окружающие считают, что этого делать не стоит, то я готов отказаться от своих намерений.</div><div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q2a1' asp-for='Ans.a2' value='0' class='custom-control-input' qwe><label class='custom-control-label' for='q2a1'>НЕТ</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q2a2' asp-for='Ans.a2' value='1' class='custom-control-input'><label class='custom-control-label' for='q2a2'>Скорее НЕТ, чем ДА</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q2a3' asp-for='Ans.a2' value='2' class='custom-control-input'><label class='custom-control-label' for='q2a3'>Скорее ДА, чем НЕТ</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q2a4' asp-for='Ans.a2' value='3' class='custom-control-input'><label class='custom-control-label' for='q2a4'>ДА</label></div></div></div>
         <div class="shadow p-3 mb-5 bg-white rounded"><div class="alert alert-success" role="alert">3. Люди, которые говорят, что что-то вредно для здоровья, часто просто перестраховываются.</div><div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q3a1' asp-for='Ans.a3' value='0' class='custom-control-input' qwe><label class='custom-control-label' for='q3a1'>НЕТ</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q3a2' asp-for='Ans.a3' value='1' class='custom-control-input'><label class='custom-control-label' for='q3a2'>Скорее НЕТ, чем ДА</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q3a3' asp-for='Ans.a3' value='2' class='custom-control-input'><label class='custom-control-label' for='q3a3'>Скорее ДА, чем НЕТ</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q3a4' asp-for='Ans.a3' value='3' class='custom-control-input'><label class='custom-control-label' for='q3a4'>ДА</label></div></div></div>

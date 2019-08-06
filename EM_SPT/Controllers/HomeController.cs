@@ -86,6 +86,7 @@ namespace EM_SPT.Controllers
             /* CompositeModel model = new CompositeModel();
              model.Ans = new answer();
              model.Ans.a1 = 1;*/
+            model.Ans.date = DateTime.Now;
             model.Ans.id_user = id;
             db.answer.Add(model.Ans);
             await db.SaveChangesAsync();

@@ -34,7 +34,11 @@ namespace EM_SPT.Controllers
 
 
         }
+        public IActionResult Start()
+        {
 
+            return View();
+        }
         public IActionResult Adm_klass()
         {
             var login = HttpContext.User.Identity.Name;
@@ -47,26 +51,25 @@ namespace EM_SPT.Controllers
 
         public IActionResult Adm_oo()
         {
-
             return View();
         }
         public IActionResult Adm_mo()
         {
-
             return View();
         }
         public IActionResult Adm_full()
         {
-
             return View();
         }
 
         public IActionResult Info()
         {
-
             return View();
         }
-
+        public IActionResult End()
+        {
+            return View();
+        }
         public IActionResult Privacy()
         {
             return View();
@@ -90,7 +93,7 @@ namespace EM_SPT.Controllers
             db.answer.Add(model.Ans);
             await db.SaveChangesAsync();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("end");
         }
 
 

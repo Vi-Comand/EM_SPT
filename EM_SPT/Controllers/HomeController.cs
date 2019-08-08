@@ -97,7 +97,7 @@ namespace EM_SPT.Controllers
 
             //      var stream = new MemoryStream();
             List<answer> list = db.answer.ToList();
-            FileInfo newFile = new FileInfo(@"C:\1\S1.xlsx");
+            FileInfo newFile = new FileInfo(@"C:\1\S1oo.xlsx");
             byte[] data;
             using (var package = new ExcelPackage(newFile))
             {
@@ -106,8 +106,8 @@ namespace EM_SPT.Controllers
 
                 //orkSheet.Cells.LoadFromCollection(list, true);
                 int i = 10;
-                workSheet.DeleteRow(11 + list.Count, 100000, true);
-
+                workSheet.DeleteRow(11 + list.Count, 5000, true);
+                workSheet.Cells[7, 2].Value = list.Count;
                 foreach (answer row in list)
                 {
 

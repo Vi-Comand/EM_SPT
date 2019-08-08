@@ -144,10 +144,60 @@ namespace EM_SPT.Controllers
                     workSheet.Cells[i, 7].Value = row.vozr;
                     workSheet.Cells[i, 8].Value = row.sek;
                     row.AddMas();
+                    int a0 = 0;
+                    int a1 = 0;
+                    int a2 = 0;
+                    int a3 = 0;
+                    int ser = 0;
+                    int bolshe_20 = 0;
+                    int bolshe_70 = 0;
                     for (int j = 9; j < 119; j++)
-                        workSheet.Cells[i, j].Value = row.mas[j - 9];
+                    {
+                        if (row.mas[j - 9] == (j - 10 != -1 ? row.mas[j - 10] : row.mas[0]))
+                        {
+                            ser++;
+                        }
+                        else
+                        {
 
 
+                            if (row.mas[j - 10] == 0)
+                            {
+                                a0 = a0 + ser;
+                                if (ser > 20)
+                                    bolshe_20 = 1;
+                                ser = 0;
+                            }
+                            if (row.mas[j - 10] == 1)
+                            {
+                                a1 = a1 + ser;
+                                if (ser > 20)
+                                    bolshe_20 = 1;
+                                ser = 0;
+                            }
+                            if (row.mas[j - 10] == 2)
+                            {
+                                a2 = a2 + ser;
+                                if (ser > 20)
+                                    bolshe_20 = 1;
+                                ser = 0;
+                            }
+                            if (row.mas[j - 10] == 3)
+                            {
+                                a3 = a3 + ser;
+                                if (ser > 20)
+                                    bolshe_20 = 1;
+                                ser = 0;
+                            }
+
+
+                            workSheet.Cells[i, j].Value = row.mas[j - 9];
+                        }
+
+                    }
+                    if (a1 > 77 || a2 > 77 || a3 > 77 || a0 > 77)
+                        bolshe_70 = 1;
+                    workSheet.Cells[i, 182].Value = (bolshe_70 == 1 || bolshe_20 == 1 ? 1 : 0);
                 }
 
                 data = package.GetAsByteArray();

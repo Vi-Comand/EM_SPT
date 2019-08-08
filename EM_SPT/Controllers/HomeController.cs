@@ -113,13 +113,39 @@ namespace EM_SPT.Controllers
 
 
                     i++;
-                    workSheet.Cells[i, 3].Value = row.id_user;
-                    workSheet.Cells[i, 4].Value = row.pol;
-                    workSheet.Cells[i, 5].Value = row.vozr;
-                    workSheet.Cells[i, 6].Value = row.sek;
+                    if (row.id_user != 0)
+                    {
+                        var str = (from main in db.User.Where(p => p.id == row.id_user)
+
+                                   join kl in db.klass on main.id_klass equals kl.id into klas
+                                   from k in klas.DefaultIfEmpty()
+                                   join oo in db.oo on k.id_oo equals oo.id into ioo
+                                   from o in ioo.DefaultIfEmpty()
+                                   join mo in db.mo on o.id_mo equals mo.id into m
+                                   from mo in m.DefaultIfEmpty()
+
+
+                                   select new
+                                   {
+                                       mo = mo.name,
+                                       oo = o.kod,
+                                       klass = k.klass_n,
+                                       log = main.login
+                                   }).First();
+
+
+
+                        workSheet.Cells[i, 2].Value = str.mo;
+                        workSheet.Cells[i, 3].Value = str.oo;
+                        workSheet.Cells[i, 4].Value = str.klass;
+                        workSheet.Cells[i, 5].Value = str.log;
+                    }
+                    workSheet.Cells[i, 6].Value = row.pol;
+                    workSheet.Cells[i, 7].Value = row.vozr;
+                    workSheet.Cells[i, 8].Value = row.sek;
                     row.AddMas();
-                    for (int j = 7; j < 117; j++)
-                        workSheet.Cells[i, j].Value = row.mas[j - 7];
+                    for (int j = 9; j < 119; j++)
+                        workSheet.Cells[i, j].Value = row.mas[j - 9];
 
 
                 }

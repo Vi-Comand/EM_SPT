@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Threading.Tasks;
 
 namespace EM_SPT.Models
@@ -180,6 +181,157 @@ namespace EM_SPT.Models
         public int a138 { get; set; }
         public int a139 { get; set; }
         public int a140 { get; set; }
+        [NotMapped]
+        public int[] mas { get; set; }
+
+        public void AddMas()
+        {
+            mas = new int[140];
+            mas[0] = a1 - 1;
+            mas[1] = a2 - 1;
+            mas[2] = a3 - 1;
+            mas[3] = a4 - 1;
+            mas[4] = a5 - 1;
+            mas[5] = a6 - 1;
+            mas[6] = a7 - 1;
+            mas[7] = a8 - 1;
+            mas[8] = a9 - 1;
+            mas[9] = a10 - 1;
+            mas[10] = a11 - 1;
+            mas[11] = a12 - 1;
+            mas[12] = a13 - 1;
+            mas[13] = a14 - 1;
+            mas[14] = a15 - 1;
+            mas[15] = a16 - 1;
+            mas[16] = a17 - 1;
+            mas[17] = a18 - 1;
+            mas[18] = a19 - 1;
+            mas[19] = a20 - 1;
+            mas[20] = a21 - 1;
+            mas[21] = a22 - 1;
+            mas[22] = a23 - 1;
+            mas[23] = a24 - 1;
+            mas[24] = a25 - 1;
+            mas[25] = a26 - 1;
+            mas[26] = a27 - 1;
+            mas[27] = a28 - 1;
+            mas[28] = a29 - 1;
+            mas[29] = a30 - 1;
+            mas[30] = a31 - 1;
+            mas[31] = a32 - 1;
+            mas[32] = a33 - 1;
+            mas[33] = a34 - 1;
+            mas[34] = a35 - 1;
+            mas[35] = a36 - 1;
+            mas[36] = a37 - 1;
+            mas[37] = a38 - 1;
+            mas[38] = a39 - 1;
+            mas[39] = a40 - 1;
+            mas[40] = a41 - 1;
+            mas[41] = a42 - 1;
+            mas[42] = a43 - 1;
+            mas[43] = a44 - 1;
+            mas[44] = a45 - 1;
+            mas[45] = a46 - 1;
+            mas[46] = a47 - 1;
+            mas[47] = a48 - 1;
+            mas[48] = a49 - 1;
+            mas[49] = a50 - 1;
+            mas[50] = a51 - 1;
+            mas[51] = a52 - 1;
+            mas[52] = a53 - 1;
+            mas[53] = a54 - 1;
+            mas[54] = a55 - 1;
+            mas[55] = a56 - 1;
+            mas[56] = a57 - 1;
+            mas[57] = a58 - 1;
+            mas[58] = a59 - 1;
+            mas[59] = a60 - 1;
+            mas[60] = a61 - 1;
+            mas[61] = a62 - 1;
+            mas[62] = a63 - 1;
+            mas[63] = a64 - 1;
+            mas[64] = a65 - 1;
+            mas[65] = a66 - 1;
+            mas[66] = a67 - 1;
+            mas[67] = a68 - 1;
+            mas[68] = a69 - 1;
+            mas[69] = a70 - 1;
+            mas[70] = a71 - 1;
+            mas[71] = a72 - 1;
+            mas[72] = a73 - 1;
+            mas[73] = a74 - 1;
+            mas[74] = a75 - 1;
+            mas[75] = a76 - 1;
+            mas[76] = a77 - 1;
+            mas[77] = a78 - 1;
+            mas[78] = a79 - 1;
+            mas[79] = a80 - 1;
+            mas[80] = a81 - 1;
+            mas[81] = a82 - 1;
+            mas[82] = a83 - 1;
+            mas[83] = a84 - 1;
+            mas[84] = a85 - 1;
+            mas[85] = a86 - 1;
+            mas[86] = a87 - 1;
+            mas[87] = a88 - 1;
+            mas[88] = a89 - 1;
+            mas[89] = a90 - 1;
+            mas[90] = a91 - 1;
+            mas[91] = a92 - 1;
+            mas[92] = a93 - 1;
+            mas[93] = a94 - 1;
+            mas[94] = a95 - 1;
+            mas[95] = a96 - 1;
+            mas[96] = a97 - 1;
+            mas[97] = a98 - 1;
+            mas[98] = a99 - 1;
+            mas[99] = a100 - 1;
+            mas[100] = a101 - 1;
+            mas[101] = a102 - 1;
+            mas[102] = a103 - 1;
+            mas[103] = a104 - 1;
+            mas[104] = a105 - 1;
+            mas[105] = a106 - 1;
+            mas[106] = a107 - 1;
+            mas[107] = a108 - 1;
+            mas[108] = a109 - 1;
+            mas[109] = a110 - 1;
+            mas[110] = a111 - 1;
+            mas[111] = a112 - 1;
+            mas[112] = a113 - 1;
+            mas[113] = a114 - 1;
+            mas[114] = a115 - 1;
+            mas[115] = a116 - 1;
+            mas[116] = a117 - 1;
+            mas[117] = a118 - 1;
+            mas[118] = a119 - 1;
+            mas[119] = a120 - 1;
+            mas[120] = a121 - 1;
+            mas[121] = a122 - 1;
+            mas[122] = a123 - 1;
+            mas[123] = a124 - 1;
+            mas[124] = a125 - 1;
+            mas[125] = a126 - 1;
+            mas[126] = a127 - 1;
+            mas[127] = a128 - 1;
+            mas[128] = a129 - 1;
+            mas[129] = a130 - 1;
+            mas[130] = a131 - 1;
+            mas[131] = a132 - 1;
+            mas[132] = a133 - 1;
+            mas[133] = a134 - 1;
+            mas[134] = a135 - 1;
+            mas[135] = a136 - 1;
+            mas[136] = a137 - 1;
+            mas[137] = a138 - 1;
+            mas[138] = a139 - 1;
+            mas[139] = a140 - 1;
+
+
+
+
+        }
 
     }
 

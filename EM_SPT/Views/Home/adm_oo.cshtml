@@ -26,13 +26,15 @@
     </ul>
     <div class="tab-content">
         <div class="tab-pane active " id="klass">
-            <form>
+            <form method="post" asp-controller="Home">
                 <div class="form-row shadow p-3 mb-5 bg-white rounded">
 
                     <div class="alert alert-success col-md-12" role="alert">Список классов</div>
 
 
                     <button class="btn btn-outline-success " data-toggle="modal" data-target="#addklass" form="0">Добавить класс</button>
+                    <button class="btn btn-outline-success " asp-controller="Home" asp-action="Excel">Excel</button>
+
 
                 </div>
             </form>

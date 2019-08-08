@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace EM_SPT.Controllers
@@ -88,6 +90,63 @@ namespace EM_SPT.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+        public async Task<IActionResult> Excel(CompositeModel model)
+        {
+            await Task.Yield();
+
+            //      var stream = new MemoryStream();
+            List<answer> list = db.answer.ToList();
+            FileInfo newFile = new FileInfo(@"C:\1\S1.xlsx");
+            byte[] data;
+            using (var package = new ExcelPackage(newFile))
+            {
+
+                var workSheet = package.Workbook.Worksheets[0];
+
+                //orkSheet.Cells.LoadFromCollection(list, true);
+                int i = 10;
+
+
+                foreach (answer row in list)
+                {
+
+
+                    i++;
+                    workSheet.Cells[i, 3].Value = row.id_user;
+                    workSheet.Cells[i, 4].Value = row.pol;
+                    workSheet.Cells[i, 5].Value = row.vozr;
+                    workSheet.Cells[i, 6].Value = row.sek;
+                    row.AddMas();
+                    for (int j = 7; j < 117; j++)
+                        workSheet.Cells[i, j].Value = row.mas[j - 7];
+
+
+                }
+
+                data = package.GetAsByteArray();
+
+            }
+            string excelName = $"UserList-{DateTime.Now.ToString("yyyyMMddHHmmssfff")}.xlsx";
+
+
+            //return File(stream, "application/octet-stream", excelName);  
+            return File(data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", excelName);
+
+
+
+
+            /* var login = HttpContext.User.Identity.Name;
+             int id = db.User.Where(p => p.login == login).First().id;
+             /* CompositeModel model = new CompositeModel();
+              model.Ans = new answer();
+              model.Ans.a1 = 1;*/
+            /*model.Ans.date = DateTime.Now;
+               model.Ans.id_user = id;
+               db.answer.Add(model.Ans);
+               await db.SaveChangesAsync();
+
+               return RedirectToAction("end");*/
         }
 
 

@@ -17,9 +17,28 @@ namespace EM_SPT.Controllers
     public class HomeController : Controller
     {
         private DataContext db = new DataContext();
-
+        [Authorize]
         public IActionResult Index()
         {
+            try
+            {
+                var login = HttpContext.User.Identity.Name;
+                int role = db.User.Where(p => p.login == login).First().role;
+                ViewBag.rl = role;
+                if (role == 0)
+                { return RedirectToAction("start", "Home"); }
+                if (role == 1)
+                { return RedirectToAction("adm_klass", "Home"); }
+                if (role == 2)
+                { return RedirectToAction("adm_oo", "Home"); }
+                if (role == 3)
+                { return RedirectToAction("adm_mo", "Home"); }
+                if (role == 4)
+                { return RedirectToAction("adm_full", "Home"); }
+                else { return RedirectToAction("start", "Home"); }
+            }
+            catch { }
+
             return View();
         }
         public IActionResult Anketa(CompositeModel model)

@@ -25,12 +25,31 @@
             <div class="collapse navbar-collapse text-left " id="navbarNav">
 
                 <form method="post" class="navbar" style="margin:initial; display:contents">
-                    <button type="submit" class="btn btn-outline-success" style="margin:5px; margin-left:0px;" asp-controller="Home" asp-action="Index">Главная</button>
-                    <br />
-                    <button type="submit" class="btn btn-outline-success" style="margin:5px; margin-left:0px;" asp-controller="Home" asp-action="Anketa_a">Анкетирование</button>
-                    <br />
-                    <button type="submit" class="btn btn-outline-success" style="margin:5px; margin-left:0px;" asp-controller="Home" asp-action="Info">Информация</button>
-                    <br />
+                    <h2 class="success">
+                        Единая методика
+                        социально-психологического тестирования
+                    </h2>
+
+                    @*<button type="submit" class="btn btn-outline-success" style="margin:5px; margin-left:0px;" asp-controller="Home" asp-action="Index">Главная</button>
+                            <br />
+                        @if (ViewBag.rl == 0)
+                        {
+                            <button type="submit" class="btn btn-outline-success" style="margin:5px; margin-left:0px;" asp-controller="Home" asp-action="Anketa_a">Анкетирование</button>
+                            <br />
+                        }
+                        @if (ViewBag.rl == 1)
+                        {
+                            <button type="submit" class="btn btn-outline-success" style="margin:5px; margin-left:0px;" asp-controller="Home" asp-action="adm_klass">Администрирование</button>
+                            <br />
+                        }
+                        @if (ViewBag.rl == 2)
+                        {
+                            <button type="submit" class="btn btn-outline-success" style="margin:5px; margin-left:0px;" asp-controller="Home" asp-action="adm_oo">Администрирование</button>
+                            <br />
+                        }
+
+                        @*<button type="submit" class="btn btn-outline-success" style="margin:5px; margin-left:0px;" asp-controller="Home" asp-action="Info">Инструкция</button>
+                            <br />*@
                     @if (User.Identity.IsAuthenticated == false)
                     {
                         <button type="submit" class="btn btn-outline-info" style="margin:5px; margin-left:auto;" asp-controller="Account" asp-action="login">Войти</button>
@@ -52,7 +71,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; 2019 - ВиКоманда</p>
+            <p>2019 </p>
         </footer>
     </div>
 

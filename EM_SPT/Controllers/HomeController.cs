@@ -106,7 +106,7 @@ namespace EM_SPT.Controllers
 
                 //orkSheet.Cells.LoadFromCollection(list, true);
                 int i = 10;
-
+                workSheet.DeleteRow(11 + list.Count, 100000, true);
 
                 foreach (answer row in list)
                 {
@@ -191,8 +191,9 @@ namespace EM_SPT.Controllers
                             }
 
 
-                            workSheet.Cells[i, j].Value = row.mas[j - 9];
+
                         }
+                        workSheet.Cells[i, j].Value = row.mas[j - 9];
 
                     }
                     if (a1 > 77 || a2 > 77 || a3 > 77 || a0 > 77)

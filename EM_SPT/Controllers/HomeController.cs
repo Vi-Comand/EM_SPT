@@ -153,47 +153,51 @@ namespace EM_SPT.Controllers
                     int bolshe_70 = 0;
                     for (int j = 9; j < 119; j++)
                     {
-                        if (row.mas[j - 9] == (j - 10 != -1 ? row.mas[j - 10] : row.mas[0]))
+                        if (bolshe_20 != 1)
                         {
-                            ser++;
+                            if (row.mas[j - 9] == (j - 10 != -1 ? row.mas[j - 10] : row.mas[0]))
+                            {
+                                ser++;
+                            }
+                            else
+                            {
+                                if (ser > 20)
+                                    bolshe_20 = 1;
+
+                                if (row.mas[j - 10] == 0)
+                                {
+                                    a0 = a0 + ser;
+
+                                }
+                                if (row.mas[j - 10] == 1)
+                                {
+                                    a1 = a1 + ser;
+
+
+                                }
+                                if (row.mas[j - 10] == 2)
+                                {
+                                    a2 = a2 + ser;
+
+
+                                }
+                                if (row.mas[j - 10] == 3)
+                                {
+                                    a3 = a3 + ser;
+
+
+                                }
+                                ser = 1;
+
+
+                            }
+                            if (j - 9 == 109)
+                                if (ser > 20)
+                                    bolshe_20 = 1;
+
                         }
-                        else
-                        {
 
-
-                            if (row.mas[j - 10] == 0)
-                            {
-                                a0 = a0 + ser;
-                                if (ser > 20)
-                                    bolshe_20 = 1;
-                                ser = 0;
-                            }
-                            if (row.mas[j - 10] == 1)
-                            {
-                                a1 = a1 + ser;
-                                if (ser > 20)
-                                    bolshe_20 = 1;
-                                ser = 0;
-                            }
-                            if (row.mas[j - 10] == 2)
-                            {
-                                a2 = a2 + ser;
-                                if (ser > 20)
-                                    bolshe_20 = 1;
-                                ser = 0;
-                            }
-                            if (row.mas[j - 10] == 3)
-                            {
-                                a3 = a3 + ser;
-                                if (ser > 20)
-                                    bolshe_20 = 1;
-                                ser = 0;
-                            }
-
-
-                            workSheet.Cells[i, j].Value = row.mas[j - 9];
-                        }
-
+                        workSheet.Cells[i, j].Value = row.mas[j - 9];
                     }
                     if (a1 > 77 || a2 > 77 || a3 > 77 || a0 > 77)
                         bolshe_70 = 1;

@@ -41,7 +41,7 @@ namespace EM_SPT.Controllers
                 string password = model.Password;
 
                 // generate a 128-bit salt using a secure PRNG
-                string a = "Соль";
+                /*string a = "Соль";
 
                 byte[] salt = Encoding.Default.GetBytes(a);
 
@@ -51,12 +51,12 @@ namespace EM_SPT.Controllers
                     salt: salt,
                     prf: KeyDerivationPrf.HMACSHA1,
                     iterationCount: 10000,
-                    numBytesRequested: 256 / 8));
+                    numBytesRequested: 256 / 8));*/
                 string remoteIpAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString();
                 user user = new user();
                 try
                 {
-                    user = await db.User.FirstOrDefaultAsync(u => u.login == model.Login && u.pass == hashed);
+                    user = await db.User.FirstOrDefaultAsync(u => u.login == model.Login && u.pass == password);
                 }
                 catch (Exception ex)
                 {

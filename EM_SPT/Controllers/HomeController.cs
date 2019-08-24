@@ -23,10 +23,14 @@ namespace EM_SPT.Controllers
             try
             {
                 var login = HttpContext.User.Identity.Name;
-                int role = db.User.Where(p => p.login == login).First().role;
+                user us = db.User.Where(p => p.login == login).First();
+                int role = us.role;
                 ViewBag.rl = role;
                 if (role == 0)
-                { return RedirectToAction("start", "Home"); }
+                {
+                    if (us.test != 1) return RedirectToAction("start", "Home");
+                    else return RedirectToAction("end");
+                }
                 if (role == 1)
                 { return RedirectToAction("adm_klass", "Home"); }
                 if (role == 2)
@@ -35,7 +39,7 @@ namespace EM_SPT.Controllers
                 { return RedirectToAction("adm_mo", "Home"); }
                 if (role == 4)
                 { return RedirectToAction("adm_full", "Home"); }
-                else { return RedirectToAction("start", "Home"); }
+
             }
             catch { }
 
@@ -43,15 +47,28 @@ namespace EM_SPT.Controllers
         }
         public IActionResult Anketa(CompositeModel model)
         {
+            if (model.Ans == null || model.Ans.pol == null || model.Ans.vozr == null)
+            {
+                return RedirectToAction("start", "Home");
+            }
+
             var login = HttpContext.User.Identity.Name;
-            int id = db.User.Where(p => p.login == login).First().id_klass;
-            string klass = db.klass.Where(p => p.id == id).First().klass_n;
-            if (klass == "7" || klass == "8" || klass == "9")
-                return View("anketa_a", model);
-            if (klass == "10" || klass == "11")
-                return View("anketa_b", model);
+            user us = db.User.Where(p => p.login == login).First();
+            if (us.test != 1)
+            {
+                string klass = db.klass.Where(p => p.id == us.id_klass).First().klass_n;
+
+                if (klass == "7" || klass == "8" || klass == "9")
+                    return View("anketa_a", model);
+                if (klass == "10" || klass == "11")
+                    return View("anketa_b", model);
+                else
+                    return View("anketa_c", model);
+            }
             else
-                return View("anketa_c", model);
+            {
+                return RedirectToAction("end");
+            }
 
 
         }
@@ -252,13 +269,16 @@ namespace EM_SPT.Controllers
         public async Task<IActionResult> Answer(CompositeModel model)
         {
             var login = HttpContext.User.Identity.Name;
-            int id = db.User.Where(p => p.login == login).First().id;
+            user us = db.User.Where(p => p.login == login).First();
             /* CompositeModel model = new CompositeModel();
              model.Ans = new answer();
              model.Ans.a1 = 1;*/
             model.Ans.date = DateTime.Now;
-            model.Ans.id_user = id;
+            model.Ans.id_user = us.id;
             db.answer.Add(model.Ans);
+
+            us.test = 1;
+            db.User.Update(us);
             await db.SaveChangesAsync();
 
             return RedirectToAction("end");

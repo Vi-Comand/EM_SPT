@@ -29,12 +29,42 @@ namespace EM_SPT.Models
 
 
     }
+    public class TestVKlass
+    {
+
+        //public List<user> LUsers { get; set; }
+        public int id_klass { get; set; }
+        public int kol { get; set; }
+    }
+
+    public class TestKl
+    {
+        public List<TestVKlass> testVKlasses { get; set; }
+    }
     public class ListKlass
     {
         public List<klass> klasses { get; set; }
         public int id { get; set; }
 
     }
+
+    public class ListOos
+    {
+        public List<oo> oos { get; set; }
+        public int id { get; set; }
+        /*  public int sum { get; set; }
+          public int sumTest { get; set; }
+          public string klass { get; set; }*/
+
+    }
+
+    public class SpisOo
+    {
+        public List<ListOos> spisOos { get; set; }
+
+    }
+
+
     public class VigruzkaExcel
     {
         public string mo { get; set; }

@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
@@ -10,6 +12,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EM_SPT.Controllers
@@ -17,34 +20,101 @@ namespace EM_SPT.Controllers
     public class HomeController : Controller
     {
         private DataContext db = new DataContext();
+
+        internal class TimedHostedService : IHostedService, IDisposable
+        {
+            private readonly ILogger _logger;
+            private Timer _timer;
+
+            public TimedHostedService(ILogger<TimedHostedService> logger)
+            {
+                _logger = logger;
+            }
+
+            public Task StartAsync(CancellationToken cancellationToken)
+            {
+                _logger.LogInformation("Timed Background Service is starting.");
+
+                _timer = new Timer(DoWork, null, TimeSpan.Zero,
+                    TimeSpan.FromSeconds(25));
+
+                return Task.CompletedTask;
+
+            }
+
+            private void DoWork(object state)
+            {
+                if (DateTime.Now.Hour > 22)
+                {
+                    _logger.LogInformation("Timed Background Service is working.");
+                }
+            }
+
+            public Task StopAsync(CancellationToken cancellationToken)
+            {
+                _logger.LogInformation("Timed Background Service is stopping.");
+
+                _timer?.Change(Timeout.Infinite, 0);
+
+                return Task.CompletedTask;
+            }
+
+            public void Dispose()
+            {
+                _timer?.Dispose();
+            }
+
+            /* public Task StartAsync(CancellationToken cancellationToken)
+             {
+                 throw new NotImplementedException();
+             }
+
+             public Task StopAsync(CancellationToken cancellationToken)
+             {
+                 throw new NotImplementedException();
+             }*/
+        }
+
+
+
+
         [Authorize]
         public IActionResult Index()
         {
-         
-                var login = HttpContext.User.Identity.Name;
-                user user = db.User.Where(p => p.login == login).First();
-                ViewBag.rl =user.role;
-                if (user.role == 0)
-                { return RedirectToAction("start", "Home"); }
-                if (user.role == 1)
-                { return RedirectToAction("adm_klass", "Home"); }
-                if (user.role == 2)
-                {
 
-                    ListKlass klasses = new ListKlass();
-                    klasses.klasses = db.klass.Where(p => p.id_oo == user.id_oo).ToList();
-                    
+            var login = HttpContext.User.Identity.Name;
+            user user = db.User.Where(p => p.login == login).First();
+            ViewBag.rl = user.role;
+            if (user.role == 0)
+            { return RedirectToAction("start", "Home"); }
+            if (user.role == 1)
+            {
+                ViewBag.klad_Id = user.id_klass;
+                return RedirectToAction("adm_klass", "Home");
+            }
+            if (user.role == 2)
+            {
+
+                ListKlass klasses = new ListKlass();
+                klasses.klasses = db.klass.Where(p => p.id_oo == user.id_oo).ToList();
 
 
-                    return View("adm_oo",klasses); }
-                if (user.role == 3)
-                { return RedirectToAction("adm_mo", "Home"); }
-                if (user.role == 4)
-                { return RedirectToAction("adm_full", "Home"); }
-                else { return RedirectToAction("start", "Home"); }
-         
 
-         
+                return View("adm_oo", klasses);
+            }
+            if (user.role == 3)
+
+            {
+                ListOos ooes = new ListOos();
+                ooes.oos = db.oo.Where(p => p.id_mo == user.id_mo).ToList();
+                return View("adm_mo", ooes);
+            }
+            if (user.role == 4)
+            { return RedirectToAction("adm_full", "Home"); }
+            else { return RedirectToAction("start", "Home"); }
+
+
+
         }
         public IActionResult Anketa(CompositeModel model)
         {
@@ -60,25 +130,93 @@ namespace EM_SPT.Controllers
 
 
         }
+        public IActionResult SpisokOO(int id)
+        {
+            var login = HttpContext.User.Identity.Name;
+            var mo = db.User.Where(p => p.login == login).First().id_mo;
+            int[] masOO = (from k in db.oo.Where(p => p.id_mo == mo)
+                           select k.id).ToArray();
+            if (id != 0)
+            {
+                int[] masKlass = (from k in db.klass.Where(p => p.id_oo == id)
+                                  select k.id).ToArray();
+                List<TestVKlass> list = new List<TestVKlass>();
+                foreach (int qwe in masKlass)
+                {
+                    TestVKlass test = new TestVKlass();
+                    test.id_klass = qwe;
+                    test.kol = db.User.Where(p => p.id_klass == qwe && p.test == 1).Count();
+                    list.Add(test);
+                }
+                var query = list;
+                return Json(query);
+            }
+            else
+            {
+                return null;
+                int[] mas = (from k in db.oo.Where(p => p.id_mo == mo)
+                             select k.id).ToArray();
+
+                var query = from u in db.User.Where(p => mas.Distinct().Contains(p.id_klass) && p.role == 0)
+                            select new
+                            {
+                                u.id,
+                                u.test,
+                                u.login,
+                                u.pass,
+                                u.id_klass,
+                            };
+
+                ViewData["SumTestOO"] = query.Where(p => p.test == 1).Count();
+                return Json(query.ToArray());
+            }
+        }
+
         public IActionResult SpisokKlassa(int id)
         {
             var login = HttpContext.User.Identity.Name;
             var klass = db.User.Where(p => p.login == login).First().id_oo;
-            
 
-            var query = from user in db.User
-                        where user.id_klass == id
-                       select new
-                        {
-                           user.id,
-                           user.test,
-                           user.login,
-                           user.pass
-                        };
+            if (id != 0)
+            {
+                var query = from user in db.User
+                            where user.id_klass == id && user.role == 0
+                            select new
+                            {
+                                user.id,
+                                user.test,
+                                user.login,
+                                user.pass,
+                                user.id_klass
+                            };
+                ViewData["SumTestOO"] = query.Where(p => p.test == 1).Count();
 
-          
-            return Json(query.ToArray());
+                return Json(query.ToArray());
+            }
+            else
+            {
+
+                int[] mas = (from k in db.klass.Where(p => p.id_oo == klass)
+                             select k.id).ToArray();
+
+                var query = from u in db.User.Where(p => mas.Distinct().Contains(p.id_klass) && p.role == 0)
+                            select new
+                            {
+
+                                u.id,
+                                u.test,
+                                u.login,
+                                u.pass,
+                                u.id_klass,
+
+                            };
+
+                ViewData["SumTestOO"] = query.Where(p => p.test == 1).Count();
+                return Json(query.ToArray());
+            }
+
         }
+
         public IActionResult Start()
         {
 
@@ -91,6 +229,7 @@ namespace EM_SPT.Controllers
             var klass = db.User.Where(p => p.login == login).First().id_klass;
             lk.klass = db.klass.Find(klass);
             lk.LKuser = db.User.Where(p => p.id_klass == klass && p.role == 0).ToList();
+            ViewBag.SumTest = lk.LKuser.Where(p => p.test == 1).Count();
             return View("Adm_klass", lk);
         }
 
@@ -105,6 +244,7 @@ namespace EM_SPT.Controllers
 
         public IActionResult Adm_oo()
         {
+
             return View();
         }
         public IActionResult Adm_mo()
@@ -136,10 +276,10 @@ namespace EM_SPT.Controllers
         }
 
 
-       
-            
-       
-            public async Task<IActionResult> Excel(ListKlass l)
+
+
+
+        public async Task<IActionResult> Excel(ListKlass l)
         {
             await Task.Yield();
 
@@ -149,46 +289,47 @@ namespace EM_SPT.Controllers
             //      var stream = new MemoryStream();
             if (l.id != 0)
             {
-                 str = (from k in db.klass.Where(p => p.id == l.id)
-                           join us in db.User on k.id equals us.id_klass into user
-                           from u in user.DefaultIfEmpty()
-                           join ans in db.answer on u.id equals ans.id_user into answe
-                           from ans in answe.DefaultIfEmpty()
-                        join oo in db.oo on k.id_oo equals oo.id
-                        join mo in db.mo on oo.id_mo equals mo.id
+                str = (from k in db.klass.Where(p => p.id == l.id)
+                       join us in db.User on k.id equals us.id_klass into user
+                       from u in user.DefaultIfEmpty()
+                       join ans in db.answer on u.id equals ans.id_user into answe
+                       from ans in answe.DefaultIfEmpty()
+                       join oo in db.oo on k.id_oo equals oo.id
+                       join mo in db.mo on oo.id_mo equals mo.id
 
 
-                        select new VigruzkaExcel
-                           {
-                               mo=mo.name,
-                               oo=oo.kod,
-                               klass_n = k.klass_n,
-                               login=u.login,
-                               ans=ans
-                           }).ToList();
+                       select new VigruzkaExcel
+                       {
+                           mo = mo.name,
+                           oo = oo.kod,
+                           klass_n = k.klass_n,
+                           login = u.login,
+                           ans = ans
+                       }).ToList();
 
             }
-            else {
+            else
+            {
                 var login = HttpContext.User.Identity.Name;
                 var klass = db.User.Where(p => p.login == login).First().id_oo;
-                str = (from us in db.User 
+                str = (from us in db.User
                        join k in db.klass.Where(p => p.id_oo == klass) on us.id_klass equals k.id
                        join ans in db.answer on us.id equals ans.id_user into answe
-                           from ans in answe.DefaultIfEmpty()
-                           join oo in db.oo on k.id_oo equals oo.id into ioo
-                           from o in ioo.DefaultIfEmpty()
-                           join mo in db.mo on o.id_mo equals mo.id into m
-                           from mo in m.DefaultIfEmpty()
+                       from ans in answe.DefaultIfEmpty()
+                       join oo in db.oo on k.id_oo equals oo.id into ioo
+                       from o in ioo.DefaultIfEmpty()
+                       join mo in db.mo on o.id_mo equals mo.id into m
+                       from mo in m.DefaultIfEmpty()
 
 
-                           select new VigruzkaExcel
-                           {
-                               mo = mo.name,
-                               oo = o.kod,
-                               klass_n = k.klass_n,
-                               login = us.login,
-                               ans = ans
-                           }).ToList();
+                       select new VigruzkaExcel
+                       {
+                           mo = mo.name,
+                           oo = o.kod,
+                           klass_n = k.klass_n,
+                           login = us.login,
+                           ans = ans
+                       }).ToList();
 
             }
 
@@ -204,7 +345,7 @@ namespace EM_SPT.Controllers
                 workSheet.DeleteRow(11 + str.Count, 5000, true);
                 workSheet1.DeleteRow(11 + str.Count, 5000, true);
 
-                
+
                 workSheet.Cells[7, 2].Value = str.Count;
                 foreach (var stroka in str)
                 {

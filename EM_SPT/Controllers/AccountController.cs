@@ -67,15 +67,7 @@ namespace EM_SPT.Controllers
 
 
                     await Authenticate(model.Login); // аутентификация
-                    if (user.role == 1)
-                    { return RedirectToAction("adm_klass", "Home"); }
-                    if (user.role == 2)
-                    { return RedirectToAction("adm_oo", "Home"); }
-                    if (user.role == 3)
-                    { return RedirectToAction("adm_mo", "Home"); }
-                    if (user.role == 4)
-                    { return RedirectToAction("adm_full", "Home"); }
-                    else { return RedirectToAction("start", "Home"); }
+                    return RedirectToAction("Index", "Home");
 
                 }
 

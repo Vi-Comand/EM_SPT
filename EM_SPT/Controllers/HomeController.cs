@@ -20,30 +20,31 @@ namespace EM_SPT.Controllers
         [Authorize]
         public IActionResult Index()
         {
-            try
-            {
+         
                 var login = HttpContext.User.Identity.Name;
-                user us = db.User.Where(p => p.login == login).First();
-                int role = us.role;
-                ViewBag.rl = role;
-                if (role == 0)
-                {
-                    if (us.test != 1) return RedirectToAction("start", "Home");
-                    else return RedirectToAction("end");
-                }
-                if (role == 1)
+                user user = db.User.Where(p => p.login == login).First();
+                ViewBag.rl =user.role;
+                if (user.role == 0)
+                { return RedirectToAction("start", "Home"); }
+                if (user.role == 1)
                 { return RedirectToAction("adm_klass", "Home"); }
-                if (role == 2)
-                { return RedirectToAction("adm_oo", "Home"); }
-                if (role == 3)
+                if (user.role == 2)
+                {
+
+                    ListKlass klasses = new ListKlass();
+                    klasses.klasses = db.klass.Where(p => p.id_oo == user.id_oo).ToList();
+                    
+
+
+                    return View("adm_oo",klasses); }
+                if (user.role == 3)
                 { return RedirectToAction("adm_mo", "Home"); }
-                if (role == 4)
+                if (user.role == 4)
                 { return RedirectToAction("adm_full", "Home"); }
+                else { return RedirectToAction("start", "Home"); }
+         
 
-            }
-            catch { }
-
-            return View();
+         
         }
         public IActionResult Anketa(CompositeModel model)
         {
@@ -71,6 +72,25 @@ namespace EM_SPT.Controllers
             }
 
 
+        }
+        public IActionResult SpisokKlassa(int id)
+        {
+            var login = HttpContext.User.Identity.Name;
+            var klass = db.User.Where(p => p.login == login).First().id_oo;
+            
+
+            var query = from user in db.User
+                        where user.id_klass == id
+                       select new
+                        {
+                           user.id,
+                           user.test,
+                           user.login,
+                           user.pass
+                        };
+
+          
+            return Json(query.ToArray());
         }
         public IActionResult Start()
         {
@@ -127,117 +147,154 @@ namespace EM_SPT.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-        public async Task<IActionResult> Excel(CompositeModel model)
+
+
+       
+            
+       
+            public async Task<IActionResult> Excel(ListKlass l)
         {
             await Task.Yield();
 
+
+            List<VigruzkaExcel> str = new List<VigruzkaExcel>();
+
             //      var stream = new MemoryStream();
-            List<answer> list = db.answer.ToList();
-            FileInfo newFile = new FileInfo(@"C:\1\S1oo.xlsx");
+            if (l.id != 0)
+            {
+                 str = (from k in db.klass.Where(p => p.id == l.id)
+                           join us in db.User on k.id equals us.id_klass into user
+                           from u in user.DefaultIfEmpty()
+                           join ans in db.answer on u.id equals ans.id_user into answe
+                           from ans in answe.DefaultIfEmpty()
+                        join oo in db.oo on k.id_oo equals oo.id
+                        join mo in db.mo on oo.id_mo equals mo.id
+
+
+                        select new VigruzkaExcel
+                           {
+                               mo=mo.name,
+                               oo=oo.kod,
+                               klass_n = k.klass_n,
+                               login=u.login,
+                               ans=ans
+                           }).ToList();
+
+            }
+            else {
+                var login = HttpContext.User.Identity.Name;
+                var klass = db.User.Where(p => p.login == login).First().id_oo;
+                str = (from us in db.User 
+                       join k in db.klass.Where(p => p.id_oo == klass) on us.id_klass equals k.id
+                       join ans in db.answer on us.id equals ans.id_user into answe
+                           from ans in answe.DefaultIfEmpty()
+                           join oo in db.oo on k.id_oo equals oo.id into ioo
+                           from o in ioo.DefaultIfEmpty()
+                           join mo in db.mo on o.id_mo equals mo.id into m
+                           from mo in m.DefaultIfEmpty()
+
+
+                           select new VigruzkaExcel
+                           {
+                               mo = mo.name,
+                               oo = o.kod,
+                               klass_n = k.klass_n,
+                               login = us.login,
+                               ans = ans
+                           }).ToList();
+
+            }
+
+            FileInfo newFile = new FileInfo(@"C:\1\s1oo с паролем.xlsx");
             byte[] data;
             using (var package = new ExcelPackage(newFile))
             {
 
                 var workSheet = package.Workbook.Worksheets[0];
-
+                var workSheet1 = package.Workbook.Worksheets[1];
                 //orkSheet.Cells.LoadFromCollection(list, true);
                 int i = 10;
-                workSheet.DeleteRow(11 + list.Count, 5000, true);
-                workSheet.Cells[7, 2].Value = list.Count;
-                foreach (answer row in list)
-                {
+                workSheet.DeleteRow(11 + str.Count, 5000, true);
+                workSheet1.DeleteRow(11 + str.Count, 5000, true);
 
+                
+                workSheet.Cells[7, 2].Value = str.Count;
+                foreach (var stroka in str)
+                {
+                    answer row = stroka.ans;
 
                     i++;
-                    if (row.id_user != 0)
+
+
+                    workSheet.Cells[i, 2].Value = stroka.mo;
+                    workSheet.Cells[i, 3].Value = stroka.oo;
+                    workSheet.Cells[i, 4].Value = stroka.klass_n;
+                    workSheet.Cells[i, 5].Value = stroka.login;
+                    if (row != null)
                     {
-                        var str = (from main in db.User.Where(p => p.id == row.id_user)
-
-                                   join kl in db.klass on main.id_klass equals kl.id into klas
-                                   from k in klas.DefaultIfEmpty()
-                                   join oo in db.oo on k.id_oo equals oo.id into ioo
-                                   from o in ioo.DefaultIfEmpty()
-                                   join mo in db.mo on o.id_mo equals mo.id into m
-                                   from mo in m.DefaultIfEmpty()
-
-
-                                   select new
-                                   {
-                                       mo = mo.name,
-                                       oo = o.kod,
-                                       klass = k.klass_n,
-                                       log = main.login
-                                   }).First();
-
-
-
-                        workSheet.Cells[i, 2].Value = str.mo;
-                        workSheet.Cells[i, 3].Value = str.oo;
-                        workSheet.Cells[i, 4].Value = str.klass;
-                        workSheet.Cells[i, 5].Value = str.log;
-                    }
-                    workSheet.Cells[i, 6].Value = row.pol;
-                    workSheet.Cells[i, 7].Value = row.vozr;
-                    workSheet.Cells[i, 8].Value = row.sek;
-                    row.AddMas();
-                    int a0 = 0;
-                    int a1 = 0;
-                    int a2 = 0;
-                    int a3 = 0;
-                    int ser = 0;
-                    int bolshe_20 = 0;
-                    int bolshe_70 = 0;
-                    for (int j = 9; j < 119; j++)
-                    {
-                        if (bolshe_20 != 1)
+                        workSheet.Cells[i, 6].Value = row.pol;
+                        workSheet.Cells[i, 7].Value = row.vozr;
+                        workSheet.Cells[i, 8].Value = row.sek;
+                        row.AddMas();
+                        int a0 = 0;
+                        int a1 = 0;
+                        int a2 = 0;
+                        int a3 = 0;
+                        int ser = 0;
+                        int bolshe_20 = 0;
+                        int bolshe_70 = 0;
+                        for (int j = 9; j < 119; j++)
                         {
-                            if (row.mas[j - 9] == (j - 10 != -1 ? row.mas[j - 10] : row.mas[0]))
+                            if (bolshe_20 != 1)
                             {
-                                ser++;
+                                if (row.mas[j - 9] == (j - 10 != -1 ? row.mas[j - 10] : row.mas[0]))
+                                {
+                                    ser++;
+                                }
+                                else
+                                {
+                                    if (ser > 20)
+                                        bolshe_20 = 1;
+
+                                    if (row.mas[j - 10] == 0)
+                                    {
+                                        a0 = a0 + ser;
+
+                                    }
+                                    if (row.mas[j - 10] == 1)
+                                    {
+                                        a1 = a1 + ser;
+
+
+                                    }
+                                    if (row.mas[j - 10] == 2)
+                                    {
+                                        a2 = a2 + ser;
+
+
+                                    }
+                                    if (row.mas[j - 10] == 3)
+                                    {
+                                        a3 = a3 + ser;
+
+
+                                    }
+                                    ser = 1;
+
+
+                                }
+                                if (j - 9 == 109)
+                                    if (ser > 20)
+                                        bolshe_20 = 1;
+
                             }
-                            else
-                            {
-                                if (ser > 20)
-                                    bolshe_20 = 1;
 
-                                if (row.mas[j - 10] == 0)
-                                {
-                                    a0 = a0 + ser;
-
-                                }
-                                if (row.mas[j - 10] == 1)
-                                {
-                                    a1 = a1 + ser;
-
-
-                                }
-                                if (row.mas[j - 10] == 2)
-                                {
-                                    a2 = a2 + ser;
-
-
-                                }
-                                if (row.mas[j - 10] == 3)
-                                {
-                                    a3 = a3 + ser;
-
-
-                                }
-                                ser = 1;
-
-
-                            }
-                            if (j - 9 == 109)
-                                if (ser > 20)
-                                    bolshe_20 = 1;
-
+                            workSheet.Cells[i, j].Value = row.mas[j - 9];
                         }
-
-                        workSheet.Cells[i, j].Value = row.mas[j - 9];
+                        if (a1 > 77 || a2 > 77 || a3 > 77 || a0 > 77)
+                            bolshe_70 = 1;
+                        workSheet.Cells[i, 182].Value = (bolshe_70 == 1 || bolshe_20 == 1 ? 1 : 0);
                     }
-                    if (a1 > 77 || a2 > 77 || a3 > 77 || a0 > 77)
-                        bolshe_70 = 1;
-                    workSheet.Cells[i, 182].Value = (bolshe_70 == 1 || bolshe_20 == 1 ? 1 : 0);
                 }
 
                 data = package.GetAsByteArray();
@@ -265,6 +322,10 @@ namespace EM_SPT.Controllers
                return RedirectToAction("end");*/
         }
 
+        private void First()
+        {
+            throw new NotImplementedException();
+        }
 
         public async Task<IActionResult> Answer(CompositeModel model)
         {

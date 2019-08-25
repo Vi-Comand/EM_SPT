@@ -29,7 +29,22 @@ namespace EM_SPT.Models
 
 
     }
+    public class ListKlass
+    {
+        public List<klass> klasses { get; set; }
+        public int id { get; set; }
+        
+    }
+    public class VigruzkaExcel
+    {
+        public string mo { get; set; }
+        public string oo { get; set; }
+        public string login { get; set; }
+        public string klass_n { get; set; }
+        public int sek { get; set; }
+        public answer ans { get; set; }
 
+    }
     public class answer
     {
 
@@ -341,6 +356,8 @@ namespace EM_SPT.Models
     {
         public int id { get; set; }
         public int id_klass { get; set; }
+        public int id_oo { get; set; }
+        public int id_mo { get; set; }
         public string kod { get; set; }
         public int role { get; set; }
         public string login { get; set; }

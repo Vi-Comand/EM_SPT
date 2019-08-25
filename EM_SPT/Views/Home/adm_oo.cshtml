@@ -1,5 +1,4 @@
-﻿@using System.Linq
-@model EM_SPT.Models.oo
+﻿@model EM_SPT.Models.ListKlass
 @{
     ViewData["Title"] = "Администратор ОО";
 }
@@ -26,58 +25,114 @@
     </ul>
     <div class="tab-content">
         <div class="tab-pane active " id="klass">
+            <form method="post" asp-controller="Home">
+                <div class="form-row shadow p-3 mb-5 bg-white rounded">
 
-            <div class="form-row shadow p-3 mb-5 bg-white rounded">
+                  
+                    <div class="form-group col-md-4">
+                        <select id="idKlass" class="form-control">
+                            <option value="" selected>Выберите код класса</option>
+                            @foreach (klass row in Model.klasses)
+                            {
+                                <option value="@row.id" selected>Класс:@row.klass_n Код:@row.id</option>
+                            }
+                        </select>
 
-                @*<div class="alert alert-success col-md-12" role="alert">Список классов</div>
 
 
-                    <button class="btn btn-outline-success " data-toggle="modal" data-target="#addklass" form="0">Добавить класс</button>*@
+                        <table id="stat"></table>
+                        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+                        <script>
+                            $(document).ready(function () { alert(jQuery.fn.jquery); });
+
+
+                            $("#idKlass").change(function () { // задаем функцию при нажатиии на элемент <button>
+                                var n = document.getElementById("idKlass").options.selectedIndex;
+                                var id = document.getElementById("idKlass").options[n].value;
+                                alert(id);
+                                $.ajax({
+                                    url: '/Home/SpisokKlassa/',
+                                    type: "POST",
+                                    dataType: "json",
+                                    data: { "id": id },
+                                    success: function (query) {
+                                        var tableArr = ['<table>'];
+
+                                        for (i = 0; i < query.length; i++) {
+                                            tableArr.push('<tr><td>' + query[i].id + '</td><td style="width: 40%">' + query[i].login + '</td><td style="width: 40%">' + query[i].test + '</td><td style="width: 40%">' + query[i].pass + '</td></tr>');
+                                        }
+                                        tableArr.push('</table>');
+                                        document.getElementById('stat').innerHTML = tableArr.join('\n')
+                                    }
+                                });
+                            });
+
+                            /*   window.addEventListener("DOMContentLoaded", function () {
+                                   var but = document.querySelectorAll(".button_del1");
+
+                                   [].forEach.call(but, function (item) {
+                                       item.addEventListener("click", function () {
+                                           res = item.value
+                                       })
+                                   })
+                               });*/
+
+
+                        </script>
 
 
 
-            </div>
 
+
+
+
+                    </div>
+
+                    @*<div class="alert alert-success col-md-12" role="alert">Список классов</div>
+
+
+        <button class="btn btn-outline-success " data-toggle="modal" data-target="#addklass" form="0">Добавить класс</button>*@
+
+
+
+                </div>
+
+            </form>
         </div>
+
+
+       
+
+
+
         <div class="tab-pane fade " id="otch">
             <form method="post" asp-controller="Home">
                 <div class="form-row shadow p-3 mb-5 bg-white rounded">
-                    @*<div class="form-group col-md-12">
-                            <div class="form-group col-md-4">
-                                <select id="inputState" class="form-control" required>
-                                    <option value="" selected>Выберите код класса</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                    <option value="6">6</option>
-                                    <option value="7">7</option>
-                                    <option value="8">8</option>
-                                    <option value="9">9</option>
-                                    <option value="10">10</option>
-                                    <option value="11">11</option>
-                                    <option value="12">12</option>
-                                    <option value="1 курс">1 курс</option>
-                                    <option value="2 курс">2 курс</option>
-                                    <option value="3 курс">3 курс</option>
-                                    <option value="4 курс">4 курс</option>
-                                    <option value="5 курс">5 курс</option>
-                                </select>
-                            </div>
-                            <button class="btn btn-outline-success form-group col-md-4">Загрузить отчет по классу</button>
+                    <div class="form-group col-md-12">
+                        <div class="form-group col-md-4">
+                            <select id="inputState" class="form-control" asp-for="id">
+                                <option value="0" selected>Все классы</option>
+                                @foreach (klass row in Model.klasses)
+                                {
+                                    <option value="@row.id" selected>Класс:@row.klass_n Код:@row.id</option>
+                                }
+                            </select>
                         </div>
-                        <div class="form-group col-md-12">
-                            <button class="btn btn-outline-success form-group col-md-4">Загрузить отчет по школе</button>
-                        </div>*@
+                        <button class="btn btn-outline-success form-group col-md-4">Загрузить отчет по классу</button>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <button class="btn btn-outline-success form-group col-md-4">Загрузить отчет по школе</button>
+                    </div>
+
                     <button class="btn btn-outline-success " asp-controller="Home" asp-action="Excel">Загрузить отчет</button>
+
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Modal addklass -->
-    <div class="modal fade bs-example-modal-lg" id="addklass" tabindex="1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  @*  <div class="modal fade bs-example-modal-lg" id="addklass" tabindex="1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -86,12 +141,12 @@
                 </div>
                 <form method="post" enctype="multipart/form-data">
                     <div class="modal-body">
-                        <input type="hidden" asp-for="id" />
+                        <input type="hidden" asp-for="i" />
                         <table>
                             <tr>
                                 <td>Количество учеников</td>
                                 <td>
-                                    <input type="text" value="" asp-for="id" />
+                                    <input type="text" value="" asp-for="Ta" />
                                 </td>
                             </tr>
                         </table>
@@ -103,6 +158,6 @@
                 </form>
             </div>
         </div>
-    </div>
+    </div>*@
 </body>
 </html>

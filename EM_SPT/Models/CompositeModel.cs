@@ -33,14 +33,14 @@ namespace EM_SPT.Models
     {
         public List<klass> klasses { get; set; }
         public int id { get; set; }
-        
+
     }
     public class VigruzkaExcel
     {
         public string mo { get; set; }
         public string oo { get; set; }
         public string login { get; set; }
-        public string klass_n { get; set; }
+        public int klass_n { get; set; }
         public int sek { get; set; }
         public answer ans { get; set; }
 
@@ -370,14 +370,14 @@ namespace EM_SPT.Models
         public int id { get; set; }
         public int id_oo { get; set; }
         public string kod { get; set; }
-        public string klass_n { get; set; }
+        public int klass_n { get; set; }
     }
     public class oo
     {
         public int id { get; set; }
         public int id_mo { get; set; }
         public string kod { get; set; }
-        public string tip { get; set; }
+        public int tip { get; set; }
     }
     public class mo
     {

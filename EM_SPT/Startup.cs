@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.IO;
 using System.Text;
-
+using static EM_SPT.Controllers.HomeController;
 
 namespace EM_SPT
 {
@@ -48,8 +48,8 @@ namespace EM_SPT
             // services.AddMvcCore();
             services.AddMvc()
            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-          
-       
+            services.AddHostedService<TimedHostedService>();
+
         }
 
 

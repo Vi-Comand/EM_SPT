@@ -49,12 +49,12 @@
                             <br />*@
                     @if (User.Identity.IsAuthenticated == false)
                     {
-                        <button type="submit" class="btn btn-outline-info" style="margin:5px; margin-left:auto;" asp-controller="Account" asp-action="login">Войти</button>
+                        <button type="submit" class="btn btn-warning" style="margin:5px; margin-left:auto;" asp-controller="Account" asp-action="login">Войти</button>
                         <br />
                     }
                     else
                     {
-                        <button type="submit" class="btn btn-outline-info" style="margin:5px; margin-left:auto; " asp-controller="Account" asp-action="Logout"> Выйти</button>
+                        <button type="submit" class="btn btn-danger" style="margin:5px; margin-left:auto; " asp-controller="Account" asp-action="Logout"> Выйти</button>
                     }
                 </form>
             </div>

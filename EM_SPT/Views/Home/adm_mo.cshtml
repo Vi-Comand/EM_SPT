@@ -1,5 +1,5 @@
 ﻿@using System.Linq
-@model EM_SPT.Models.oo
+@model EM_SPT.Models.ListOos
 @{
     ViewData["Title"] = "Администратор МО";
 }
@@ -29,9 +29,66 @@
             <form>
                 <div class="form-row shadow p-3 mb-5 bg-white rounded">
 
-                    <div class="alert alert-success col-md-12" role="alert">Список ОО</div>
+                    <div class="form-group col-md-12">
+                        <select id="idOo" class="form-control">
+                            <option value="0" selected>Все ОО</option>
+                            @foreach (oo row in Model.oos)
+                            {
+                                <option value="@row.id">ОО: @row.id Тип oo: @row.tip</option>
+                            }
+                        </select>
 
 
+                        <br />
+                        <table id="stat" class="table table-striped table-hover table-sm"></table>
+                        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+                        <script>
+                            $("#idOo").change(function () { // задаем функцию при нажатиии на элемент <button>
+                                var n = document.getElementById("idOo").options.selectedIndex;
+                                var id = document.getElementById("idOo").options[n].value;
+
+
+                                $.ajax({
+                                    url: '/Home/SpisokOO/',
+                                    type: "POST",
+                                    dataType: "json",
+                                    data: { "id": id },
+                                    success: function (query) {
+                                        var tableArr = ['<table >'];
+                                        var sumo = 0;
+                                        tableArr.push('<tr><th style="width: 15%">Код класса</th><th style="width: 25%">Тест пройден</th></tr>');
+                                        for (i = 0; i < query.length; i++) {
+                                            tableArr.push('<tr><td>' + query[i].id_klass + '</td><td>' + query[i].kol + '</td></tr>');
+                                            sumo = sumo + query[i].kol;
+                                        }
+
+                                        tableArr.push('<tfoot class=" alert-dark btn-outline-success"><tr><td>Всего </td><td>' + sumo + '</td></tr></tfoot>');
+                                        tableArr.push('</table>');
+                                        document.getElementById('stat').innerHTML = tableArr.join('\n')
+                                    }
+                                });
+                            });
+
+                            /*   window.addEventListener("DOMContentLoaded", function () {
+                                   var but = document.querySelectorAll(".button_del1");
+
+                                   [].forEach.call(but, function (item) {
+                                       item.addEventListener("click", function () {
+                                           res = item.value
+                                       })
+                                   })
+                               });*/
+
+
+                        </script>
+
+
+
+
+
+
+
+                    </div>
                     <button class="btn btn-outline-success " data-toggle="modal" data-target="#addoo" form="0">Добавить ОО</button>
 
                 </div>

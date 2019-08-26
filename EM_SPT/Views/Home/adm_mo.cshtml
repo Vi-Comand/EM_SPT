@@ -31,10 +31,20 @@
 
                     <div class="form-group col-md-12">
                         <select id="idOo" class="form-control">
-                            <option value="0" selected>Все ОО</option>
+                            <option value="0" selected>Выберите ОО</option>
                             @foreach (oo row in Model.oos)
                             {
-                                <option value="@row.id">ОО: @row.id Тип oo: @row.tip</option>
+                                <option value="@row.id">
+                                    ОО: @row.id Тип oo: @if (row.tip == 1)
+                                    {@Html.Raw("СОШ");
+                                }
+                                else if (row.tip == 2)
+                                { @Html.Raw("СПО");
+                            }
+                            else
+                            { @Html.Raw("ВУЗ");
+                        }
+                                </option>
                             }
                         </select>
 
@@ -69,15 +79,15 @@
                                 });
                             });
 
-                            /*   window.addEventListener("DOMContentLoaded", function () {
-                                   var but = document.querySelectorAll(".button_del1");
+                                                                                                                                                                                                                                                                                                    /*   window.addEventListener("DOMContentLoaded", function () {
+                                                                                                                                                                                                                                                                                                           var but = document.querySelectorAll(".button_del1");
 
-                                   [].forEach.call(but, function (item) {
-                                       item.addEventListener("click", function () {
-                                           res = item.value
-                                       })
-                                   })
-                               });*/
+                                                                                                                                                                                                                                                                                                           [].forEach.call(but, function (item) {
+                                                                                                                                                                                                                                                                                                               item.addEventListener("click", function () {
+                                                                                                                                                                                                                                                                                                                   res = item.value
+                                                                                                                                                                                                                                                                                                               })
+                                                                                                                                                                                                                                                                                                           })
+                                                                                                                                                                                                                                                                                                       });*/
 
 
                         </script>
@@ -89,7 +99,7 @@
 
 
                     </div>
-                    <button class="btn btn-outline-success " data-toggle="modal" data-target="#addoo" form="0">Добавить ОО</button>
+                    @*<button class="btn btn-outline-success " data-toggle="modal" data-target="#addoo" form="0">Добавить ОО</button>*@
 
                 </div>
             </form>

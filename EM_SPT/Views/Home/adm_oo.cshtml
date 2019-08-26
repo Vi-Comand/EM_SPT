@@ -62,22 +62,22 @@
                                             if (query[i].test == "1") { sum++ }
                                         }
 
-                                        tableArr.push('<tfoot class=" alert-dark btn-outline-success"><tr><td>Всего </td><td>' + query.length + '</td><td>' + sum + '</td><td></td><td></td></tr></tfoot>');
+                                        tableArr.push('<tfoot class=" alert-dark btn-outline-success"><tr><td>Всего </td><td>' + query.length + '</td><td></td><td></td><td>' + sum + '</td></tr></tfoot>');
                                         tableArr.push('</table>');
                                         document.getElementById('stat').innerHTML = tableArr.join('\n')
                                     }
                                 });
                             });
 
-                            /*   window.addEventListener("DOMContentLoaded", function () {
-                                   var but = document.querySelectorAll(".button_del1");
+                                                    /*   window.addEventListener("DOMContentLoaded", function () {
+                                                           var but = document.querySelectorAll(".button_del1");
 
-                                   [].forEach.call(but, function (item) {
-                                       item.addEventListener("click", function () {
-                                           res = item.value
-                                       })
-                                   })
-                               });*/
+                                                           [].forEach.call(but, function (item) {
+                                                               item.addEventListener("click", function () {
+                                                                   res = item.value
+                                                               })
+                                                           })
+                                                       });*/
 
 
                         </script>

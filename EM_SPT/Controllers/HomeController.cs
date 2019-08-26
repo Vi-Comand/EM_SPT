@@ -33,7 +33,7 @@ namespace EM_SPT.Controllers
             {
                 _logger = logger;
             }
-
+            int t1 = 0;
             public Task StartAsync(CancellationToken cancellationToken)
             {
                 _logger.LogInformation("Timed Background Service is starting.");
@@ -679,14 +679,14 @@ namespace EM_SPT.Controllers
             List<mo> munic = db.mo.ToList();
             foreach (mo mun in munic)
             {
-                if (!Directory.Exists(@"C:\1\Vgruzka\" + mun.name))
+                if (!Directory.Exists(@"C:\1\Vgruzka\" ))
                 {
-                    Directory.CreateDirectory(@"C:\1\Vgruzka\" + mun.name);
+                    Directory.CreateDirectory(@"C:\1\Vgruzka\" );
 
                 }
 
                 int[] skl = (from k in db.oo.Where(p => p.id_mo == mun.id && p.tip == 1) select k.id).ToArray();
-
+                int[] spo_vuz = (from k in db.oo.Where(p => p.id_mo == mun.id && (p.tip == 3 || p.tip==2)) select k.id).ToArray();
 
                 var str1 = (from us in db.User
                             join k in db.klass.Where(p => skl.Contains(p.id_oo) && p.klass_n < 10 && p.klass_n > 6) on us.id_klass equals k.id
@@ -724,8 +724,8 @@ namespace EM_SPT.Controllers
                                 login = us.login,
                                 ans = ans
                             }).ToList();
-                var str3 = (from us in db.User
-                            join k in db.klass.Where(p => skl.Contains(p.id_oo) && p.klass_n < 7) on us.id_klass equals k.id
+              var str3 = (from us in db.User
+                            join k in db.klass.Where(p => spo_vuz.Contains(p.id_oo) && p.klass_n < 7) on us.id_klass equals k.id
                             join ans in db.answer on us.id equals ans.id_user into answe
                             from ans in answe.DefaultIfEmpty()
                             join oo in db.oo on k.id_oo equals oo.id into ioo
@@ -742,7 +742,7 @@ namespace EM_SPT.Controllers
                                 login = us.login,
                                 ans = ans
                             }).ToList();
-
+                            
 
                 MemoryStream outputMemStream = new MemoryStream();
                 ZipOutputStream zipStream = new ZipOutputStream(outputMemStream);
@@ -865,7 +865,7 @@ namespace EM_SPT.Controllers
 
 
                     }
-
+                    //System.IO.File.WriteAllBytes(@"C:\1\Vgruzka\" + mun.name + @"\7-9_klass.xlsx", data);
                 }
 
 
@@ -982,7 +982,7 @@ namespace EM_SPT.Controllers
                         zipStream.CloseEntry();
 
                     }
-
+                    //System.IO.File.WriteAllBytes(@"C:\1\Vgruzka\" + mun.name + @"\10-11_klass.xlsx", data);
 
 
 
@@ -1108,6 +1108,7 @@ namespace EM_SPT.Controllers
 
 
                 }
+                
                 //using (FileStream file = new FileStream("file.bin", FileMode.Create, System.IO.FileAccess.Write))
                 //{
                 //    byte[] bytes = new byte[outputMemStream.Length];

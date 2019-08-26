@@ -24,7 +24,7 @@ namespace EM_SPT.Controllers
     {
         private DataContext db = new DataContext();
 
-        internal class TimedHostedService : IHostedService, IDisposable
+        public class TimedHostedService : IHostedService, IDisposable
         {
             private readonly ILogger _logger;
             private Timer _timer;
@@ -39,7 +39,7 @@ namespace EM_SPT.Controllers
                 _logger.LogInformation("Timed Background Service is starting.");
 
                 _timer = new Timer(DoWork, null, TimeSpan.Zero,
-                    TimeSpan.FromSeconds(25));
+                    TimeSpan.FromSeconds(5000));
 
                 return Task.CompletedTask;
 
@@ -49,7 +49,8 @@ namespace EM_SPT.Controllers
             {
                 if (DateTime.Now.Hour > 22)
                 {
-                    _logger.LogInformation("Timed Background Service is working.");
+                    HomeController ff = new HomeController();
+                    ff.VigruzkaMO();
                 }
             }
 
@@ -667,7 +668,7 @@ namespace EM_SPT.Controllers
         {
             throw new NotImplementedException();
         }
-        private void VigruzkaMO()
+        public void VigruzkaMO()
         {
             //if (!Directory.Exists(@"C:\1\Vgruzka"))
             //{
@@ -1106,14 +1107,14 @@ namespace EM_SPT.Controllers
 
 
                 }
-                using (FileStream file = new FileStream("file.bin", FileMode.Create, System.IO.FileAccess.Write))
-                {
-                    byte[] bytes = new byte[outputMemStream.Length];
-                    outputMemStream.Read(bytes, 0, (int)outputMemStream.Length);
-                    file.Write(bytes, 0, bytes.Length);
-                    outputMemStream.Close();
+                //using (FileStream file = new FileStream("file.bin", FileMode.Create, System.IO.FileAccess.Write))
+                //{
+                //    byte[] bytes = new byte[outputMemStream.Length];
+                //    outputMemStream.Read(bytes, 0, (int)outputMemStream.Length);
+                //    file.Write(bytes, 0, bytes.Length);
+                //    outputMemStream.Close();
 
-                }
+                //}
 
                 System.IO.File.WriteAllBytes(@"C:\1\Vgruzka\" + mun.name + ".zip", outputMemStream.ToArray());
 

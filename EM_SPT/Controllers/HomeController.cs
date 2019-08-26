@@ -1,4 +1,6 @@
 ﻿using EM_SPT.Models;
+using ICSharpCode.SharpZipLib.Core;
+using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,13 +12,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using ICSharpCode.SharpZipLib.Zip;
-using ICSharpCode.SharpZipLib.Core;
-using System.IO.Compression;
 
 namespace EM_SPT.Controllers
 {
@@ -39,17 +39,18 @@ namespace EM_SPT.Controllers
                 _logger.LogInformation("Timed Background Service is starting.");
 
                 _timer = new Timer(DoWork, null, TimeSpan.Zero,
-                    TimeSpan.FromSeconds(5000));
+                    TimeSpan.FromSeconds(3600));
 
                 return Task.CompletedTask;
 
             }
-
+            string dateVigruz = "";
             private void DoWork(object state)
             {
-                if (DateTime.Now.Hour > 22)
+                if (DateTime.Now.Hour > 14 && DateTime.Now.Hour < 17 && dateVigruz != DateTime.Now.ToShortDateString())
                 {
                     HomeController ff = new HomeController();
+                    dateVigruz = DateTime.Now.ToShortDateString();
                     ff.VigruzkaMO();
                 }
             }

@@ -34,7 +34,7 @@ namespace EM_SPT.Controllers
             {
                 _logger = logger;
             }
-            int t1 = 0;
+       
             public Task StartAsync(CancellationToken cancellationToken)
             {
                 _logger.LogInformation("Timed Background Service is starting.");
@@ -70,15 +70,6 @@ namespace EM_SPT.Controllers
                 _timer?.Dispose();
             }
 
-            /* public Task StartAsync(CancellationToken cancellationToken)
-             {
-                 throw new NotImplementedException();
-             }
-
-             public Task StopAsync(CancellationToken cancellationToken)
-             {
-                 throw new NotImplementedException();
-             }*/
         }
 
 
@@ -410,8 +401,7 @@ namespace EM_SPT.Controllers
                 {
 
                     var workSheet = package.Workbook.Worksheets[0];
-                    var workSheet1 = package.Workbook.Worksheets[1];
-                    //orkSheet.Cells.LoadFromCollection(list, true);
+                    var workSheet1 = package.Workbook.Worksheets[1];               
                     int i = 10;
                     workSheet.DeleteRow(11 + str1.Count, 5000, true);
                     workSheet1.DeleteRow(11 + str1.Count, 5000, true);
@@ -542,8 +532,7 @@ namespace EM_SPT.Controllers
 
                     var workSheet = package.Workbook.Worksheets[0];
                     var workSheet1 = package.Workbook.Worksheets[1];
-                    //orkSheet.Cells.LoadFromCollection(list, true);
-                    int i = 10;
+                                    int i = 10;
                     workSheet.DeleteRow(11 + str2.Count, 5000, true);
                     workSheet1.DeleteRow(11 + str2.Count, 5000, true);
 
@@ -683,11 +672,7 @@ namespace EM_SPT.Controllers
         }
         public void VigruzkaMO()
         {
-            //if (!Directory.Exists(@"C:\1\Vgruzka"))
-            //{
-            //    Directory.CreateDirectory(@"C:\1\Vgruzka");
-
-            //}
+            
             List<mo> munic = db.mo.ToList();
             foreach (mo mun in munic)
             {
@@ -769,7 +754,6 @@ namespace EM_SPT.Controllers
 
                         var workSheet = package.Workbook.Worksheets[0];
                         var workSheet1 = package.Workbook.Worksheets[1];
-                        //orkSheet.Cells.LoadFromCollection(list, true);
                         int i = 10;
                         workSheet.DeleteRow(11 + str1.Count, 5000, true);
                         workSheet1.DeleteRow(11 + str1.Count, 5000, true);
@@ -877,7 +861,7 @@ namespace EM_SPT.Controllers
 
 
                     }
-                    //System.IO.File.WriteAllBytes(@"C:\1\Vgruzka\" + mun.name + @"\7-9_klass.xlsx", data);
+               
                 }
 
 
@@ -891,7 +875,7 @@ namespace EM_SPT.Controllers
 
                         var workSheet = package.Workbook.Worksheets[0];
                         var workSheet1 = package.Workbook.Worksheets[1];
-                        //orkSheet.Cells.LoadFromCollection(list, true);
+                      
                         int i = 10;
                         workSheet.DeleteRow(11 + str2.Count, 5000, true);
                         workSheet1.DeleteRow(11 + str2.Count, 5000, true);
@@ -994,10 +978,7 @@ namespace EM_SPT.Controllers
                         zipStream.CloseEntry();
 
                     }
-                    //System.IO.File.WriteAllBytes(@"C:\1\Vgruzka\" + mun.name + @"\10-11_klass.xlsx", data);
-
-
-
+                
                 }
 
                 if (str3.Count != 0)
@@ -1009,7 +990,7 @@ namespace EM_SPT.Controllers
 
                         var workSheet = package.Workbook.Worksheets[0];
                         var workSheet1 = package.Workbook.Worksheets[1];
-                        //orkSheet.Cells.LoadFromCollection(list, true);
+                        
                         int i = 10;
                         workSheet.DeleteRow(11 + str3.Count, 5000, true);
                         workSheet1.DeleteRow(11 + str3.Count, 5000, true);

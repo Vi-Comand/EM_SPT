@@ -1671,6 +1671,46 @@ pre {
     }
 }
 
+.tab {
+    width: 100%;
+    border-collapse: inherit;
+    text-align: center;
+}
+
+    .tab thead tr {
+        color: #ffffff;
+        font-weight: bold;
+        background: #00bf80;
+    }
+
+        .tab thead tr td {
+            border: 1px solid #01ab73;
+        }
+
+    .tab tfoot tr {
+        color: #000000;
+        background: rgba(0, 191, 128, 0.50);
+    }
+
+    .tab tfoot tr {
+        border: 1px solid #01ab73;
+    }
+
+    .tab tbody tr {
+        border: 1px solid #01ab73;
+    }
+
+        .tab tbody tr:nth-child(2n) {
+            background: #f4f4f4;
+        }
+
+        .tab tbody tr:hover {
+            background: #ebffe8;
+        }
+
+
+
+
 .table {
     width: 100%;
     margin-bottom: 1rem;

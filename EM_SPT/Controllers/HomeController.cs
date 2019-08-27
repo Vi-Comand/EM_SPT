@@ -2,6 +2,7 @@
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -47,7 +48,7 @@ namespace EM_SPT.Controllers
             string dateVigruz = "";
             private void DoWork(object state)
             {
-                if (DateTime.Now.Hour > 14 && DateTime.Now.Hour < 17 && dateVigruz != DateTime.Now.ToShortDateString())
+                if (DateTime.Now.Hour > 9 && DateTime.Now.Hour < 17 && dateVigruz != DateTime.Now.ToShortDateString())
                 {
                     HomeController ff = new HomeController();
                     dateVigruz = DateTime.Now.ToShortDateString();
@@ -91,9 +92,20 @@ namespace EM_SPT.Controllers
             user user = db.User.Where(p => p.login == login).First();
             ViewBag.rl = user.role;
             if (user.role == 0)
-            { return RedirectToAction("start", "Home"); }
+
+            {
+                if (user.test != 1)
+                {
+                    return RedirectToAction("start", "Home");
+                }
+                else
+                {
+                    return RedirectToAction("end");
+                }
+            }
             if (user.role == 1)
             {
+
                 ViewBag.klad_Id = user.id_klass;
                 return RedirectToAction("adm_klass", "Home");
             }
@@ -310,7 +322,7 @@ namespace EM_SPT.Controllers
             if (l.id != 0)
             {
                 str1 = (from k in db.klass.Where(p => p.id == l.id && p.klass_n < 10 && p.klass_n > 6)
-                        join us in db.User on k.id equals us.id_klass into user
+                        join us in db.User.Where(p => p.role == 0) on k.id equals us.id_klass into user
                         from u in user.DefaultIfEmpty()
                         join ans in db.answer on u.id equals ans.id_user into answe
                         from ans in answe.DefaultIfEmpty()
@@ -327,7 +339,7 @@ namespace EM_SPT.Controllers
                             ans = ans
                         }).ToList();
                 str2 = (from k in db.klass.Where(p => p.id == l.id && (p.klass_n > 9 || p.klass_n < 7))
-                        join us in db.User on k.id equals us.id_klass into user
+                        join us in db.User.Where(p => p.role == 0) on k.id equals us.id_klass into user
                         from u in user.DefaultIfEmpty()
                         join ans in db.answer on u.id equals ans.id_user into answe
                         from ans in answe.DefaultIfEmpty()
@@ -348,7 +360,7 @@ namespace EM_SPT.Controllers
             else
             {
 
-                str1 = (from us in db.User
+                str1 = (from us in db.User.Where(p => p.role == 0)
                         join k in db.klass.Where(p => p.id_oo == admin.id_oo && p.klass_n < 10 && p.klass_n > 6) on us.id_klass equals k.id
                         join ans in db.answer on us.id equals ans.id_user into answe
                         from ans in answe.DefaultIfEmpty()
@@ -366,7 +378,7 @@ namespace EM_SPT.Controllers
                             login = us.login,
                             ans = ans
                         }).ToList();
-                str2 = (from us in db.User
+                str2 = (from us in db.User.Where(p => p.role == 0)
                         join k in db.klass.Where(p => p.id_oo == admin.id_oo && (p.klass_n > 9 || p.klass_n < 7)) on us.id_klass equals k.id
                         join ans in db.answer on us.id equals ans.id_user into answe
                         from ans in answe.DefaultIfEmpty()
@@ -679,16 +691,16 @@ namespace EM_SPT.Controllers
             List<mo> munic = db.mo.ToList();
             foreach (mo mun in munic)
             {
-                if (!Directory.Exists(@"C:\1\Vgruzka\" ))
+                if (!Directory.Exists(@"~\Vgruzka\"))
                 {
-                    Directory.CreateDirectory(@"C:\1\Vgruzka\" );
+                    Directory.CreateDirectory(@"~\Vgruzka\");
 
                 }
 
                 int[] skl = (from k in db.oo.Where(p => p.id_mo == mun.id && p.tip == 1) select k.id).ToArray();
-                int[] spo_vuz = (from k in db.oo.Where(p => p.id_mo == mun.id && (p.tip == 3 || p.tip==2)) select k.id).ToArray();
+                int[] spo_vuz = (from k in db.oo.Where(p => p.id_mo == mun.id && (p.tip == 3 || p.tip == 2)) select k.id).ToArray();
 
-                var str1 = (from us in db.User
+                var str1 = (from us in db.User.Where(p => p.role == 0)
                             join k in db.klass.Where(p => skl.Contains(p.id_oo) && p.klass_n < 10 && p.klass_n > 6) on us.id_klass equals k.id
                             join ans in db.answer on us.id equals ans.id_user into answe
                             from ans in answe.DefaultIfEmpty()
@@ -706,7 +718,7 @@ namespace EM_SPT.Controllers
                                 login = us.login,
                                 ans = ans
                             }).ToList();
-                var str2 = (from us in db.User
+                var str2 = (from us in db.User.Where(p => p.role == 0)
                             join k in db.klass.Where(p => skl.Contains(p.id_oo) && p.klass_n > 9) on us.id_klass equals k.id
                             join ans in db.answer on us.id equals ans.id_user into answe
                             from ans in answe.DefaultIfEmpty()
@@ -724,7 +736,7 @@ namespace EM_SPT.Controllers
                                 login = us.login,
                                 ans = ans
                             }).ToList();
-              var str3 = (from us in db.User
+                var str3 = (from us in db.User.Where(p => p.role == 0)
                             join k in db.klass.Where(p => spo_vuz.Contains(p.id_oo) && p.klass_n < 7) on us.id_klass equals k.id
                             join ans in db.answer on us.id equals ans.id_user into answe
                             from ans in answe.DefaultIfEmpty()
@@ -742,12 +754,12 @@ namespace EM_SPT.Controllers
                                 login = us.login,
                                 ans = ans
                             }).ToList();
-                            
+
 
                 MemoryStream outputMemStream = new MemoryStream();
                 ZipOutputStream zipStream = new ZipOutputStream(outputMemStream);
-                zipStream.SetLevel(3); // уровень сжатия от 0 до 9
-                byte[] buffer = new byte[4096];
+                zipStream.SetLevel(1); // уровень сжатия от 0 до 9
+                byte[] buffer = new byte[32768];
                 if (str1.Count != 0)
                 {
                     FileInfo newFile = new FileInfo(@"C:\1\s110.xlsx");
@@ -1108,7 +1120,7 @@ namespace EM_SPT.Controllers
 
 
                 }
-                
+
                 //using (FileStream file = new FileStream("file.bin", FileMode.Create, System.IO.FileAccess.Write))
                 //{
                 //    byte[] bytes = new byte[outputMemStream.Length];
@@ -1117,8 +1129,12 @@ namespace EM_SPT.Controllers
                 //    outputMemStream.Close();
 
                 //}
+                zipStream.IsStreamOwner = false;
+                zipStream.Close();
 
-                System.IO.File.WriteAllBytes(@"C:\1\Vgruzka\" + mun.name + ".zip", outputMemStream.ToArray());
+                outputMemStream.Position = 0;
+                string qw = @"\Vgruzka\" + mun.name + ".zip";
+                System.IO.File.WriteAllBytes(Directory.GetCurrentDirectory()+"\\wwwroot\\Vgruzka\\" + mun.name + ".zip", outputMemStream.ToArray());
 
 
 
@@ -1148,6 +1164,12 @@ namespace EM_SPT.Controllers
 
             return RedirectToAction("end");
         }
+
+
+
+
+
+
 
 
     }

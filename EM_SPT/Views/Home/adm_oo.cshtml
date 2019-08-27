@@ -3,7 +3,8 @@
     ViewData["Title"] = "Администратор ОО";
 }
 <!DOCTYPE html>
-
+<style>
+</style>
 
 <html>
 <head>
@@ -40,7 +41,7 @@
 
 
                         <br />
-                        <table id="stat" class="table table-striped table-hover table-sm"></table>
+                        <table id="stat" class="tab"></table>
                         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
                         <script>
                             $("#idKlass").change(function () { // задаем функцию при нажатиии на элемент <button>
@@ -54,30 +55,30 @@
                                     dataType: "json",
                                     data: { "id": id },
                                     success: function (query) {
-                                        var tableArr = ['<table >'];
+                                        var tableArr = ['<table class="tab">'];
                                         var sum = 0;
-                                        tableArr.push('<tr><th style="width: 15%">Код класса</th><th style="width: 15%">Номер учащегося</th><th style="width: 25%">Логин</th><th style="width: 25%">Пароль</th><th style="width: 25%">Тест пройден</th></tr>');
+                                        tableArr.push('<thead ><tr><th style="width: 15%">Код класса</th><th style="width: 15%">Номер учащегося</th><th style="width: 25%">Логин</th><th style="width: 25%">Пароль</th><th style="width: 25%">Тест пройден</th></tr></thead>');
                                         for (i = 0; i < query.length; i++) {
                                             tableArr.push('<tr><td>' + query[i].id_klass + '</td><td>' + query[i].id + '</td><td >' + query[i].login + '</td><td>' + query[i].pass + '</td><td>' + query[i].test + '</td></tr>');
                                             if (query[i].test == "1") { sum++ }
                                         }
 
-                                        tableArr.push('<tfoot class=" alert-dark btn-outline-success"><tr><td>Всего </td><td>' + query.length + '</td><td></td><td></td><td>' + sum + '</td></tr></tfoot>');
+                                        tableArr.push('<tfoot class=""><tr><td>Всего </td><td>' + query.length + '</td><td></td><td></td><td>' + sum + '</td></tr></tfoot>');
                                         tableArr.push('</table>');
                                         document.getElementById('stat').innerHTML = tableArr.join('\n')
                                     }
                                 });
                             });
 
-                                                    /*   window.addEventListener("DOMContentLoaded", function () {
-                                                           var but = document.querySelectorAll(".button_del1");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    /*   window.addEventListener("DOMContentLoaded", function () {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           var but = document.querySelectorAll(".button_del1");
 
-                                                           [].forEach.call(but, function (item) {
-                                                               item.addEventListener("click", function () {
-                                                                   res = item.value
-                                                               })
-                                                           })
-                                                       });*/
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           [].forEach.call(but, function (item) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               item.addEventListener("click", function () {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   res = item.value
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               })
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           })
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       });*/
 
 
                         </script>

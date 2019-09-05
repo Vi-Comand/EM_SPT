@@ -66,12 +66,20 @@
                                     success: function (query) {
                                         var tableArr = ['<table >'];
                                         var sumo = 0;
-                                        tableArr.push('<thead class=""><tr><th style="width: 15%">Код класса</th><th style="width: 25%">Тест пройден</th></tr></thead>');
-                                        for (i = 0; i < query.length; i++) {
-                                            tableArr.push('<tr><td>' + query[i].id_klass + '</td><td>' + query[i].kol + '</td></tr>');
-                                            sumo = sumo + query[i].kol;
+                                        if (query[0].id_klass != null) {
+                                            tableArr.push('<thead class=""><tr><th style="width: 15%">Код класса</th><th style="width: 25%">Тест пройден</th></tr></thead>');
+                                            for (i = 0; i < query.length; i++) {
+                                                tableArr.push('<tr><td>' + query[i].id_klass + '</td><td>' + query[i].kol + '</td></tr>');
+                                                sumo = sumo + query[i].kol;
+                                            }
                                         }
-
+                                        else {
+                                            tableArr.push('<thead class=""><tr><th style="width: 15%">Код ОО</th><th style="width: 25%">Тест пройден</th></tr></thead>');
+                                            for (i = 0; i < query.length; i++) {
+                                                tableArr.push('<tr><td>' + query[i].oo + '</td><td>' + query[i].kol + '</td></tr>');
+                                                sumo = sumo + query[i].kol;
+                                            }
+                                        }
                                         tableArr.push('<tfoot class=""><tr><td>Всего </td><td>' + sumo + '</td></tr></tfoot>');
                                         tableArr.push('</table>');
                                         document.getElementById('stat').innerHTML = tableArr.join('\n')
@@ -79,15 +87,15 @@
                                 });
                             });
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            /*   window.addEventListener("DOMContentLoaded", function () {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   var but = document.querySelectorAll(".button_del1");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    /*   window.addEventListener("DOMContentLoaded", function () {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           var but = document.querySelectorAll(".button_del1");
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   [].forEach.call(but, function (item) {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       item.addEventListener("click", function () {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           res = item.value
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       })
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   })
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               });*/
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           [].forEach.call(but, function (item) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               item.addEventListener("click", function () {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   res = item.value
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               })
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           })
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       });*/
 
 
                         </script>
@@ -115,42 +123,19 @@
                         </div>
                         <button class="btn btn-outline-success form-group col-md-4">Загрузить отчет по ОО</button>
                     </div>*@
+                <form action="~/Vgruzka/@Model.mo_name.ToString()_.zip">
+
+                    <button type="submit" class="btn btn-outline-success" style="background: url(/icon/excel.png) no-repeat 280.5px 7.5px rgba(7, 255, 126, 0.2); background-size: 10%; height: 50px; width:320px">Загрузить отчет по МО</button>
+                </form>
+
                 <div class="form-group col-md-12">
 
-                    <a href="~/vgruzka/Анапский.zip">Загрузить отчет по МО</a>
-                    @*<button class="btn btn-outline-success form-group col-md-4">Загрузить отчет по МО</button>*@
+
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal addoo -->
-    <div class="modal fade bs-example-modal-lg" id="addklass" tabindex="1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="myModalLabel">Добавить ОО</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                </div>
-                <form method="post" enctype="multipart/form-data">
-                    <div class="modal-body">
-                        <input type="hidden" asp-for="id" />
-                        <table>
-                            <tr>
-                                <td>Количество классов</td>
-                                <td>
-                                    <input type="text" value="" asp-for="id" />
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-                        <button type="submit" class="" asp-controller="Lk" asp-action="Add_klass">Добавить ОО</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+
 </body>
 </html>

@@ -29,26 +29,31 @@ namespace EM_SPT.Controllers
         {
             private readonly ILogger _logger;
             private Timer _timer;
+            private DataContext db = new DataContext();
+            param par = new param();
+
+            int hour = 10;
+
 
             public TimedHostedService(ILogger<TimedHostedService> logger)
             {
                 _logger = logger;
             }
-       
+
             public Task StartAsync(CancellationToken cancellationToken)
             {
                 _logger.LogInformation("Timed Background Service is starting.");
 
                 _timer = new Timer(DoWork, null, TimeSpan.Zero,
-                    TimeSpan.FromSeconds(3600));
-
+                    TimeSpan.FromSeconds(360));
+                hour = db.param.Where(p => p.id == 1).First().h_otch;
                 return Task.CompletedTask;
 
             }
             string dateVigruz = "";
             private void DoWork(object state)
             {
-                if (DateTime.Now.Hour > 9 && DateTime.Now.Hour < 17 && dateVigruz != DateTime.Now.ToShortDateString())
+                if (DateTime.Now.Hour >= hour && DateTime.Now.Hour <= 23 && dateVigruz != DateTime.Now.ToShortDateString())
                 {
                     HomeController ff = new HomeController();
                     dateVigruz = DateTime.Now.ToShortDateString();
@@ -114,11 +119,77 @@ namespace EM_SPT.Controllers
 
             {
                 ListOos ooes = new ListOos();
+                ooes.mo_name = db.mo.Where(p => p.id == user.id_mo).First().name;
                 ooes.oos = db.oo.Where(p => p.id_mo == user.id_mo).ToList();
                 return View("adm_mo", ooes);
             }
             if (user.role == 4)
-            { return RedirectToAction("adm_full", "Home"); }
+            {
+                SpisParam par = new SpisParam();
+
+                par.Params = db.param.ToList();
+                List<mo_kol> listMO = new List<mo_kol>();
+                List<TestVOO> listOO = new List<TestVOO>();
+                List<TestVKlass> listKl = new List<TestVKlass>();
+                int[] masMO = (from k in db.mo select k.id).ToArray();
+                int sum = 0;
+                int sumt = 0;
+                foreach (int iMO in masMO)
+                {
+                    int[] masOO = (from k in db.oo.Where(p => p.id_mo == iMO) select k.id).ToArray();
+                    foreach (int iOO in masOO)
+                    {
+                        int[] masKlass = (from k in db.klass.Where(p => p.id_oo == iOO) select k.id).ToArray();
+                        foreach (int qwe in masKlass)
+                        {
+                            TestVKlass test = new TestVKlass();
+                            test.oo = iOO;
+                            test.id_klass = qwe;
+                            test.kol = db.User.Where(p => p.id_klass == qwe && p.test == 1).Count();
+                            listKl.Add(test);
+                        }
+
+                    }
+                    foreach (int qwe in masOO)
+                    {
+                        TestVOO testVOO = new TestVOO();
+                        testVOO.oo = qwe;
+                        testVOO.mo = iMO;
+                        testVOO.tip = db.oo.Where(p => p.id == qwe).First().tip;
+                        testVOO.kol = listKl.Where(p => p.oo == qwe).Sum(p => p.kol);
+                        listOO.Add(testVOO);
+                    }
+                    mo_kol mo_Kol = new mo_kol();
+                    mo_Kol.id = iMO;
+                    mo_Kol.name = db.mo.Find(iMO).name;
+                    mo_Kol.kol_OO = listOO.Where(p => p.tip == 1 && p.mo == iMO).Count();
+                    mo_Kol.kol_SPO = listOO.Where(p => p.tip == 2 && p.mo == iMO).Count();
+                    mo_Kol.kol_VUZ = listOO.Where(p => p.tip == 3 && p.mo == iMO).Count();
+                    mo_Kol.kol_OO_t = listOO.Where(p => p.tip == 1 && p.mo == iMO).Sum(p => p.kol);
+                    mo_Kol.kol_SPO_t = listOO.Where(p => p.tip == 2 && p.mo == iMO).Sum(p => p.kol);
+                    mo_Kol.kol_VUZ_t = listOO.Where(p => p.tip == 3 && p.mo == iMO).Sum(p => p.kol);
+                    listMO.Add(mo_Kol);
+                    int s1 = listMO.Where(p => p.id == iMO).Sum(p => p.kol_OO) + listMO.Where(p => p.id == iMO).Sum(p => p.kol_SPO) + listMO.Where(p => p.id == iMO).Sum(p => p.kol_VUZ);
+                    int s2 = listMO.Where(p => p.id == iMO).Sum(p => p.kol_OO_t) + listMO.Where(p => p.id == iMO).Sum(p => p.kol_SPO_t) + listMO.Where(p => p.id == iMO).Sum(p => p.kol_VUZ_t);
+                    ViewData["SumKolVOO" + iMO] = s1;
+                    ViewData["SumKolVTest" + iMO] = s2;
+                    sum = sum + s1;
+                    sumt = sumt + s2;
+                }
+
+                //db.Database.ExecuteSqlCommand("TRUNCATE TABLE mo");
+
+                par.Mos = listMO;
+                ViewData["Sum"] = sum;
+                ViewData["Sumt"] = sumt;
+                ViewData["SumKolOO"] = listMO.Sum(p => p.kol_OO);
+                ViewData["SumKolSPO"] = listMO.Sum(p => p.kol_SPO);
+                ViewData["SumKolVUZ"] = listMO.Sum(p => p.kol_VUZ);
+                ViewData["SumKolOO_t"] = listMO.Sum(p => p.kol_OO_t);
+                ViewData["SumKolSPO_t"] = listMO.Sum(p => p.kol_SPO_t);
+                ViewData["SumKolVUZ_t"] = listMO.Sum(p => p.kol_VUZ_t);
+                return View("adm_full", par);
+            }
             else { return RedirectToAction("start", "Home"); }
 
 
@@ -139,7 +210,7 @@ namespace EM_SPT.Controllers
 
                 if (klass == "7" || klass == "8" || klass == "9")
                     return View("anketa_a", model);
-                if (klass == "10" || klass == "11")
+                else if (klass == "10" || klass == "11")
                     return View("anketa_b", model);
                 else
                     return View("anketa_c", model);
@@ -151,6 +222,7 @@ namespace EM_SPT.Controllers
 
 
         }
+
         public IActionResult SpisokOO(int id)
         {
             var login = HttpContext.User.Identity.Name;
@@ -165,6 +237,7 @@ namespace EM_SPT.Controllers
                 foreach (int qwe in masKlass)
                 {
                     TestVKlass test = new TestVKlass();
+                    test.oo = id;
                     test.id_klass = qwe;
                     test.kol = db.User.Where(p => p.id_klass == qwe && p.test == 1).Count();
                     list.Add(test);
@@ -174,22 +247,34 @@ namespace EM_SPT.Controllers
             }
             else
             {
-                return null;
-                int[] mas = (from k in db.oo.Where(p => p.id_mo == mo)
-                             select k.id).ToArray();
+                List<TestVOO> list1 = new List<TestVOO>();
+                List<TestVKlass> list = new List<TestVKlass>();
+                foreach (int oo in masOO)
+                {
+                    int[] masKlass = (from k in db.klass.Where(p => p.id_oo == oo)
+                                      select k.id).ToArray();
 
-                var query = from u in db.User.Where(p => mas.Distinct().Contains(p.id_klass) && p.role == 0)
-                            select new
-                            {
-                                u.id,
-                                u.test,
-                                u.login,
-                                u.pass,
-                                u.id_klass,
-                            };
+                    foreach (int qwe in masKlass)
+                    {
+                        TestVKlass test = new TestVKlass();
+                        test.oo = oo;
+                        test.id_klass = qwe;
+                        test.kol = db.User.Where(p => p.id_klass == qwe && p.test == 1).Count();
+                        list.Add(test);
+                    }
 
-                ViewData["SumTestOO"] = query.Where(p => p.test == 1).Count();
-                return Json(query.ToArray());
+
+
+                }
+                foreach (int qwe in masOO)
+                {
+                    TestVOO testVOO = new TestVOO();
+                    testVOO.oo = qwe;
+                    testVOO.kol = list.Where(p => p.oo == qwe).Sum(p => p.kol);
+                    list1.Add(testVOO);
+                }
+                var query = list1;
+                return Json(query);
             }
         }
 
@@ -236,6 +321,26 @@ namespace EM_SPT.Controllers
                 return Json(query.ToArray());
             }
 
+        }
+
+        public IActionResult Save_Param(SpisParam par)
+        {
+            param pardb = new param();
+            if (par.Params[0].id == 1)
+            {
+
+                pardb = par.Params[0];
+                db.Entry(pardb).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+            if (par.Params[1].id == 2)
+            {
+
+                pardb = par.Params[1];
+                db.Entry(pardb).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+            return Redirect("Index");
         }
 
         public IActionResult Start()
@@ -393,21 +498,56 @@ namespace EM_SPT.Controllers
             ZipOutputStream zipStream = new ZipOutputStream(outputMemStream);
             zipStream.SetLevel(3); // уровень сжатия от 0 до 9
             byte[] buffer = new byte[4096];
+
+
+
             if (str1.Count != 0)
             {
+                param para = new param();
+                para = db.param.Where(p => p.id == 1).First();
+
                 FileInfo newFile = new FileInfo(@"C:\1\s110.xlsx");
                 byte[] data;
                 using (var package = new ExcelPackage(newFile))
                 {
 
                     var workSheet = package.Workbook.Worksheets[0];
-                    var workSheet1 = package.Workbook.Worksheets[1];               
+                    var workSheet1 = package.Workbook.Worksheets[1];
                     int i = 10;
                     workSheet.DeleteRow(11 + str1.Count, 5000, true);
                     workSheet1.DeleteRow(11 + str1.Count, 5000, true);
 
 
                     workSheet.Cells[7, 2].Value = str1.Count;
+
+                    workSheet.Cells[2, 184].Value = para.po_v;
+                    workSheet.Cells[3, 184].Value = para.po_n;
+                    workSheet.Cells[2, 186].Value = para.pvg_v;
+                    workSheet.Cells[3, 186].Value = para.pvg_n;
+                    workSheet.Cells[2, 188].Value = para.pau_v;
+                    workSheet.Cells[3, 188].Value = para.pau_n;
+                    workSheet.Cells[2, 190].Value = para.sr_v;
+                    workSheet.Cells[3, 190].Value = para.sr_n;
+                    workSheet.Cells[2, 192].Value = para.i_v;
+                    workSheet.Cells[3, 192].Value = para.i_n;
+                    workSheet.Cells[2, 194].Value = para.t_v;
+                    workSheet.Cells[3, 194].Value = para.t_n;
+                    workSheet.Cells[2, 196].Value = para.pr_v;
+                    workSheet.Cells[3, 196].Value = para.pr_n;
+                    workSheet.Cells[2, 198].Value = para.poo_v;
+                    workSheet.Cells[3, 198].Value = para.poo_n;
+                    workSheet.Cells[2, 200].Value = para.sa_v;
+                    workSheet.Cells[3, 200].Value = para.sa_n;
+                    workSheet.Cells[2, 202].Value = para.sp_v;
+                    workSheet.Cells[3, 202].Value = para.sp_n;
+                    workSheet.Cells[2, 204].Value = para.fr_v;
+                    workSheet.Cells[3, 204].Value = para.fr_n;
+                    workSheet.Cells[2, 205].Value = para.fz_v;
+                    workSheet.Cells[3, 205].Value = para.fz_n;
+
+
+
+
                     foreach (var stroka in str1)
                     {
                         answer row = stroka.ans;
@@ -493,7 +633,7 @@ namespace EM_SPT.Controllers
                     {
                         entryName = ZipEntry.CleanName("7-9_klass.xlsx");
                     }
-                    if (tip == 2)
+                    else if (tip == 2)
                     {
                         entryName = ZipEntry.CleanName("SPO.xlsx");
                     }
@@ -525,6 +665,15 @@ namespace EM_SPT.Controllers
 
             if (str2.Count != 0)
             {
+                param para = new param();
+                if (tip == 1)
+                {
+                    para = db.param.Where(p => p.id == 1).First();
+                }
+                else
+                {
+                    para = db.param.Where(p => p.id == 2).First();
+                }
                 FileInfo newFile = new FileInfo(@"C:\1\s140.xlsx");
                 byte[] data;
                 using (var package = new ExcelPackage(newFile))
@@ -532,12 +681,44 @@ namespace EM_SPT.Controllers
 
                     var workSheet = package.Workbook.Worksheets[0];
                     var workSheet1 = package.Workbook.Worksheets[1];
-                                    int i = 10;
+                    int i = 10;
                     workSheet.DeleteRow(11 + str2.Count, 5000, true);
                     workSheet1.DeleteRow(11 + str2.Count, 5000, true);
 
 
                     workSheet.Cells[7, 2].Value = str2.Count;
+
+                    workSheet.Cells[2, 217].Value = para.po_v;
+                    workSheet.Cells[3, 217].Value = para.po_n;
+                    workSheet.Cells[2, 219].Value = para.pvg_v;
+                    workSheet.Cells[3, 219].Value = para.pvg_n;
+                    workSheet.Cells[2, 221].Value = para.pau_v;
+                    workSheet.Cells[3, 221].Value = para.pau_n;
+                    workSheet.Cells[2, 223].Value = para.sr_v;
+                    workSheet.Cells[3, 223].Value = para.sr_n;
+                    workSheet.Cells[2, 225].Value = para.i_v;
+                    workSheet.Cells[3, 225].Value = para.i_n;
+                    workSheet.Cells[2, 227].Value = para.t_v;
+                    workSheet.Cells[3, 227].Value = para.t_n;
+                    workSheet.Cells[2, 229].Value = para.f_v;
+                    workSheet.Cells[3, 229].Value = para.f_n;
+                    workSheet.Cells[2, 231].Value = para.nso_v;
+                    workSheet.Cells[3, 231].Value = para.nso_n;
+                    workSheet.Cells[2, 233].Value = para.pr_v;
+                    workSheet.Cells[3, 233].Value = para.pr_n;
+                    workSheet.Cells[2, 235].Value = para.poo_v;
+                    workSheet.Cells[3, 235].Value = para.poo_n;
+                    workSheet.Cells[2, 237].Value = para.sa_v;
+                    workSheet.Cells[3, 237].Value = para.sa_n;
+                    workSheet.Cells[2, 239].Value = para.sp_v;
+                    workSheet.Cells[3, 239].Value = para.sp_n;
+                    workSheet.Cells[2, 241].Value = para.s_v;
+                    workSheet.Cells[3, 241].Value = para.s_n;
+                    workSheet.Cells[2, 243].Value = para.fr_v;
+                    workSheet.Cells[3, 243].Value = para.fr_n;
+                    workSheet.Cells[2, 244].Value = para.fz_v;
+                    workSheet.Cells[3, 244].Value = para.fz_n;
+
                     foreach (var stroka in str2)
                     {
                         answer row = stroka.ans;
@@ -618,7 +799,19 @@ namespace EM_SPT.Controllers
                     }
 
                     data = package.GetAsByteArray();
-                    string entryName = ZipEntry.CleanName(tip == 2 ? "10-11_klass.xlsx" : "SPO.xlsx");
+                    string entryName;
+                    if (tip == 1)
+                    {
+                        entryName = ZipEntry.CleanName("10-11_klass.xlsx");
+                    }
+                    else if (tip == 2)
+                    {
+                        entryName = ZipEntry.CleanName("SPO.xlsx");
+                    }
+                    else
+                    {
+                        entryName = ZipEntry.CleanName("VUZ.xlsx");
+                    }
                     ZipEntry newEntry = new ZipEntry(entryName);
                     newEntry.DateTime = package.File.LastWriteTime;
                     newEntry.Size = data.Length;
@@ -672,7 +865,7 @@ namespace EM_SPT.Controllers
         }
         public void VigruzkaMO()
         {
-            
+
             List<mo> munic = db.mo.ToList();
             foreach (mo mun in munic)
             {
@@ -745,8 +938,11 @@ namespace EM_SPT.Controllers
                 ZipOutputStream zipStream = new ZipOutputStream(outputMemStream);
                 zipStream.SetLevel(1); // уровень сжатия от 0 до 9
                 byte[] buffer = new byte[32768];
+
                 if (str1.Count != 0)
                 {
+                    param para = new param();
+                    para = db.param.Where(p => p.id == 1).First();
                     FileInfo newFile = new FileInfo(@"C:\1\s110.xlsx");
                     byte[] data;
                     using (var package = new ExcelPackage(newFile))
@@ -760,6 +956,30 @@ namespace EM_SPT.Controllers
 
 
                         workSheet.Cells[7, 2].Value = str1.Count;
+                        workSheet.Cells[2, 184].Value = para.po_v;
+                        workSheet.Cells[3, 184].Value = para.po_n;
+                        workSheet.Cells[2, 186].Value = para.pvg_v;
+                        workSheet.Cells[3, 186].Value = para.pvg_n;
+                        workSheet.Cells[2, 188].Value = para.pau_v;
+                        workSheet.Cells[3, 188].Value = para.pau_n;
+                        workSheet.Cells[2, 190].Value = para.sr_v;
+                        workSheet.Cells[3, 190].Value = para.sr_n;
+                        workSheet.Cells[2, 192].Value = para.i_v;
+                        workSheet.Cells[3, 192].Value = para.i_n;
+                        workSheet.Cells[2, 194].Value = para.t_v;
+                        workSheet.Cells[3, 194].Value = para.t_n;
+                        workSheet.Cells[2, 196].Value = para.pr_v;
+                        workSheet.Cells[3, 196].Value = para.pr_n;
+                        workSheet.Cells[2, 198].Value = para.poo_v;
+                        workSheet.Cells[3, 198].Value = para.poo_n;
+                        workSheet.Cells[2, 200].Value = para.sa_v;
+                        workSheet.Cells[3, 200].Value = para.sa_n;
+                        workSheet.Cells[2, 202].Value = para.sp_v;
+                        workSheet.Cells[3, 202].Value = para.sp_n;
+                        workSheet.Cells[2, 204].Value = para.fr_v;
+                        workSheet.Cells[3, 204].Value = para.fr_n;
+                        workSheet.Cells[2, 205].Value = para.fz_v;
+                        workSheet.Cells[3, 205].Value = para.fz_n;
                         foreach (var stroka in str1)
                         {
                             answer row = stroka.ans;
@@ -861,13 +1081,15 @@ namespace EM_SPT.Controllers
 
 
                     }
-               
+
                 }
 
 
 
                 if (str2.Count != 0)
                 {
+                    param para = new param();
+                    para = db.param.Where(p => p.id == 2).First();
                     FileInfo newFile = new FileInfo(@"C:\1\s140.xlsx");
                     byte[] data;
                     using (var package = new ExcelPackage(newFile))
@@ -875,13 +1097,43 @@ namespace EM_SPT.Controllers
 
                         var workSheet = package.Workbook.Worksheets[0];
                         var workSheet1 = package.Workbook.Worksheets[1];
-                      
+
                         int i = 10;
                         workSheet.DeleteRow(11 + str2.Count, 5000, true);
                         workSheet1.DeleteRow(11 + str2.Count, 5000, true);
 
 
                         workSheet.Cells[7, 2].Value = str2.Count;
+                        workSheet.Cells[2, 217].Value = para.po_v;
+                        workSheet.Cells[3, 217].Value = para.po_n;
+                        workSheet.Cells[2, 219].Value = para.pvg_v;
+                        workSheet.Cells[3, 219].Value = para.pvg_n;
+                        workSheet.Cells[2, 221].Value = para.pau_v;
+                        workSheet.Cells[3, 221].Value = para.pau_n;
+                        workSheet.Cells[2, 223].Value = para.sr_v;
+                        workSheet.Cells[3, 223].Value = para.sr_n;
+                        workSheet.Cells[2, 225].Value = para.i_v;
+                        workSheet.Cells[3, 225].Value = para.i_n;
+                        workSheet.Cells[2, 227].Value = para.t_v;
+                        workSheet.Cells[3, 227].Value = para.t_n;
+                        workSheet.Cells[2, 229].Value = para.f_v;
+                        workSheet.Cells[3, 229].Value = para.f_n;
+                        workSheet.Cells[2, 231].Value = para.nso_v;
+                        workSheet.Cells[3, 231].Value = para.nso_n;
+                        workSheet.Cells[2, 233].Value = para.pr_v;
+                        workSheet.Cells[3, 233].Value = para.pr_n;
+                        workSheet.Cells[2, 235].Value = para.poo_v;
+                        workSheet.Cells[3, 235].Value = para.poo_n;
+                        workSheet.Cells[2, 237].Value = para.sa_v;
+                        workSheet.Cells[3, 237].Value = para.sa_n;
+                        workSheet.Cells[2, 239].Value = para.sp_v;
+                        workSheet.Cells[3, 239].Value = para.sp_n;
+                        workSheet.Cells[2, 241].Value = para.s_v;
+                        workSheet.Cells[3, 241].Value = para.s_n;
+                        workSheet.Cells[2, 243].Value = para.fr_v;
+                        workSheet.Cells[3, 243].Value = para.fr_n;
+                        workSheet.Cells[2, 244].Value = para.fz_v;
+                        workSheet.Cells[3, 244].Value = para.fz_n;
                         foreach (var stroka in str2)
                         {
                             answer row = stroka.ans;
@@ -978,11 +1230,13 @@ namespace EM_SPT.Controllers
                         zipStream.CloseEntry();
 
                     }
-                
+
                 }
 
                 if (str3.Count != 0)
                 {
+                    param para = new param();
+                    para = db.param.Where(p => p.id == 2).First();
                     FileInfo newFile = new FileInfo(@"C:\1\s140.xlsx");
                     byte[] data;
                     using (var package = new ExcelPackage(newFile))
@@ -990,13 +1244,43 @@ namespace EM_SPT.Controllers
 
                         var workSheet = package.Workbook.Worksheets[0];
                         var workSheet1 = package.Workbook.Worksheets[1];
-                        
+
                         int i = 10;
                         workSheet.DeleteRow(11 + str3.Count, 5000, true);
                         workSheet1.DeleteRow(11 + str3.Count, 5000, true);
 
 
                         workSheet.Cells[7, 2].Value = str3.Count;
+                        workSheet.Cells[2, 217].Value = para.po_v;
+                        workSheet.Cells[3, 217].Value = para.po_n;
+                        workSheet.Cells[2, 219].Value = para.pvg_v;
+                        workSheet.Cells[3, 219].Value = para.pvg_n;
+                        workSheet.Cells[2, 221].Value = para.pau_v;
+                        workSheet.Cells[3, 221].Value = para.pau_n;
+                        workSheet.Cells[2, 223].Value = para.sr_v;
+                        workSheet.Cells[3, 223].Value = para.sr_n;
+                        workSheet.Cells[2, 225].Value = para.i_v;
+                        workSheet.Cells[3, 225].Value = para.i_n;
+                        workSheet.Cells[2, 227].Value = para.t_v;
+                        workSheet.Cells[3, 227].Value = para.t_n;
+                        workSheet.Cells[2, 229].Value = para.f_v;
+                        workSheet.Cells[3, 229].Value = para.f_n;
+                        workSheet.Cells[2, 231].Value = para.nso_v;
+                        workSheet.Cells[3, 231].Value = para.nso_n;
+                        workSheet.Cells[2, 233].Value = para.pr_v;
+                        workSheet.Cells[3, 233].Value = para.pr_n;
+                        workSheet.Cells[2, 235].Value = para.poo_v;
+                        workSheet.Cells[3, 235].Value = para.poo_n;
+                        workSheet.Cells[2, 237].Value = para.sa_v;
+                        workSheet.Cells[3, 237].Value = para.sa_n;
+                        workSheet.Cells[2, 239].Value = para.sp_v;
+                        workSheet.Cells[3, 239].Value = para.sp_n;
+                        workSheet.Cells[2, 241].Value = para.s_v;
+                        workSheet.Cells[3, 241].Value = para.s_n;
+                        workSheet.Cells[2, 243].Value = para.fr_v;
+                        workSheet.Cells[3, 243].Value = para.fr_n;
+                        workSheet.Cells[2, 244].Value = para.fz_v;
+                        workSheet.Cells[3, 244].Value = para.fz_n;
                         foreach (var stroka in str3)
                         {
                             answer row = stroka.ans;
@@ -1114,8 +1398,8 @@ namespace EM_SPT.Controllers
                 zipStream.Close();
 
                 outputMemStream.Position = 0;
-                string qw = @"\Vgruzka\" + mun.name + ".zip";
-                System.IO.File.WriteAllBytes(Directory.GetCurrentDirectory()+"\\wwwroot\\Vgruzka\\" + mun.name + ".zip", outputMemStream.ToArray());
+                string qw = @"\Vgruzka\" + mun.name + "_.zip";
+                System.IO.File.WriteAllBytes(Directory.GetCurrentDirectory() + "\\wwwroot\\Vgruzka\\" + mun.name + "_.zip", outputMemStream.ToArray());
 
 
 

@@ -1,5 +1,5 @@
 ﻿@using System.Linq
-@model EM_SPT.Models.oo
+@model EM_SPT.Models.SpisParam
 @{
     ViewData["Title"] = "Администратор";
 }
@@ -22,7 +22,9 @@
         <li>
             <a href="#otch" style="float: left;" class="nav-link" data-toggle="tab">Формирование отчетов</a>
         </li>
-
+        <li>
+            <a href="#param" style="float: left;" class="nav-link" data-toggle="tab">Параметры тестирования</a>
+        </li>
     </ul>
     <div class="tab-content">
         <div class="tab-pane active " id="klass">
@@ -32,6 +34,54 @@
                     <div class="alert alert-success col-md-12" role="alert">Список МО</div>
                     <p>Скачайте файл шаблон для заполнения, заполните все поля и загрузите, чтобы сформировать логины и пароли для всех МО <a href="~/file/Formir_MO.xlsx">Шаблон для заполнения</a></p>
                     <div class="input-group">
+                        <table class="tab">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th width="20%">MO</th>
+                                    <th width="10%">Количество СОШ</th>
+                                    <th width="10%">Тест пройден в СОШ</th>
+                                    <th width="10%">Количество СПО</th>
+                                    <th width="10%">Тест пройден в СПО</th>
+                                    <th width="10%">Количество ВУЗ</th>
+                                    <th width="10%">Тест пройден в ВУЗ</th>
+                                    <th width="10%">Количество ОО</th>
+                                    <th width="10%">Тест пройден в ОО</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @for (int i = 0; i < Model.Mos.Count; i++)
+                                {
+                                    <tr>
+                                        <td>@Model.Mos[i].name </td>
+                                        <td>@Model.Mos[i].kol_OO</td>
+                                        <td>@Model.Mos[i].kol_OO_t</td>
+                                        <td>@Model.Mos[i].kol_SPO</td>
+                                        <td>@Model.Mos[i].kol_SPO_t</td>
+                                        <td>@Model.Mos[i].kol_VUZ</td>
+                                        <td>@Model.Mos[i].kol_VUZ_t</td>
+                                        <td class="tab-itog">@ViewData["SumKolVOO" + Model.Mos[i].id]</td>
+                                        <td class="tab-itog">@ViewData["SumKolVTest" + Model.Mos[i].id]</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot class=" ">
+                                <tr>
+                                    <td>Всего </td>
+                                    <td>@ViewData["SumKolOO"]</td>
+                                    <td>@ViewData["SumKolOO_t"]</td>
+                                    <td>@ViewData["SumKolSPO"]</td>
+                                    <td>@ViewData["SumKolSPO_t"]</td>
+                                    <td>@ViewData["SumKolVUZ"]</td>
+                                    <td>@ViewData["SumKolVUZ_t"]</td>
+                                    <td>@ViewData["Sum"]</td>
+                                    <td>@ViewData["Sumt"]</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+
+
                         @*<div class="file">
                                 <div class="form-group">
                                     <input type="file" name="uploadedFile" id="uploadedFile" class="input-file" required>
@@ -62,49 +112,213 @@
         </div>
         <div class="tab-pane fade " id="otch">
             <div class="form-row shadow p-3 mb-5 bg-white rounded">
-                <div class="form-group col-md-12">
-                    <div class="form-group col-md-4">
-                        <select id="inputState" class="form-control" required>
-                            <option value="" selected>Выберите МО</option>
 
-                        </select>
-                    </div>
-                    <button class="btn btn-outline-success form-group col-md-4">Загрузить отчет по МО</button>
-                </div>
-                <div class="form-group col-md-12">
-                    <button class="btn btn-outline-success form-group col-md-4">Загрузить общий отчет</button>
-                </div>
+                <table class="tab">
+                    <thead class="thead-light">
+                        <tr>
+                            <th width="20%">MO</th>
+                            <th width="10%">Скачать</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.Mos.Count; i++)
+                        {
+                            <tr>
+                                <td>@Model.Mos[i].name </td>
+                                <td>
+                                    <form action="~/Vgruzka/@Model.Mos[i].name.ToString()_.zip">
+
+                                        <button type="submit" class="btn btn-outline-success" style="background: url(/icon/excel.png) no-repeat 215.5px 10.5px rgba(7, 255, 126, 0.2); background-size: 10%; height: 50px; width:250px">Загрузить отчет</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+
             </div>
+        </div>
+        <div class="tab-pane fade " id="param">
+            <form method="post" asp-controller="Home">
+                <div class="form-row shadow p-3 mb-5 bg-white rounded">
+                    <div class="form-group col-md-12">
+                        <input type="hidden" asp-for="Params[0].id" />
+                        <input type="hidden" asp-for="Params[1].id" />
+                        <table class="tab">
+                            <thead>
+                                <tr><th colspan="2">Название критерия</th><th>Значение СОШ </th><th>Значение СПУ/ВУЗ </th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><th rowspan="2">Факторы риска</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].fr_v" /></th><th><input class="form-control" type="text" asp-for="Params[1].fr_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].fr_n" /></th><th><input class="form-control" type="text" asp-for="Params[1].fr_n" /></th></tr>
+                                <tr><th rowspan="2">Факторы защиты</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].fz_v" /></th><th><input class="form-control" type="text" asp-for="Params[1].fz_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].fz_n" /></th><th><input class="form-control" type="text" asp-for="Params[1].fz_n" /></th></tr>
+                                <tr><th rowspan="2">Потребность в одобрении</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].po_v" /></th><th><input class="form-control" type="text" asp-for="Params[1].po_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].po_n" /></th><th><input class="form-control" type="text" asp-for="Params[1].po_n" /></tr>
+                                <tr><th rowspan="2">Подверженность влиянию группы</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].pvg_v" /></th><th><input class="form-control" type="text" asp-for="Params[1].pvg_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].pvg_n" /></th><th><input class="form-control" type="text" asp-for="Params[1].pvg_n" /></th></tr>
+                                <tr><th rowspan="2">Принятие асоциальных установок социума</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].pau_v" /></th><th><input class="form-control" type="text" asp-for="Params[1].pau_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].pau_n" /></th><th><input class="form-control" type="text" asp-for="Params[1].pau_n" /></th></tr>
+                                <tr><th rowspan="2">Склонность к риску</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].sr_v" /></th><th><input class="form-control" type="text" asp-for="Params[1].sr_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].sr_n" /></th><th><input class="form-control" type="text" asp-for="Params[1].sr_n" /></th></tr>
+                                <tr><th rowspan="2">Импульсивность</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].i_v" /></th><th><input class="form-control" type="text" asp-for="Params[1].i_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].i_n" /></th><th><input class="form-control" type="text" asp-for="Params[1].i_n" /></th></tr>
+                                <tr><th rowspan="2">Тревожность</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].t_v" /></th><th><input class="form-control" type="text" asp-for="Params[1].t_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].t_n" /></th><th><input class="form-control" type="text" asp-for="Params[1].t_n" /></th></tr>
+                                <tr><th rowspan="2">Фрустрация</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].f_v" /></th><th><input class="form-control" type="text" asp-for="Params[1].f_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].f_n" /></th><th><input class="form-control" type="text" asp-for="Params[1].f_n" /></th></tr>
+                                <tr><th rowspan="2">Наркопотребление в социальном окружении</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].nso_v" /></th><th><input class="form-control" type="text" asp-for="Params[1].nso_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].nso_n" /></th><th><input class="form-control" type="text" asp-for="Params[1].nso_n" /></th></tr>
+                                <tr><th rowspan="2">Принятие родителями</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].pr_v" /></th><th><input class="form-control" type="text" asp-for="Params[1].pr_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].pr_n" /></th><th><input class="form-control" type="text" asp-for="Params[1].pr_n" /></th></tr>
+                                <tr><th rowspan="2">Принятие одноклассниками</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].poo_v" /></th><th><input class="form-control" type="text" asp-for="Params[1].poo_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].poo_n" /></th><th><input class="form-control" type="text" asp-for="Params[1].poo_n" /></th></tr>
+                                <tr><th rowspan="2">Социальная активность</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].sa_v" /></th><th><input class="form-control" type="text" asp-for="Params[1].sa_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].sa_n" /></th><th><input class="form-control" type="text" asp-for="Params[1].sa_n" /></th></tr>
+                                <tr><th rowspan="2">Самоконтроль поведения</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].sp_v" /></th><th><input class="form-control" type="text" asp-for="Params[1].sp_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].sp_n" /></th><th><input class="form-control" type="text" asp-for="Params[1].sp_n" /></th></tr>
+                                <tr><th rowspan="2">Самоэффективность</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].s_v" /></th><th><input class="form-control" type="text" asp-for="Params[1].s_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].s_n" /></th><th><input class="form-control" type="text" asp-for="Params[1].s_n" /></th></tr>
+                                <tr><th>Час начала выгрузки отчетов для МО</th><th></th><th colspan="2"><input class="form-control" type="text" asp-for="Params[0].h_otch" /></th></tr>
+                            </tbody>
+                            <tfoot>
+
+                            </tfoot>
+                        </table>
+
+
+                    </div>
+                    <button type="submit" class="btn btn-outline-success" style="background: url(/icon/save.png) no-repeat 280.5px 7.5px rgba(7, 255, 126, 0.2); background-size: 10%; height: 50px; width:320px" asp-controller="Home" asp-action="Save_Param">Сохранить параметры</button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <!-- Modal addklass
-    <div class="modal fade bs-example-modal-lg" id="addklass" tabindex="1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+    @*Modal editParam-------------------------------------------------------------------------------------*@
+    <div class="modal fade bs-example-modal-lg" id="editParam" tabindex="1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="myModalLabel">Добавить класс</h4>
+                    <h4 class="modal-title" id="myModalLabel">Изменить значения СОШ</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 </div>
                 <form method="post" enctype="multipart/form-data">
                     <div class="modal-body">
-                        <input type="hidden" asp-for="id" />
-                        <table>
-                            <tr>
-                                <td>Количество учеников</td>
-                                <td>
-                                    <input type="text" value="" asp-for="id" />
-                                </td>
-                            </tr>
+                        <input type="hidden" asp-for="Params[0].id" />
+                        <table class="tab">
+                            <thead>
+                                <tr><th colspan="2">Название критерия</th><th>Значение СОШ</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><th rowspan="2">Факторы риска</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].fr_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].fr_n" /></th></tr>
+                                <tr><th rowspan="2">Факторы защиты</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].fz_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].fz_n" /></th></tr>
+                                <tr><th rowspan="2">Потребность в одобрении</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].po_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].po_n" /></th></tr>
+                                <tr><th rowspan="2">Подверженность влиянию группы</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].pvg_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].pvg_n" /></th></tr>
+                                <tr><th rowspan="2">Принятие асоциальных установок социума</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].pau_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].pau_n" /></th></tr>
+                                <tr><th rowspan="2">Склонность к риску</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].sr_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].sr_n" /></th></tr>
+                                <tr><th rowspan="2">Импульсивность</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].i_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].i_n" /></th></tr>
+                                <tr><th rowspan="2">Тревожность</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].t_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].t_n" /></th></tr>
+                                <tr><th rowspan="2">Фрустрация</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].f_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].f_n" /></th></tr>
+                                <tr><th rowspan="2">Наркопотребление в социальном окружении</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].nso_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].nso_n" /></th></tr>
+                                <tr><th rowspan="2">Принятие родителями</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].pr_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].pr_n" /></th></tr>
+                                <tr><th rowspan="2">Принятие одноклассниками</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].poo_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].poo_n" /></th></tr>
+                                <tr><th rowspan="2">Социальная активность</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].sa_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].sa_n" /></th></tr>
+                                <tr><th rowspan="2">Самоконтроль поведения</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].sp_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].sp_n" /></th></tr>
+                                <tr><th rowspan="2">Самоэффективность</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].s_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].s_n" /></th></tr>
+                                <tr><th>Час начала выгрузки отчетов для МО</th><th></th><th><input class="form-control" type="text" asp-for="Params[0].h_otch" /></th></tr>
+                            </tbody>
+                            <tfoot>
+
+                            </tfoot>
                         </table>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-                        <button type="submit" class="" asp-controller="Lk" asp-action="Add_klass">Добавить класс</button>
+                        <button type="submit" class="" asp-controller="Home" asp-action="Save_Param">Сохранить параметры</button>
                     </div>
                 </form>
             </div>
         </div>
-    </div>-->
+    </div>
+
+    @*Modal editParam2-------------------------------------------------------------------------------------*@
+    <div class="modal fade bs-example-modal-lg" id="editParam2" tabindex="1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Изменить значения СПО/ВУЗ</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <form method="post" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <input type="text" asp-for="Params[1].id" />
+                        <table class="tab">
+                            <thead>
+                                <tr><th colspan="2">Название критерия</th><th>Значение СПО/ВУЗ</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><th rowspan="2">Факторы риска</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].fr_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].fr_n" /></th></tr>
+                                <tr><th rowspan="2">Факторы защиты</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].fz_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].fz_n" /></th></tr>
+                                <tr><th rowspan="2">Потребность в одобрении</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].po_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].po_n" /></th></tr>
+                                <tr><th rowspan="2">Подверженность влиянию группы</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].pvg_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].pvg_n" /></th></tr>
+                                <tr><th rowspan="2">Принятие асоциальных установок социума</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].pau_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].pau_n" /></th></tr>
+                                <tr><th rowspan="2">Склонность к риску</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].sr_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].sr_n" /></th></tr>
+                                <tr><th rowspan="2">Импульсивность</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].i_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].i_n" /></th></tr>
+                                <tr><th rowspan="2">Тревожность</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].t_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].t_n" /></th></tr>
+                                <tr><th rowspan="2">Фрустрация</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].f_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].f_n" /></th></tr>
+                                <tr><th rowspan="2">Наркопотребление в социальном окружении</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].nso_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].nso_n" /></th></tr>
+                                <tr><th rowspan="2">Принятие родителями</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].pr_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].pr_n" /></th></tr>
+                                <tr><th rowspan="2">Принятие одноклассниками</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].poo_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].poo_n" /></th></tr>
+                                <tr><th rowspan="2">Социальная активность</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].sa_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].sa_n" /></th></tr>
+                                <tr><th rowspan="2">Самоконтроль поведения</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].sp_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].sp_n" /></th></tr>
+                                <tr><th rowspan="2">Самоэффективность</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].s_v" /></th></tr>
+                                <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].s_n" /></th></tr>
+
+                            </tbody>
+                            <tfoot>
+
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                        <button type="submit" class="" asp-controller="Home" asp-action="Save_Param">Сохранить параметры</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

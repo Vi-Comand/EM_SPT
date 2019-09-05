@@ -400,7 +400,7 @@ namespace EM_SPT.Models
 
     }
 
-  
+
 
     public class user
     {
@@ -417,7 +417,7 @@ namespace EM_SPT.Models
     }
     public class Errore
     {
-        
+
         public string Messege { get; set; }
     }
     public class FileModel
@@ -498,6 +498,7 @@ namespace EM_SPT.Models
         public List<param> Params { get; set; }
         // public List<ListOos> spisOos { get; set; }
         public List<mo_kol> Mos { get; set; }
+        public FileModel fileModel { get; set; }
 
     }
 }

@@ -1,6 +1,6 @@
 ﻿@using System.Linq
 @model EM_SPT.Models.SpisParam
-@model EM_SPT.Models.FileModel
+@*@model EM_SPT.Models.FileModel*@
 @{
     ViewData["Title"] = "Администратор";
 }
@@ -92,47 +92,49 @@
                                         <span class="js-fileName">Загрузить файл</span>
                                     </label>
                                 </div>
+                            </div>*@
+
+
+
+                        <input type="file" name="uploadedFile" /><br>
+                        <input class="btn btn-outline-success" type="submit" id="inputGroupFileAddon04" value="Загрузить" />
+                        <button class="btn btn-outline-success form-group col-md-4" asp-action="Added">Проверка</button>
+                        @*<div class="input-group">
+                                        <div class="file">
+                                <div class="form-group">
+                                    <input type="file" name="uploadedFile" id="uploadedFile" class="input-file" required>
+                                    <label for="uploadedFile" class="btn btn-tertiary js-labelFile">
+                                        <i class="icon fa fa-check"></i>
+                                        <span class="js-fileName">Загрузить файл</span>
+                                    </label>
+                                </div>
                             </div>
 
+                            <input type="submit" value="Загрузить" />
+
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" name="uploadedFile" id="uploadedFile" aria-describedby="inputGroupFileAddon04" lang="ru">
+                                    <label class="custom-file-label" for="inputGroupFile04">Выберите файл</label>
+                                </div>
+                                <div class="input-group-append">
+
+                                </div>
+                            </div>
+
+                            <button class="btn btn-outline-success " data-toggle="modal" data-target="#addklass" form="0">Сформировать МО</button>*@
 
 
-                    <input type="file" name="uploadedFile" /><br>
-                    <input class="btn btn-outline-success" type="submit" id="inputGroupFileAddon04" value="Загрузить" />
-                    <button class="btn btn-outline-success form-group col-md-4" asp-action="Added">Проверка</button>
-                    @*<div class="input-group">
-                    <div class="file">
-            <div class="form-group">
-                <input type="file" name="uploadedFile" id="uploadedFile" class="input-file" required>
-                <label for="uploadedFile" class="btn btn-tertiary js-labelFile">
-                    <i class="icon fa fa-check"></i>
-                    <span class="js-fileName">Загрузить файл</span>
-                </label>
-            </div>
-        </div>
 
-        <input type="submit" value="Загрузить" />
-
-            <div class="custom-file">
-                <input type="file" class="custom-file-input" name="uploadedFile" id="uploadedFile" aria-describedby="inputGroupFileAddon04" lang="ru">
-                <label class="custom-file-label" for="inputGroupFile04">Выберите файл</label>
-            </div>
-            <div class="input-group-append">
-
-            </div>
-        </div>
-
-        <button class="btn btn-outline-success " data-toggle="modal" data-target="#addklass" form="0">Сформировать МО</button>
-
-
-                    *@
+                    </div>
                 </div>
-            </form>
-
-
-
-
 
             </form>
+
+
+
+
+
+
         </div>
         <div class="tab-pane fade " id="otch">
             <div class="form-row shadow p-3 mb-5 bg-white rounded">

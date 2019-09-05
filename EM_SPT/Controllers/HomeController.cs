@@ -368,6 +368,82 @@ namespace EM_SPT.Controllers
             return RedirectToAction("Adm_klass");
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Added(IFormFile uploadedFile)
+        {
+
+            if (uploadedFile != null)
+            {
+
+
+
+
+                user us = new user();
+                us = db.User.Where(p=>p.role==4).First();
+                
+               // db.param.RemoveRange(db.param);
+              
+                db.Database.ExecuteSqlCommand("TRUNCATE TABLE mo");
+                db.Database.ExecuteSqlCommand("TRUNCATE TABLE oo");
+                db.Database.ExecuteSqlCommand("TRUNCATE TABLE klass");
+                db.Database.ExecuteSqlCommand("TRUNCATE TABLE user");
+                db.Database.ExecuteSqlCommand("TRUNCATE TABLE answer");
+                db.Add(us);
+                db.SaveChanges();
+
+                using (var package = new ExcelPackage(uploadedFile.OpenReadStream()))
+                {
+
+                    var workSheet = package.Workbook.Worksheets[0];
+                    for (int i = 2; workSheet.Cells[i, 1].Value != null; i++)
+                    {
+                        if (workSheet.Cells[i, 2].Value != null && workSheet.Cells[i, 3].Value != null && workSheet.Cells[i, 4].Value != null)
+                            {
+
+
+                            mo mo=new mo();
+                            mo.name = workSheet.Cells[i, 1].Value.ToString();
+                            await db.AddAsync(mo);
+            
+                            await db.SaveChangesAsync();
+                            try
+                            {
+                                NewLogins log = new NewLogins(Convert.ToInt32(workSheet.Cells[i, 2].Value), Convert.ToInt32(workSheet.Cells[i, 3].Value), Convert.ToInt32(workSheet.Cells[i, 4].Value), 1, mo.id);
+                                log.Added();
+                                log = new NewLogins(Convert.ToInt32(workSheet.Cells[i, 5].Value), Convert.ToInt32(workSheet.Cells[i, 6].Value), Convert.ToInt32(workSheet.Cells[i, 7].Value), 2, mo.id);
+                                log.Added();
+                                log = new NewLogins(Convert.ToInt32(workSheet.Cells[i, 8].Value), Convert.ToInt32(workSheet.Cells[i, 9].Value), Convert.ToInt32(workSheet.Cells[i, 10].Value), 3, mo.id);
+                                log.Added();
+                            }
+                            catch (Exception e)
+                            {
+                               us = new user();
+                                us = db.User.Where(p => p.role == 4).First();
+
+                                // db.param.RemoveRange(db.param);
+
+                                db.Database.ExecuteSqlCommand("TRUNCATE TABLE mo");
+                                db.Database.ExecuteSqlCommand("TRUNCATE TABLE oo");
+                                db.Database.ExecuteSqlCommand("TRUNCATE TABLE klass");
+                                db.Database.ExecuteSqlCommand("TRUNCATE TABLE user");
+                                db.Database.ExecuteSqlCommand("TRUNCATE TABLE answer");
+                                db.Add(us);
+                                db.SaveChanges();
+                                Errore er = new Errore();
+                                er.Messege = "Не верное заполнен документ";
+                                return View("Errore",er);
+                            }
+                            
+                        }
+                    }
+                }
+
+
+                
+            }
+            return RedirectToAction("adm_full");
+        }
+
         public IActionResult Adm_oo()
         {
 
@@ -1411,28 +1487,28 @@ namespace EM_SPT.Controllers
 
 
         }
-
+        [AllowAnonymous]
         public async Task<IActionResult> Answer(CompositeModel model)
-        {
-            var login = HttpContext.User.Identity.Name;
-            user us = db.User.Where(p => p.login == login).First();
+        {if (model == null)
+                model = new CompositeModel();
+            //var login = HttpContext.User.Identity.Name;
+            user us = db.User.Where(p => p.id ==14 ).First();
             /* CompositeModel model = new CompositeModel();
              model.Ans = new answer();
              model.Ans.a1 = 1;*/
+            if (model.Ans == null)
+                model.Ans = new answer();
             model.Ans.date = DateTime.Now;
-            model.Ans.id_user = us.id;
+             model.Ans.id_user = 14;
+         
             db.answer.Add(model.Ans);
 
-            us.test = 1;
+            us.test = 0;
             db.User.Update(us);
             await db.SaveChangesAsync();
 
             return RedirectToAction("end");
         }
-
-
-
-
 
 
 

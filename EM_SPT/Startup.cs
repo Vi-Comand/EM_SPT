@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.IO;
@@ -30,6 +31,8 @@ namespace EM_SPT
             var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
                  .AddJsonFile("appsettings.json");
             var configuration = builder.Build();
+       
+
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             services.AddDbContext<DataContext>(options => options.UseMySql(configuration["ConnectionStrings:DefaultConnection"]));
 

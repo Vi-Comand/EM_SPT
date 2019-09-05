@@ -22,14 +22,14 @@ namespace EM_SPT.Models
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 
-            var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
+        var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json");
             var configuration = builder.Build();
 
             optionsBuilder.UseMySql(configuration["ConnectionStrings:DefaultConnection"]);
 
         }
-
+        public DbSet<FileModel> Files { get; set; }
         public DbSet<answer> answer { get; set; }
         public DbSet<mo> mo { get; set; }
         public DbSet<oo> oo { get; set; }

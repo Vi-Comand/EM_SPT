@@ -380,7 +380,7 @@ namespace EM_SPT.Models
 
     }
 
-
+  
 
     public class user
     {
@@ -394,6 +394,17 @@ namespace EM_SPT.Models
         public string pass { get; set; }
         public int test { get; set; }
         //  public string last_date_autor { get; set; }
+    }
+    public class Errore
+    {
+        
+        public string Messege { get; set; }
+    }
+    public class FileModel
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Path { get; set; }
     }
     public class klass
     {

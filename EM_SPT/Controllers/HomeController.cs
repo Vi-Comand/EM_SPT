@@ -494,7 +494,7 @@ namespace EM_SPT.Controllers
             user us = new user();
             us = db.User.Where(p => p.role == 4).First();
 
-         
+
 
             db.Database.ExecuteSqlCommand("TRUNCATE TABLE mo");
             db.Database.ExecuteSqlCommand("TRUNCATE TABLE oo");
@@ -503,7 +503,7 @@ namespace EM_SPT.Controllers
             db.Database.ExecuteSqlCommand("TRUNCATE TABLE answer");
             db.Add(us);
             db.SaveChanges();
-            return RedirectToAction("adm_full");
+            return RedirectToAction("Index");
         }
         public async Task<IActionResult> AddedUserRaion(IList<IFormFile> uploadedFile)
         {
@@ -519,7 +519,7 @@ namespace EM_SPT.Controllers
                 }
             }
 
-            return RedirectToAction("adm_full");
+            return RedirectToAction("Index");
         }
         [HttpPost]
         public async Task<IActionResult> Added(IFormFile uploadedFile)
@@ -560,7 +560,8 @@ namespace EM_SPT.Controllers
 
                             await db.SaveChangesAsync();
                             try
-                            {if (workSheet.Cells[i, 2].Value != null && workSheet.Cells[i, 3].Value != null && workSheet.Cells[i, 4].Value != null)
+                            {
+                                if (workSheet.Cells[i, 2].Value != null && workSheet.Cells[i, 3].Value != null && workSheet.Cells[i, 4].Value != null)
                                 {
                                     NewLogins log = new NewLogins(Convert.ToInt32(workSheet.Cells[i, 2].Value), Convert.ToInt32(workSheet.Cells[i, 3].Value), Convert.ToInt32(workSheet.Cells[i, 4].Value), 1, mo.id);
                                     log.Added();
@@ -603,7 +604,7 @@ namespace EM_SPT.Controllers
 
 
             }
-            return RedirectToAction("adm_full");
+            return RedirectToAction("Index");
         }
 
         public IActionResult Adm_oo()

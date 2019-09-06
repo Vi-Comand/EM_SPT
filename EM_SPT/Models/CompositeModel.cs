@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using System.Threading.Tasks;
 
 namespace EM_SPT.Models
@@ -226,7 +227,7 @@ namespace EM_SPT.Models
         public int a138 { get; set; }
         public int a139 { get; set; }
         public int a140 { get; set; }
-        [NotMapped]
+       [NotMapped]
         public int[] mas { get; set; }
 
         public void AddMas()

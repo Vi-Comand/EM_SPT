@@ -36,39 +36,28 @@
 
                     <input type="file" name="uploadedFile" /><br>
                     <input class="btn btn-outline-success" type="submit" id="inputGroupFileAddon04" value="Загрузить" />
-                    <button class="btn btn-outline-success form-group col-md-4" asp-action="Added">Проверка</button>
-                    @*<div class="input-group">
-                    <div class="file">
-            <div class="form-group">
-                <input type="file" name="uploadedFile" id="uploadedFile" class="input-file" required>
-                <label for="uploadedFile" class="btn btn-tertiary js-labelFile">
-                    <i class="icon fa fa-check"></i>
-                    <span class="js-fileName">Загрузить файл</span>
-                </label>
-            </div>
-        </div>
+                  
 
-        <input type="submit" value="Загрузить" />
-
-            <div class="custom-file">
-                <input type="file" class="custom-file-input" name="uploadedFile" id="uploadedFile" aria-describedby="inputGroupFileAddon04" lang="ru">
-                <label class="custom-file-label" for="inputGroupFile04">Выберите файл</label>
-            </div>
-            <div class="input-group-append">
-
-            </div>
-        </div>
-
-        <button class="btn btn-outline-success " data-toggle="modal" data-target="#addklass" form="0">Сформировать МО</button>
-
-
-                    *@
                 </div>
             </form>
 
+            <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="AddedUserRaion">
+                <div class="form-row shadow p-3 mb-5 bg-white rounded">
+
+                    <div class="alert alert-success col-md-12" role="alert">Список МО</div>
+
+                    <p>Скачайте файл шаблон для заполнения, заполните все поля и загрузите, чтобы сформировать логины и пароли для всех МО <a href="~/file/Formir_MO.xlsx">Шаблон для заполнения</a></p>
 
 
 
+                    <input type="file" name="uploadedFile" multiple /><br>
+                    <input class="btn btn-outline-success" type="submit" id="inputGroupFileAddon04" value="Загрузить" />
+                    <button class="btn btn-outline-success form-group col-md-4" asp-action="CleanDB">Очистить БД</button>
+
+                </div>
+            </form>
+
+        </div>
 
             <div class="tab-pane fade " id="otch">
                 <div class="form-row shadow p-3 mb-5 bg-white rounded">

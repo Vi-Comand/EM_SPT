@@ -37,26 +37,27 @@ namespace EM_SPT.Models
                 oo.tip = tip;
                 list_oo.Add(oo);
             }
+            if (tip==1) {
+                int Length = 8;
+                user admin = new user();
+                admin.id_mo = MO;
+                admin.login = "AM" + MO;
+                admin.role = 3;
+                const string valid = "1234567890";
+                StringBuilder res = new StringBuilder();
+                Random rnd = new Random();
 
-            int Length = 8;
-            user admin = new user();
-            admin.id_mo =MO ;
-            admin.login = "AM" + MO;
-            admin.role = 3;
-            const string valid = "1234567890";
-            StringBuilder res = new StringBuilder();
-            Random rnd = new Random();
+                while (0 < Length--)
+                {
+                    res.Append(valid[rnd.Next(valid.Length)]);
+                }
+                admin.pass = res.ToString();
 
-            while (0 < Length--)
-            {
-                res.Append(valid[rnd.Next(valid.Length)]);
+
+
+
+                await db.AddAsync(admin);
             }
-            admin.pass = res.ToString();
-
-
-
-
-            await db.AddAsync(admin);
             await db.AddRangeAsync(list_oo);
             await db.SaveChangesAsync();
             Added_Grupp(list_oo);
@@ -138,8 +139,8 @@ namespace EM_SPT.Models
 
                 for (int i = 0; i < kol_vo_chelovek; i++)
                 {
-                     Length = 8;
-                     user = new user();
+                    Length = 8;
+                    user = new user();
                     user.id_klass = gruppa.id;
                     user.login = "K"+gruppa.id+"T"+i;
 
@@ -162,7 +163,8 @@ namespace EM_SPT.Models
                 }
             await db.AddRangeAsync(list_user);
             await db.SaveChangesAsync();
-
+            System.Runtime.GCSettings.LargeObjectHeapCompactionMode = System.Runtime.GCLargeObjectHeapCompactionMode.CompactOnce;
+            System.GC.Collect();
         }
 
         }

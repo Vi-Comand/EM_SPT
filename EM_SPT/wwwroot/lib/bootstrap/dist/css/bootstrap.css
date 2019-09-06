@@ -219,6 +219,7 @@ caption {
 
 th {
     text-align: inherit;
+    font-weight: inherit;
 }
 
 label {
@@ -1679,7 +1680,7 @@ pre {
 
     .tab thead tr {
         color: #ffffff;
-        font-weight: bold;
+        font-weight: 400;
         background: #00bf80;
     }
 
@@ -1707,6 +1708,10 @@ pre {
         .tab tbody tr:hover {
             background: #ebffe8;
         }
+
+.tab-itog {
+    background: #f4f4f4;
+}
 
 
 

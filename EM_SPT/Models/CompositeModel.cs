@@ -30,13 +30,32 @@ namespace EM_SPT.Models
 
 
     }
+
+    public class ListParam
+    {
+        public List<param> Params { get; set; }
+    }
+
+
     public class TestVKlass
     {
 
         //public List<user> LUsers { get; set; }
         public int id_klass { get; set; }
         public int kol { get; set; }
+        public int oo { get; set; }
     }
+
+    public class TestVOO
+    {
+
+        //public List<user> LUsers { get; set; }
+        public int tip { get; set; }
+        public int kol { get; set; }
+        public int oo { get; set; }
+        public int mo { get; set; }
+    }
+
 
     public class TestKl
     {
@@ -53,6 +72,7 @@ namespace EM_SPT.Models
     {
         public List<oo> oos { get; set; }
         public int id { get; set; }
+        public string mo_name { get; set; }
         /*  public int sum { get; set; }
           public int sumTest { get; set; }
           public string klass { get; set; }*/
@@ -381,7 +401,7 @@ namespace EM_SPT.Models
 
     }
 
-  
+
 
     public class user
     {
@@ -398,7 +418,7 @@ namespace EM_SPT.Models
     }
     public class Errore
     {
-        
+
         public string Messege { get; set; }
     }
     public class FileModel
@@ -426,6 +446,18 @@ namespace EM_SPT.Models
         public int id { get; set; }
         public string name { get; set; }
     }
+
+    public class mo_kol
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public int kol_OO { get; set; }
+        public int kol_SPO { get; set; }
+        public int kol_VUZ { get; set; }
+        public int kol_OO_t { get; set; }
+        public int kol_SPO_t { get; set; }
+        public int kol_VUZ_t { get; set; }
+    }
     public class param
     {
         public int id { get; set; }
@@ -449,5 +481,25 @@ namespace EM_SPT.Models
         public double sa_n { get; set; }
         public double sp_v { get; set; }
         public double sp_n { get; set; }
+        public double f_v { get; set; }
+        public double f_n { get; set; }
+        public double s_v { get; set; }
+        public double s_n { get; set; }
+        public double nso_v { get; set; }
+        public double nso_n { get; set; }
+        public double fr_v { get; set; }
+        public double fr_n { get; set; }
+        public double fz_v { get; set; }
+        public double fz_n { get; set; }
+        public int h_otch { get; set; }
+    }
+
+    public class SpisParam
+    {
+        public List<param> Params { get; set; }
+        // public List<ListOos> spisOos { get; set; }
+        public List<mo_kol> Mos { get; set; }
+        public FileModel fileModel { get; set; }
+
     }
 }

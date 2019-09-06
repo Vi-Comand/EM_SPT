@@ -415,6 +415,18 @@ namespace EM_SPT.Models
         public int test { get; set; }
         //  public string last_date_autor { get; set; }
     }
+
+    public class ListUser
+    {
+        public List<user> Users { get; set; }
+    }
+
+    public class ListMo
+    {
+        public List<mo> Mos { get; set; }
+    }
+
+
     public class Errore
     {
 

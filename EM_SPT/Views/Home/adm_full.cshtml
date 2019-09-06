@@ -32,102 +32,113 @@
             <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="Added">
                 <div class="form-row shadow p-3 mb-5 bg-white rounded">
 
-                    <div class="alert alert-success col-md-12" role="alert">Список МО</div>
+                    <div class="alert alert-success col-md-12" role="alert">Формирование учетных записей</div>
 
                     <p>Скачайте файл шаблон для заполнения, заполните все поля и загрузите, чтобы сформировать логины и пароли для всех МО <a href="~/file/Formir_MO.xlsx">Шаблон для заполнения</a></p>
-                    <div class="input-group">
-                        <table class="tab">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th width="20%">MO</th>
-                                    <th width="10%">Количество СОШ</th>
-                                    <th width="10%">Тест пройден в СОШ</th>
-                                    <th width="10%">Количество СПО</th>
-                                    <th width="10%">Тест пройден в СПО</th>
-                                    <th width="10%">Количество ВУЗ</th>
-                                    <th width="10%">Тест пройден в ВУЗ</th>
-                                    <th width="10%">Количество ОО</th>
-                                    <th width="10%">Тест пройден в ОО</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-
-                                @for (int i = 0; i < Model.Mos.Count; i++)
-                                {
-                                    <tr>
-                                        <td>@Model.Mos[i].name </td>
-                                        <td>@Model.Mos[i].kol_OO</td>
-                                        <td>@Model.Mos[i].kol_OO_t</td>
-                                        <td>@Model.Mos[i].kol_SPO</td>
-                                        <td>@Model.Mos[i].kol_SPO_t</td>
-                                        <td>@Model.Mos[i].kol_VUZ</td>
-                                        <td>@Model.Mos[i].kol_VUZ_t</td>
-                                        <td class="tab-itog">@ViewData["SumKolVOO" + Model.Mos[i].id]</td>
-                                        <td class="tab-itog">@ViewData["SumKolVTest" + Model.Mos[i].id]</td>
-                                    </tr>
-                                }
-                            </tbody>
-                            <tfoot class=" ">
-                                <tr>
-                                    <td>Всего </td>
-                                    <td>@ViewData["SumKolOO"]</td>
-                                    <td>@ViewData["SumKolOO_t"]</td>
-                                    <td>@ViewData["SumKolSPO"]</td>
-                                    <td>@ViewData["SumKolSPO_t"]</td>
-                                    <td>@ViewData["SumKolVUZ"]</td>
-                                    <td>@ViewData["SumKolVUZ_t"]</td>
-                                    <td>@ViewData["Sum"]</td>
-                                    <td>@ViewData["Sumt"]</td>
-                                </tr>
-                            </tfoot>
-                        </table>
+                    <p class="alert-danger">Внимание!!! при формировании логинов удаляются все старые логины и пароли кроме пароля администратора!!!</p>
 
 
 
-                        @*<div class="file">
-                                <div class="form-group">
-                                    <input type="file" name="uploadedFile" id="uploadedFile" class="input-file" required>
-                                    <label for="uploadedFile" class="btn btn-tertiary js-labelFile">
-                                        <i class="icon fa fa-check"></i>
-                                        <span class="js-fileName">Загрузить файл</span>
-                                    </label>
-                                </div>
-                            </div>*@
-
-
-
-                        <input type="file" name="uploadedFile" /><br>
-                        <input class="btn btn-outline-success" type="submit" id="inputGroupFileAddon04" value="Загрузить" />
-                        <button class="btn btn-outline-success form-group col-md-4" asp-action="Added">Проверка</button>
-                        @*<div class="input-group">
-                                        <div class="file">
-                                <div class="form-group">
-                                    <input type="file" name="uploadedFile" id="uploadedFile" class="input-file" required>
-                                    <label for="uploadedFile" class="btn btn-tertiary js-labelFile">
-                                        <i class="icon fa fa-check"></i>
-                                        <span class="js-fileName">Загрузить файл</span>
-                                    </label>
-                                </div>
+                    @*<div class="file">
+                            <div class="form-group">
+                                <input type="file" name="uploadedFile" id="uploadedFile" class="input-file" required>
+                                <label for="uploadedFile" class="btn btn-tertiary js-labelFile">
+                                    <i class="icon fa fa-check"></i>
+                                    <span class="js-fileName">Загрузить файл</span>
+                                </label>
                             </div>
+                        </div>*@
 
-                            <input type="submit" value="Загрузить" />
 
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input" name="uploadedFile" id="uploadedFile" aria-describedby="inputGroupFileAddon04" lang="ru">
-                                    <label class="custom-file-label" for="inputGroupFile04">Выберите файл</label>
-                                </div>
-                                <div class="input-group-append">
 
-                                </div>
+                    <input type="file" name="uploadedFile" /><br>
+                    <input class="btn btn-outline-success" type="submit" id="inputGroupFileAddon04" value="Загрузить" />
+
+                    @*<div class="input-group">
+                                    <div class="file">
+                            <div class="form-group">
+                                <input type="file" name="uploadedFile" id="uploadedFile" class="input-file" required>
+                                <label for="uploadedFile" class="btn btn-tertiary js-labelFile">
+                                    <i class="icon fa fa-check"></i>
+                                    <span class="js-fileName">Загрузить файл</span>
+                                </label>
                             </div>
+                        </div>
 
-                            <button class="btn btn-outline-success " data-toggle="modal" data-target="#addklass" form="0">Сформировать МО</button>*@
+                        <input type="submit" value="Загрузить" />
+
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" name="uploadedFile" id="uploadedFile" aria-describedby="inputGroupFileAddon04" lang="ru">
+                                <label class="custom-file-label" for="inputGroupFile04">Выберите файл</label>
+                            </div>
+                            <div class="input-group-append">
+
+                            </div>
+                        </div>
+
+                        <button class="btn btn-outline-success " data-toggle="modal" data-target="#addklass" form="0">Сформировать МО</button>*@
 
 
 
-                    </div>
+
                 </div>
+            </form>
 
+            <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="Spisok_full">
+                <div class="form-row shadow p-3 mb-5 bg-white rounded">
+                    <div class="alert alert-success col-md-12" role="alert">Список МО </div>
+                    <input class="btn btn-outline-success" type="submit" id="wq" value="Сформировать" />
+                    @if (Model.Mos != null)
+                    {
+                        <div class="input-group">
+                            <table class="tab">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th width="20%">MO</th>
+                                        <th width="10%">Количество СОШ</th>
+                                        <th width="10%">Тест пройден в СОШ</th>
+                                        <th width="10%">Количество СПО</th>
+                                        <th width="10%">Тест пройден в СПО</th>
+                                        <th width="10%">Количество ВУЗ</th>
+                                        <th width="10%">Тест пройден в ВУЗ</th>
+                                        <th width="10%">Количество ОО</th>
+                                        <th width="10%">Тест пройден в ОО</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @for (int i = 0; i < Model.Mos.Count; i++)
+                                    {
+                                        <tr>
+                                            <td>@Model.Mos[i].name </td>
+                                            <td>@Model.Mos[i].kol_OO</td>
+                                            <td>@Model.Mos[i].kol_OO_t</td>
+                                            <td>@Model.Mos[i].kol_SPO</td>
+                                            <td>@Model.Mos[i].kol_SPO_t</td>
+                                            <td>@Model.Mos[i].kol_VUZ</td>
+                                            <td>@Model.Mos[i].kol_VUZ_t</td>
+                                            <td class="tab-itog">@ViewData["SumKolVOO" + Model.Mos[i].id]</td>
+                                            <td class="tab-itog">@ViewData["SumKolVTest" + Model.Mos[i].id]</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot class=" ">
+                                    <tr>
+                                        <td>Всего </td>
+                                        <td>@ViewData["SumKolOO"]</td>
+                                        <td>@ViewData["SumKolOO_t"]</td>
+                                        <td>@ViewData["SumKolSPO"]</td>
+                                        <td>@ViewData["SumKolSPO_t"]</td>
+                                        <td>@ViewData["SumKolVUZ"]</td>
+                                        <td>@ViewData["SumKolVUZ_t"]</td>
+                                        <td>@ViewData["Sum"]</td>
+                                        <td>@ViewData["Sumt"]</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    }
+                </div>
             </form>
 
 
@@ -137,13 +148,17 @@
 
         </div>
         <div class="tab-pane fade " id="otch">
-            <div class="form-row shadow p-3 mb-5 bg-white rounded">
 
+            <div class="form-row shadow p-3 mb-5 bg-white rounded">
+                <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="Pass_excel">
+                    <input class="btn btn-outline-success" type="submit" id="wq" value="Сформировать" />
+                </form>
                 <table class="tab">
                     <thead class="thead-light">
                         <tr>
                             <th width="20%">MO</th>
-                            <th width="10%">Скачать</th>
+                            <th width="10%">Отчет по тестированию</th>
+                            <th width="10%">Отчет по паролям</th>
 
                         </tr>
                     </thead>
@@ -154,6 +169,12 @@
                                 <td>@Model.Mos[i].name </td>
                                 <td>
                                     <form action="~/Vgruzka/@Model.Mos[i].name.ToString()_.zip">
+
+                                        <button type="submit" class="btn btn-outline-success" style="background: url(/icon/excel.png) no-repeat 215.5px 10.5px rgba(7, 255, 126, 0.2); background-size: 10%; height: 50px; width:250px">Загрузить отчет</button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <form action="~/Vgruzka/@Model.Mos[i].name.ToString()_pass.zip">
 
                                         <button type="submit" class="btn btn-outline-success" style="background: url(/icon/excel.png) no-repeat 215.5px 10.5px rgba(7, 255, 126, 0.2); background-size: 10%; height: 50px; width:250px">Загрузить отчет</button>
                                     </form>

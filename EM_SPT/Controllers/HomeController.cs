@@ -126,68 +126,17 @@ namespace EM_SPT.Controllers
             if (user.role == 4)
             {
                 SpisParam par = new SpisParam();
-
                 par.Params = db.param.ToList();
                 List<mo_kol> listMO = new List<mo_kol>();
-                List<TestVOO> listOO = new List<TestVOO>();
-                List<TestVKlass> listKl = new List<TestVKlass>();
                 int[] masMO = (from k in db.mo select k.id).ToArray();
-                int sum = 0;
-                int sumt = 0;
+
                 foreach (int iMO in masMO)
                 {
-                    int[] masOO = (from k in db.oo.Where(p => p.id_mo == iMO) select k.id).ToArray();
-                    foreach (int iOO in masOO)
-                    {
-                        int[] masKlass = (from k in db.klass.Where(p => p.id_oo == iOO) select k.id).ToArray();
-                        foreach (int qwe in masKlass)
-                        {
-                            TestVKlass test = new TestVKlass();
-                            test.oo = iOO;
-                            test.id_klass = qwe;
-                            test.kol = db.User.Where(p => p.id_klass == qwe && p.test == 1).Count();
-                            listKl.Add(test);
-                        }
-
-                    }
-                    foreach (int qwe in masOO)
-                    {
-                        TestVOO testVOO = new TestVOO();
-                        testVOO.oo = qwe;
-                        testVOO.mo = iMO;
-                        testVOO.tip = db.oo.Where(p => p.id == qwe).First().tip;
-                        testVOO.kol = listKl.Where(p => p.oo == qwe).Sum(p => p.kol);
-                        listOO.Add(testVOO);
-                    }
                     mo_kol mo_Kol = new mo_kol();
-                    mo_Kol.id = iMO;
                     mo_Kol.name = db.mo.Find(iMO).name;
-                    mo_Kol.kol_OO = listOO.Where(p => p.tip == 1 && p.mo == iMO).Count();
-                    mo_Kol.kol_SPO = listOO.Where(p => p.tip == 2 && p.mo == iMO).Count();
-                    mo_Kol.kol_VUZ = listOO.Where(p => p.tip == 3 && p.mo == iMO).Count();
-                    mo_Kol.kol_OO_t = listOO.Where(p => p.tip == 1 && p.mo == iMO).Sum(p => p.kol);
-                    mo_Kol.kol_SPO_t = listOO.Where(p => p.tip == 2 && p.mo == iMO).Sum(p => p.kol);
-                    mo_Kol.kol_VUZ_t = listOO.Where(p => p.tip == 3 && p.mo == iMO).Sum(p => p.kol);
                     listMO.Add(mo_Kol);
-                    int s1 = listMO.Where(p => p.id == iMO).Sum(p => p.kol_OO) + listMO.Where(p => p.id == iMO).Sum(p => p.kol_SPO) + listMO.Where(p => p.id == iMO).Sum(p => p.kol_VUZ);
-                    int s2 = listMO.Where(p => p.id == iMO).Sum(p => p.kol_OO_t) + listMO.Where(p => p.id == iMO).Sum(p => p.kol_SPO_t) + listMO.Where(p => p.id == iMO).Sum(p => p.kol_VUZ_t);
-                    ViewData["SumKolVOO" + iMO] = s1;
-                    ViewData["SumKolVTest" + iMO] = s2;
-                    sum = sum + s1;
-                    sumt = sumt + s2;
                 }
-
-                //db.Database.ExecuteSqlCommand("TRUNCATE TABLE mo");
-
                 par.Mos = listMO;
-                ViewData["Sum"] = sum;
-                ViewData["Sumt"] = sumt;
-                ViewData["SumKolOO"] = listMO.Sum(p => p.kol_OO);
-                ViewData["SumKolSPO"] = listMO.Sum(p => p.kol_SPO);
-                ViewData["SumKolVUZ"] = listMO.Sum(p => p.kol_VUZ);
-                ViewData["SumKolOO_t"] = listMO.Sum(p => p.kol_OO_t);
-                ViewData["SumKolSPO_t"] = listMO.Sum(p => p.kol_SPO_t);
-                ViewData["SumKolVUZ_t"] = listMO.Sum(p => p.kol_VUZ_t);
                 return View("adm_full", par);
             }
             else { return RedirectToAction("start", "Home"); }
@@ -195,6 +144,173 @@ namespace EM_SPT.Controllers
 
 
         }
+
+        public IActionResult Spisok_full()
+        {
+            SpisParam par = new SpisParam();
+            par.Params = db.param.ToList();
+            List<mo_kol> listMO = new List<mo_kol>();
+            List<TestVOO> listOO = new List<TestVOO>();
+            List<TestVKlass> listKl = new List<TestVKlass>();
+
+            ListUser listU = new ListUser();
+            listU.Users = db.User.Where(p => p.test == 1).ToList();
+
+
+            int[] masMO = (from k in db.mo select k.id).ToArray();
+            int sum = 0;
+            int sumt = 0;
+            foreach (int iMO in masMO)
+            {
+                int[] masOO = (from k in db.oo.Where(p => p.id_mo == iMO) select k.id).ToArray();
+                foreach (int iOO in masOO)
+                {
+
+                    int[] masKlass = (from k in db.klass.Where(p => p.id_oo == iOO) select k.id).ToArray();
+
+                    foreach (int qwe in masKlass)
+                    {
+                        TestVKlass test = new TestVKlass();
+                        test.oo = iOO;
+                        test.id_klass = qwe;
+                        test.kol = listU.Users.Where(p => p.id_klass == qwe).Count();
+                        listKl.Add(test);
+                    }
+
+                }
+                foreach (int qwe in masOO)
+                {
+                    TestVOO testVOO = new TestVOO();
+                    testVOO.oo = qwe;
+                    testVOO.mo = iMO;
+                    testVOO.tip = db.oo.Where(p => p.id == qwe).First().tip;
+                    testVOO.kol = listKl.Where(p => p.oo == qwe).Sum(p => p.kol);
+                    listOO.Add(testVOO);
+                }
+                mo_kol mo_Kol = new mo_kol();
+                mo_Kol.id = iMO;
+                mo_Kol.name = db.mo.Find(iMO).name;
+                mo_Kol.kol_OO = listOO.Where(p => p.tip == 1 && p.mo == iMO).Count();
+                mo_Kol.kol_SPO = listOO.Where(p => p.tip == 2 && p.mo == iMO).Count();
+                mo_Kol.kol_VUZ = listOO.Where(p => p.tip == 3 && p.mo == iMO).Count();
+                mo_Kol.kol_OO_t = listOO.Where(p => p.tip == 1 && p.mo == iMO).Sum(p => p.kol);
+                mo_Kol.kol_SPO_t = listOO.Where(p => p.tip == 2 && p.mo == iMO).Sum(p => p.kol);
+                mo_Kol.kol_VUZ_t = listOO.Where(p => p.tip == 3 && p.mo == iMO).Sum(p => p.kol);
+                listMO.Add(mo_Kol);
+                int s1 = listMO.Where(p => p.id == iMO).Sum(p => p.kol_OO) + listMO.Where(p => p.id == iMO).Sum(p => p.kol_SPO) + listMO.Where(p => p.id == iMO).Sum(p => p.kol_VUZ);
+                int s2 = listMO.Where(p => p.id == iMO).Sum(p => p.kol_OO_t) + listMO.Where(p => p.id == iMO).Sum(p => p.kol_SPO_t) + listMO.Where(p => p.id == iMO).Sum(p => p.kol_VUZ_t);
+                ViewData["SumKolVOO" + iMO] = s1;
+                ViewData["SumKolVTest" + iMO] = s2;
+                sum = sum + s1;
+                sumt = sumt + s2;
+            }
+
+            //db.Database.ExecuteSqlCommand("TRUNCATE TABLE mo");
+
+            par.Mos = listMO;
+            ViewData["Sum"] = sum;
+            ViewData["Sumt"] = sumt;
+            ViewData["SumKolOO"] = listMO.Sum(p => p.kol_OO);
+            ViewData["SumKolSPO"] = listMO.Sum(p => p.kol_SPO);
+            ViewData["SumKolVUZ"] = listMO.Sum(p => p.kol_VUZ);
+            ViewData["SumKolOO_t"] = listMO.Sum(p => p.kol_OO_t);
+            ViewData["SumKolSPO_t"] = listMO.Sum(p => p.kol_SPO_t);
+            ViewData["SumKolVUZ_t"] = listMO.Sum(p => p.kol_VUZ_t);
+            return View("adm_full", par);
+        }
+        public async Task<IActionResult> Pass_excel()
+        {
+            await Task.Yield();
+            ListMo listMO = new ListMo();
+            listMO.Mos = db.mo.ToList();
+
+            ListUser listU = new ListUser();
+            listU.Users = db.User.ToList();
+
+            int[] masMO = (from k in db.mo select k.id).ToArray();
+
+            for (int iMO = 0; iMO < masMO.Count(); iMO++)
+            {
+                MemoryStream outputMemStream = new MemoryStream();
+                ZipOutputStream zipStream = new ZipOutputStream(outputMemStream);
+                zipStream.SetLevel(3); // уровень сжатия от 0 до 9
+                byte[] buffer = new byte[4096];
+                int[] masOO = (from k in db.oo.Where(p => p.id_mo == masMO[iMO]) select k.id).ToArray();
+                FileInfo newFile = new FileInfo(@"C:\1\pass.xlsx");
+                byte[] data;
+                using (var package = new ExcelPackage(newFile))
+                {
+                    for (int iOO = 1; iOO <= masOO.Count(); iOO++)
+                    {
+                        int str = 6;
+                        package.Workbook.Worksheets.Add(masOO[iOO - 1].ToString());
+                        var workSheet = package.Workbook.Worksheets[iOO];
+
+                        workSheet.Cells[1, 2].Value = listMO.Mos[iMO].name;
+                        workSheet.Cells[3, 3].Value = listU.Users.Where(p => p.role == 2).First().login;
+                        workSheet.Cells[3, 4].Value = listU.Users.Where(p => p.role == 2).First().pass;
+                        ListUser listUKl = new ListUser();
+                        listUKl.Users = listU.Users.Where(p => p.role == 1).ToList();
+
+                        for (int i = 0; i < listUKl.Users.Count(); i++)
+                        {
+                            ListUser listUT = new ListUser();
+                            listUT.Users = listU.Users.Where(p => p.role == 0 && p.id_klass == listUKl.Users[i].id).ToList();
+                            workSheet.Cells[str, 1].Value = listUKl.Users[i].id;
+                            workSheet.Cells[str, 2].Value = listUKl.Users[i].id_klass;
+                            workSheet.Cells[str, 3].Value = listUKl.Users[i].login;
+                            workSheet.Cells[str, 4].Value = listUKl.Users[i].pass;
+                            str++;
+                            for (int j = 0; j < listUT.Users.Count(); j++)
+                            {
+                                workSheet.Cells[str, 1].Value = listUT.Users[j].id;
+                                workSheet.Cells[str, 2].Value = listUT.Users[j].id_klass;
+                                workSheet.Cells[str, 3].Value = listUT.Users[j].login;
+                                workSheet.Cells[str, 4].Value = listUT.Users[j].pass;
+                                workSheet.Cells[str, 5].Value = listUT.Users[j].test;
+                                str++;
+                            }
+                        }
+                    }
+                    data = package.GetAsByteArray();
+                    string entryName;
+
+                    entryName = ZipEntry.CleanName(listMO.Mos[iMO].name + "_pass.xlsx");
+
+                    ZipEntry newEntry = new ZipEntry(entryName);
+                    newEntry.DateTime = package.File.LastWriteTime;
+                    newEntry.Size = data.Length;
+                    zipStream.PutNextEntry(newEntry);
+
+
+                    using (MemoryStream streamReader = new MemoryStream(data))
+                    {
+                        StreamUtils.Copy(streamReader, zipStream, buffer);
+
+                    }
+                    zipStream.CloseEntry();
+
+
+                    /*    zipStream.IsStreamOwner = false;
+                        zipStream.Close();
+
+                        outputMemStream.Position = 0;
+                        string qw = @"\Vgruzka\" + mun.name + "_.zip";*/
+
+                }
+                zipStream.IsStreamOwner = false;
+                zipStream.Close();
+
+                outputMemStream.Position = 0;
+                string qw = @"\Vgruzka\" + masMO[iMO] + "_.zip";
+                System.IO.File.WriteAllBytes(Directory.GetCurrentDirectory() + "\\wwwroot\\Vgruzka\\" + masMO[iMO] + "_.zip", outputMemStream.ToArray());
+            }
+
+            return null;
+        }
+
+
+
         public IActionResult Anketa(CompositeModel model)
         {
             if (model.Ans == null || model.Ans.pol == null || model.Ans.vozr == null)
@@ -229,6 +345,8 @@ namespace EM_SPT.Controllers
             var mo = db.User.Where(p => p.login == login).First().id_mo;
             int[] masOO = (from k in db.oo.Where(p => p.id_mo == mo)
                            select k.id).ToArray();
+            ListUser listU = new ListUser();
+            listU.Users = db.User.Where(p => p.test == 1).ToList();
             if (id != 0)
             {
                 int[] masKlass = (from k in db.klass.Where(p => p.id_oo == id)
@@ -239,7 +357,7 @@ namespace EM_SPT.Controllers
                     TestVKlass test = new TestVKlass();
                     test.oo = id;
                     test.id_klass = qwe;
-                    test.kol = db.User.Where(p => p.id_klass == qwe && p.test == 1).Count();
+                    test.kol = listU.Users.Where(p => p.id_klass == qwe).Count();
                     list.Add(test);
                 }
                 var query = list;
@@ -259,7 +377,7 @@ namespace EM_SPT.Controllers
                         TestVKlass test = new TestVKlass();
                         test.oo = oo;
                         test.id_klass = qwe;
-                        test.kol = db.User.Where(p => p.id_klass == qwe && p.test == 1).Count();
+                        test.kol = listU.Users.Where(p => p.id_klass == qwe).Count();
                         list.Add(test);
                     }
 
@@ -379,10 +497,10 @@ namespace EM_SPT.Controllers
 
 
                 user us = new user();
-                us = db.User.Where(p=>p.role==4).First();
-                
-               // db.param.RemoveRange(db.param);
-              
+                us = db.User.Where(p => p.role == 4).First();
+
+                // db.param.RemoveRange(db.param);
+
                 db.Database.ExecuteSqlCommand("TRUNCATE TABLE mo");
                 db.Database.ExecuteSqlCommand("TRUNCATE TABLE oo");
                 db.Database.ExecuteSqlCommand("TRUNCATE TABLE klass");
@@ -398,13 +516,13 @@ namespace EM_SPT.Controllers
                     for (int i = 2; workSheet.Cells[i, 1].Value != null; i++)
                     {
                         if (workSheet.Cells[i, 2].Value != null && workSheet.Cells[i, 3].Value != null && workSheet.Cells[i, 4].Value != null)
-                            {
+                        {
 
 
-                            mo mo=new mo();
+                            mo mo = new mo();
                             mo.name = workSheet.Cells[i, 1].Value.ToString();
                             await db.AddAsync(mo);
-            
+
                             await db.SaveChangesAsync();
                             try
                             {
@@ -417,7 +535,7 @@ namespace EM_SPT.Controllers
                             }
                             catch (Exception e)
                             {
-                               us = new user();
+                                us = new user();
                                 us = db.User.Where(p => p.role == 4).First();
 
                                 // db.param.RemoveRange(db.param);
@@ -431,15 +549,15 @@ namespace EM_SPT.Controllers
                                 db.SaveChanges();
                                 Errore er = new Errore();
                                 er.Messege = "Не верное заполнен документ";
-                                return View("Errore",er);
+                                return View("Errore", er);
                             }
-                            
+
                         }
                     }
                 }
 
 
-                
+
             }
             return RedirectToAction("adm_full");
         }
@@ -1489,18 +1607,19 @@ namespace EM_SPT.Controllers
         }
         [AllowAnonymous]
         public async Task<IActionResult> Answer(CompositeModel model)
-        {if (model == null)
+        {
+            if (model == null)
                 model = new CompositeModel();
             //var login = HttpContext.User.Identity.Name;
-            user us = db.User.Where(p => p.id ==14 ).First();
+            user us = db.User.Where(p => p.id == 14).First();
             /* CompositeModel model = new CompositeModel();
              model.Ans = new answer();
              model.Ans.a1 = 1;*/
             if (model.Ans == null)
                 model.Ans = new answer();
             model.Ans.date = DateTime.Now;
-             model.Ans.id_user = 14;
-         
+            model.Ans.id_user = 14;
+
             db.answer.Add(model.Ans);
 
             us.test = 0;

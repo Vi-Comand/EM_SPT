@@ -486,6 +486,41 @@ namespace EM_SPT.Controllers
             return RedirectToAction("Adm_klass");
         }
 
+
+
+
+        public IActionResult CleanDB()
+        {
+            user us = new user();
+            us = db.User.Where(p => p.role == 4).First();
+
+         
+
+            db.Database.ExecuteSqlCommand("TRUNCATE TABLE mo");
+            db.Database.ExecuteSqlCommand("TRUNCATE TABLE oo");
+            db.Database.ExecuteSqlCommand("TRUNCATE TABLE klass");
+            db.Database.ExecuteSqlCommand("TRUNCATE TABLE user");
+            db.Database.ExecuteSqlCommand("TRUNCATE TABLE answer");
+            db.Add(us);
+            db.SaveChanges();
+            return RedirectToAction("adm_full");
+        }
+        public async Task<IActionResult> AddedUserRaion(IList<IFormFile> uploadedFile)
+        {
+
+
+
+            if (uploadedFile != null)
+            {
+                foreach (var file in uploadedFile)
+                {
+                    NewLoginsRaion lo = new NewLoginsRaion();
+                    lo.Added(file);
+                }
+            }
+
+            return RedirectToAction("adm_full");
+        }
         [HttpPost]
         public async Task<IActionResult> Added(IFormFile uploadedFile)
         {
@@ -525,13 +560,22 @@ namespace EM_SPT.Controllers
 
                             await db.SaveChangesAsync();
                             try
-                            {
-                                NewLogins log = new NewLogins(Convert.ToInt32(workSheet.Cells[i, 2].Value), Convert.ToInt32(workSheet.Cells[i, 3].Value), Convert.ToInt32(workSheet.Cells[i, 4].Value), 1, mo.id);
-                                log.Added();
-                                log = new NewLogins(Convert.ToInt32(workSheet.Cells[i, 5].Value), Convert.ToInt32(workSheet.Cells[i, 6].Value), Convert.ToInt32(workSheet.Cells[i, 7].Value), 2, mo.id);
-                                log.Added();
-                                log = new NewLogins(Convert.ToInt32(workSheet.Cells[i, 8].Value), Convert.ToInt32(workSheet.Cells[i, 9].Value), Convert.ToInt32(workSheet.Cells[i, 10].Value), 3, mo.id);
-                                log.Added();
+                            {if (workSheet.Cells[i, 2].Value != null && workSheet.Cells[i, 3].Value != null && workSheet.Cells[i, 4].Value != null)
+                                {
+                                    NewLogins log = new NewLogins(Convert.ToInt32(workSheet.Cells[i, 2].Value), Convert.ToInt32(workSheet.Cells[i, 3].Value), Convert.ToInt32(workSheet.Cells[i, 4].Value), 1, mo.id);
+                                    log.Added();
+                                }
+                                if (workSheet.Cells[i, 5].Value != null && workSheet.Cells[i, 6].Value != null && workSheet.Cells[i, 7].Value != null)
+                                {
+                                    NewLogins log = new NewLogins(Convert.ToInt32(workSheet.Cells[i, 5].Value), Convert.ToInt32(workSheet.Cells[i, 6].Value), Convert.ToInt32(workSheet.Cells[i, 7].Value), 2, mo.id);
+
+                                    log.Added();
+                                }
+                                if (workSheet.Cells[i, 8].Value != null && workSheet.Cells[i, 9].Value != null && workSheet.Cells[i, 10].Value != null)
+                                {
+                                    NewLogins log = new NewLogins(Convert.ToInt32(workSheet.Cells[i, 8].Value), Convert.ToInt32(workSheet.Cells[i, 9].Value), Convert.ToInt32(workSheet.Cells[i, 10].Value), 3, mo.id);
+                                    log.Added();
+                                }
                             }
                             catch (Exception e)
                             {

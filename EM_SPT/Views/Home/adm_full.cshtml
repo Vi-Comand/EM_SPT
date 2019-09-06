@@ -139,11 +139,61 @@
                         </div>
                     }
                 </div>
+                                @for (int i = 0; i < Model.Mos.Count; i++)
+                                {
+                                    <tr>
+                                        <td>@Model.Mos[i].name </td>
+                                        <td>@Model.Mos[i].kol_OO</td>
+                                        <td>@Model.Mos[i].kol_OO_t</td>
+                                        <td>@Model.Mos[i].kol_SPO</td>
+                                        <td>@Model.Mos[i].kol_SPO_t</td>
+                                        <td>@Model.Mos[i].kol_VUZ</td>
+                                        <td>@Model.Mos[i].kol_VUZ_t</td>
+                                        <td class="tab-itog">@ViewData["SumKolVOO" + Model.Mos[i].id]</td>
+                                        <td class="tab-itog">@ViewData["SumKolVTest" + Model.Mos[i].id]</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot class=" ">
+                                <tr>
+                                    <td>Всего </td>
+                                    <td>@ViewData["SumKolOO"]</td>
+                                    <td>@ViewData["SumKolOO_t"]</td>
+                                    <td>@ViewData["SumKolSPO"]</td>
+                                    <td>@ViewData["SumKolSPO_t"]</td>
+                                    <td>@ViewData["SumKolVUZ"]</td>
+                                    <td>@ViewData["SumKolVUZ_t"]</td>
+                                    <td>@ViewData["Sum"]</td>
+                                    <td>@ViewData["Sumt"]</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+
+                    <input type="file" name="uploadedFile" /><br>
+                    <input class="btn btn-outline-success" type="submit" id="inputGroupFileAddon04" value="Загрузить" />
+                  
+
+                </div>
             </form>
 
+            <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="AddedUserRaion">
+                <div class="form-row shadow p-3 mb-5 bg-white rounded">
+
+                    <div class="alert alert-success col-md-12" role="alert">Список МО</div>
+
+                    <p>Скачайте файл шаблон для заполнения, заполните все поля и загрузите, чтобы сформировать логины и пароли для всех МО <a href="~/file/Formir_MO.xlsx">Шаблон для заполнения</a></p>
 
 
 
+                    <input type="file" name="uploadedFile" multiple /><br>
+                    <input class="btn btn-outline-success" type="submit" id="inputGroupFileAddon04" value="Загрузить" />
+                    <button class="btn btn-outline-success form-group col-md-4" asp-action="CleanDB">Очистить БД</button>
+
+                </div>
+            </form>
+
+        </div>
 
 
         </div>

@@ -16,6 +16,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -223,64 +224,72 @@ namespace EM_SPT.Controllers
             await Task.Yield();
             ListMo listMO = new ListMo();
             listMO.Mos = db.mo.ToList();
-
+            ListOos listOO = new ListOos();
             ListUser listU = new ListUser();
             listU.Users = db.User.ToList();
 
-            int[] masMO = (from k in db.mo select k.id).ToArray();
+            // int[] masMO = (from k in db.mo select k.id).ToArray();
 
-            for (int iMO = 0; iMO < masMO.Count(); iMO++)
+            foreach (var iMO in listMO.Mos)
             {
                 MemoryStream outputMemStream = new MemoryStream();
                 ZipOutputStream zipStream = new ZipOutputStream(outputMemStream);
                 zipStream.SetLevel(3); // уровень сжатия от 0 до 9
                 byte[] buffer = new byte[4096];
-                int[] masOO = (from k in db.oo.Where(p => p.id_mo == masMO[iMO]) select k.id).ToArray();
-                FileInfo newFile = new FileInfo(@"C:\1\pass.xlsx");
-                byte[] data;
-                using (var package = new ExcelPackage(newFile))
+                listOO.oos = db.oo.Where(p => p.id_mo == iMO.id).ToList();
+
+                foreach (var iOO in listOO.oos)
                 {
-                    for (int iOO = 1; iOO <= masOO.Count(); iOO++)
+                    FileInfo newFile = new FileInfo(@"C:\1\pass.xlsx");
+                    byte[] data;
+                    using (var package = new ExcelPackage(newFile))
                     {
                         int str = 6;
-                        package.Workbook.Worksheets.Add(masOO[iOO - 1].ToString());
-                        var workSheet = package.Workbook.Worksheets[iOO];
 
-                        workSheet.Cells[1, 2].Value = listMO.Mos[iMO].name;
-                        workSheet.Cells[3, 3].Value = listU.Users.Where(p => p.role == 2).First().login;
-                        workSheet.Cells[3, 4].Value = listU.Users.Where(p => p.role == 2).First().pass;
+                        var workSheet = package.Workbook.Worksheets[0];
+                        var oo_f = listU.Users.Where(p => p.role == 2 && p.id_oo == iOO.id).First();
+                        workSheet.Cells[1, 2].Value = iMO.name;
+                        workSheet.Cells[1, 3].Value = iOO.id;
+                        workSheet.Cells[1, 4].Value = iOO.kod;
+                        workSheet.Cells[3, 3].Value = oo_f.login;
+                        workSheet.Cells[3, 4].Value = oo_f.pass;
+
+                        int[] masKlass = (from k in db.klass.Where(p => p.id_oo == iOO.id) select k.id).ToArray();
                         ListUser listUKl = new ListUser();
-                        listUKl.Users = listU.Users.Where(p => p.role == 1).ToList();
+                        listUKl.Users = listU.Users.Where(p => masKlass.Distinct().Contains(p.id_klass) && p.role == 1).ToList();
 
-                        for (int i = 0; i < listUKl.Users.Count(); i++)
+                        foreach (var ListUKl in listUKl.Users)
                         {
                             ListUser listUT = new ListUser();
-                            listUT.Users = listU.Users.Where(p => p.role == 0 && p.id_klass == listUKl.Users[i].id).ToList();
-                            workSheet.Cells[str, 1].Value = listUKl.Users[i].id;
-                            workSheet.Cells[str, 2].Value = listUKl.Users[i].id_klass;
-                            workSheet.Cells[str, 3].Value = listUKl.Users[i].login;
-                            workSheet.Cells[str, 4].Value = listUKl.Users[i].pass;
+                            listUT.Users = listU.Users.Where(p => masKlass.Distinct().Contains(p.id_klass) && p.role == 0 && p.id_klass == ListUKl.id_klass).ToList();
+                            workSheet.Cells[str, 1].Value = ListUKl.id;
+                            workSheet.Cells[str, 2].Value = ListUKl.id_klass;
+                            workSheet.Cells[str, 3].Value = ListUKl.login;
+                            workSheet.Cells[str, 4].Value = ListUKl.pass;
                             str++;
-                            for (int j = 0; j < listUT.Users.Count(); j++)
+                            foreach (var listUTR in listUT.Users)
                             {
-                                workSheet.Cells[str, 1].Value = listUT.Users[j].id;
-                                workSheet.Cells[str, 2].Value = listUT.Users[j].id_klass;
-                                workSheet.Cells[str, 3].Value = listUT.Users[j].login;
-                                workSheet.Cells[str, 4].Value = listUT.Users[j].pass;
-                                workSheet.Cells[str, 5].Value = listUT.Users[j].test;
+                                workSheet.Cells[str, 1].Value = listUTR.id;
+                                workSheet.Cells[str, 2].Value = listUTR.id_klass;
+                                workSheet.Cells[str, 3].Value = listUTR.login;
+                                workSheet.Cells[str, 4].Value = listUTR.pass;
+                                workSheet.Cells[str, 5].Value = listUTR.test;
                                 str++;
                             }
                         }
+                        data = package.GetAsByteArray();
+                        string entryName;
+
+                        entryName = ZipEntry.CleanName(iOO.id + " " + iOO.kod + "_pass.xlsx");
+
+                        ZipEntry newEntry = new ZipEntry(entryName);
+
+                        newEntry.DateTime = package.File.LastWriteTime;
+                        newEntry.Size = data.Length;
+                        zipStream.PutNextEntry(newEntry);
                     }
-                    data = package.GetAsByteArray();
-                    string entryName;
 
-                    entryName = ZipEntry.CleanName(listMO.Mos[iMO].name + "_pass.xlsx");
 
-                    ZipEntry newEntry = new ZipEntry(entryName);
-                    newEntry.DateTime = package.File.LastWriteTime;
-                    newEntry.Size = data.Length;
-                    zipStream.PutNextEntry(newEntry);
 
 
                     using (MemoryStream streamReader = new MemoryStream(data))
@@ -302,8 +311,8 @@ namespace EM_SPT.Controllers
                 zipStream.Close();
 
                 outputMemStream.Position = 0;
-                string qw = @"\Vgruzka\" + masMO[iMO] + "_.zip";
-                System.IO.File.WriteAllBytes(Directory.GetCurrentDirectory() + "\\wwwroot\\Vgruzka\\" + masMO[iMO] + "_.zip", outputMemStream.ToArray());
+                string qw = @"\Vgruzka\" + iMO.name + "_.zip";
+                System.IO.File.WriteAllBytes(Directory.GetCurrentDirectory() + "\\wwwroot\\Vgruzka\\" + iMO.name + "_.zip", outputMemStream.ToArray());
             }
 
             return null;
@@ -351,12 +360,19 @@ namespace EM_SPT.Controllers
             {
                 int[] masKlass = (from k in db.klass.Where(p => p.id_oo == id)
                                   select k.id).ToArray();
+                List<klass> listKl = new List<klass>();
+                listKl = db.klass.Where(p => p.id_oo == id).ToList();
+
+
                 List<TestVKlass> list = new List<TestVKlass>();
+
                 foreach (int qwe in masKlass)
                 {
+                    var l = listKl.Where(p => p.id == qwe).First();
                     TestVKlass test = new TestVKlass();
                     test.oo = id;
                     test.id_klass = qwe;
+                    test.kod_kl = l.klass_n + " " + l.kod;
                     test.kol = listU.Users.Where(p => p.id_klass == qwe).Count();
                     list.Add(test);
                 }
@@ -367,6 +383,8 @@ namespace EM_SPT.Controllers
             {
                 List<TestVOO> list1 = new List<TestVOO>();
                 List<TestVKlass> list = new List<TestVKlass>();
+                List<oo> listOo = new List<oo>();
+                listOo = db.oo.Where(p => p.id_mo == mo).ToList();
                 foreach (int oo in masOO)
                 {
                     int[] masKlass = (from k in db.klass.Where(p => p.id_oo == oo)
@@ -380,14 +398,14 @@ namespace EM_SPT.Controllers
                         test.kol = listU.Users.Where(p => p.id_klass == qwe).Count();
                         list.Add(test);
                     }
-
-
-
                 }
+
                 foreach (int qwe in masOO)
                 {
+                    var l = listOo.Where(p => p.id == qwe).First();
                     TestVOO testVOO = new TestVOO();
                     testVOO.oo = qwe;
+                    testVOO.kod_oo = l.kod;
                     testVOO.kol = list.Where(p => p.oo == qwe).Sum(p => p.kol);
                     list1.Add(testVOO);
                 }
@@ -399,19 +417,23 @@ namespace EM_SPT.Controllers
         public IActionResult SpisokKlassa(int id)
         {
             var login = HttpContext.User.Identity.Name;
-            var klass = db.User.Where(p => p.login == login).First().id_oo;
-
+            var oo = db.User.Where(p => p.login == login).First().id_oo;
+            List<klass> list = new List<klass>();
+            list = db.klass.Where(p => p.id_oo == oo).ToList();
             if (id != 0)
             {
                 var query = from user in db.User
                             where user.id_klass == id && user.role == 0
+                            join us in list on user.id_klass equals us.id
                             select new
                             {
                                 user.id,
                                 user.test,
                                 user.login,
                                 user.pass,
-                                user.id_klass
+                                user.id_klass,
+                                us.kod,
+                                us.klass_n
                             };
                 ViewData["SumTestOO"] = query.Where(p => p.test == 1).Count();
 
@@ -420,10 +442,11 @@ namespace EM_SPT.Controllers
             else
             {
 
-                int[] mas = (from k in db.klass.Where(p => p.id_oo == klass)
+                int[] mas = (from k in db.klass.Where(p => p.id_oo == oo)
                              select k.id).ToArray();
 
                 var query = from u in db.User.Where(p => mas.Distinct().Contains(p.id_klass) && p.role == 0)
+                            join us in list on u.id_klass equals us.id
                             select new
                             {
 
@@ -432,13 +455,67 @@ namespace EM_SPT.Controllers
                                 u.login,
                                 u.pass,
                                 u.id_klass,
-
+                                us.kod,
+                                us.klass_n
                             };
 
                 ViewData["SumTestOO"] = query.Where(p => p.test == 1).Count();
                 return Json(query.ToArray());
             }
 
+        }
+
+        public IActionResult SpisokAdmKlassa(int id)
+        {
+            var login = HttpContext.User.Identity.Name;
+            var oo = db.User.Where(p => p.login == login).First().id_oo;
+            List<klass> list = new List<klass>();
+            list = db.klass.Where(p => p.id_oo == oo).ToList();
+
+
+            int[] mas = (from k in db.klass.Where(p => p.id_oo == oo)
+                         select k.id).ToArray();
+
+            var query = from u in db.User.Where(p => mas.Distinct().Contains(p.id_klass) && p.role == 1)
+                        join us in list on u.id_klass equals us.id
+                        select new
+                        {
+
+                            u.id,
+                            u.login,
+                            u.pass,
+                            u.id_klass,
+                            us.kod,
+                            us.klass_n
+                        };
+
+            return Json(query.ToArray());
+        }
+
+        public IActionResult SpisokAdmOO(int id)
+        {
+            var login = HttpContext.User.Identity.Name;
+            var mo = db.User.Where(p => p.login == login).First().id_mo;
+            List<oo> list = new List<oo>();
+            list = db.oo.Where(p => p.id_mo == mo).ToList();
+
+
+
+
+            var query = from u in db.User.Where(p => p.role == 2)
+                        join us in list on u.id_oo equals us.id
+                        select new
+                        {
+
+                            u.id,
+                            u.login,
+                            u.pass,
+                            u.id_oo,
+                            us.kod,
+                            us.tip
+                        };
+
+            return Json(query.ToArray());
         }
 
         public IActionResult Save_Param(SpisParam par)
@@ -668,9 +745,10 @@ namespace EM_SPT.Controllers
                         select new VigruzkaExcel
                         {
                             mo = mo.name,
-                            oo = oo.kod,
-                            klass_n = k.klass_n,
+                            oo = oo.id + " " + oo.kod,
+                            klass_n = k.klass_n.ToString() + " " + k.kod,
                             login = u.login,
+                            kod = k.kod,
                             ans = ans
                         }).ToList();
                 str2 = (from k in db.klass.Where(p => p.id == l.id && (p.klass_n > 9 || p.klass_n < 7))
@@ -685,10 +763,10 @@ namespace EM_SPT.Controllers
                         select new VigruzkaExcel
                         {
                             mo = mo.name,
-
-                            oo = oo.kod,
-                            klass_n = k.klass_n,
+                            oo = oo.id + " " + oo.kod,
+                            klass_n = k.klass_n.ToString() + " " + k.kod,
                             login = u.login,
+                            kod = k.kod,
                             ans = ans
                         }).ToList();
             }
@@ -708,9 +786,10 @@ namespace EM_SPT.Controllers
                         select new VigruzkaExcel
                         {
                             mo = mo.name,
-                            oo = o.kod,
-                            klass_n = k.klass_n,
+                            oo = o.id + " " + o.kod,
+                            klass_n = k.klass_n.ToString() + " " + k.kod,
                             login = us.login,
+                            kod = k.kod,
                             ans = ans
                         }).ToList();
                 str2 = (from us in db.User.Where(p => p.role == 0)
@@ -726,9 +805,10 @@ namespace EM_SPT.Controllers
                         select new VigruzkaExcel
                         {
                             mo = mo.name,
-                            oo = o.kod,
-                            klass_n = k.klass_n,
+                            oo = o.id + " " + o.kod,
+                            klass_n = k.klass_n.ToString() + " " + k.kod,
                             login = us.login,
+                            kod = k.kod,
                             ans = ans
                         }).ToList();
 
@@ -736,6 +816,7 @@ namespace EM_SPT.Controllers
             MemoryStream outputMemStream = new MemoryStream();
             ZipOutputStream zipStream = new ZipOutputStream(outputMemStream);
             zipStream.SetLevel(3); // уровень сжатия от 0 до 9
+
             byte[] buffer = new byte[4096];
 
 
@@ -1130,9 +1211,10 @@ namespace EM_SPT.Controllers
                             select new VigruzkaExcel
                             {
                                 mo = mo.name,
-                                oo = o.kod,
-                                klass_n = k.klass_n,
+                                oo = o.id + " " + o.kod,
+                                klass_n = k.klass_n.ToString() + " " + k.kod,
                                 login = us.login,
+                                kod = k.kod,
                                 ans = ans
                             }).ToList();
                 var str2 = (from us in db.User.Where(p => p.role == 0)
@@ -1148,9 +1230,10 @@ namespace EM_SPT.Controllers
                             select new VigruzkaExcel
                             {
                                 mo = mo.name,
-                                oo = o.kod,
-                                klass_n = k.klass_n,
+                                oo = o.id + " " + o.kod,
+                                klass_n = k.klass_n.ToString() + " " + k.kod,
                                 login = us.login,
+                                kod = k.kod,
                                 ans = ans
                             }).ToList();
                 var str3 = (from us in db.User.Where(p => p.role == 0)
@@ -1166,9 +1249,10 @@ namespace EM_SPT.Controllers
                             select new VigruzkaExcel
                             {
                                 mo = mo.name,
-                                oo = o.kod,
-                                klass_n = k.klass_n,
+                                oo = o.id + " " + o.kod,
+                                klass_n = k.klass_n.ToString() + " " + k.kod,
                                 login = us.login,
+                                kod = k.kod,
                                 ans = ans
                             }).ToList();
 
@@ -1655,19 +1739,19 @@ namespace EM_SPT.Controllers
         {
             if (model == null)
                 model = new CompositeModel();
-            //var login = HttpContext.User.Identity.Name;
-            user us = db.User.Where(p => p.id == 14).First();
+            var login = HttpContext.User.Identity.Name;
+            user us = db.User.Where(p => p.login == login).First();
             /* CompositeModel model = new CompositeModel();
              model.Ans = new answer();
              model.Ans.a1 = 1;*/
             if (model.Ans == null)
                 model.Ans = new answer();
             model.Ans.date = DateTime.Now;
-            model.Ans.id_user = 14;
+            model.Ans.id_user = db.User.Where(p => p.login == login).First().id;
 
             db.answer.Add(model.Ans);
 
-            us.test = 0;
+            us.test = 1;
             db.User.Update(us);
             await db.SaveChangesAsync();
 

@@ -44,6 +44,7 @@ namespace EM_SPT.Models
         public int id_klass { get; set; }
         public int kol { get; set; }
         public int oo { get; set; }
+        public string kod_kl { get; set; }
     }
 
     public class TestVOO
@@ -53,6 +54,7 @@ namespace EM_SPT.Models
         public int tip { get; set; }
         public int kol { get; set; }
         public int oo { get; set; }
+        public string kod_oo { get; set; }
         public int mo { get; set; }
     }
 
@@ -91,8 +93,9 @@ namespace EM_SPT.Models
         public string mo { get; set; }
         public string oo { get; set; }
         public string login { get; set; }
-        public int klass_n { get; set; }
+        public string klass_n { get; set; }
         public int sek { get; set; }
+        public string kod { get; set; }
         public answer ans { get; set; }
 
     }
@@ -247,7 +250,7 @@ namespace EM_SPT.Models
         public int a138 { get; set; }
         public int a139 { get; set; }
         public int a140 { get; set; }
-       [NotMapped]
+        [NotMapped]
         public int[] mas { get; set; }
 
         public void AddMas()

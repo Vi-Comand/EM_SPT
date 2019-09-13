@@ -86,15 +86,15 @@
             <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="AddedUserRaion">
                 <div class="form-row shadow p-3 mb-5 bg-white rounded">
 
-                    <div class="alert alert-success col-md-12" role="alert">Список МО</div>
+                    <div class="alert alert-success col-md-12" role="alert">Формирование учетных записей</div>
 
-                    <p>Скачайте файл шаблон для заполнения, заполните все поля и загрузите, чтобы сформировать логины и пароли для всех МО <a href="~/file/Formir_MO.xlsx">Шаблон для заполнения</a></p>
+                    <p>Скачайте файл шаблон для заполнения, заполните все поля и загрузите, чтобы сформировать логины и пароли для всех МО <a href="~/file/forma1.xlsx">Шаблон для заполнения</a></p>
 
 
 
                     <input type="file" name="uploadedFile" multiple /><br>
                     <input class="btn btn-outline-success" type="submit" id="inputGroupFileAddon04" value="Загрузить" />
-                    <button class="btn btn-outline-success form-group col-md-4" asp-action="CleanDB">Очистить БД</button>
+                    @*   <button class="btn btn-outline-success form-group col-md-4" asp-action="CleanDB">Очистить БД</button>*@
 
                 </div>
             </form>

@@ -137,6 +137,8 @@ namespace EM_SPT.Controllers
                     mo_Kol.name = db.mo.Find(iMO).name;
                     listMO.Add(mo_Kol);
                 }
+                listMO.Sort((a, b) => a.name.CompareTo(b.name));
+
                 par.Mos = listMO;
                 return View("adm_full", par);
             }
@@ -207,7 +209,7 @@ namespace EM_SPT.Controllers
             }
 
             //db.Database.ExecuteSqlCommand("TRUNCATE TABLE mo");
-
+            listMO.Sort((a, b) => a.name.CompareTo(b.name));
             par.Mos = listMO;
             ViewData["Sum"] = sum;
             ViewData["Sumt"] = sumt;
@@ -225,6 +227,8 @@ namespace EM_SPT.Controllers
             ListMo listMO = new ListMo();
             listMO.Mos = db.mo.ToList();
             ListOos listOO = new ListOos();
+            ListKlass listKl = new ListKlass();
+            listKl.klasses = db.klass.ToList();
             ListUser listU = new ListUser();
             listU.Users = db.User.ToList();
 
@@ -235,12 +239,14 @@ namespace EM_SPT.Controllers
                 MemoryStream outputMemStream = new MemoryStream();
                 ZipOutputStream zipStream = new ZipOutputStream(outputMemStream);
                 zipStream.SetLevel(3); // уровень сжатия от 0 до 9
+                ZipConstants.DefaultCodePage = 866;
+
                 byte[] buffer = new byte[4096];
                 listOO.oos = db.oo.Where(p => p.id_mo == iMO.id).ToList();
 
                 foreach (var iOO in listOO.oos)
                 {
-                    FileInfo newFile = new FileInfo(@"C:\1\pass.xlsx");
+                    FileInfo newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\pass.xlsx");
                     byte[] data;
                     using (var package = new ExcelPackage(newFile))
                     {
@@ -249,8 +255,8 @@ namespace EM_SPT.Controllers
                         var workSheet = package.Workbook.Worksheets[0];
                         var oo_f = listU.Users.Where(p => p.role == 2 && p.id_oo == iOO.id).First();
                         workSheet.Cells[1, 2].Value = iMO.name;
-                        workSheet.Cells[1, 3].Value = iOO.id;
-                        workSheet.Cells[1, 4].Value = iOO.kod;
+                        workSheet.Cells[2, 2].Value = iOO.id;
+                        workSheet.Cells[2, 3].Value = iOO.kod;
                         workSheet.Cells[3, 3].Value = oo_f.login;
                         workSheet.Cells[3, 4].Value = oo_f.pass;
 
@@ -260,17 +266,19 @@ namespace EM_SPT.Controllers
 
                         foreach (var ListUKl in listUKl.Users)
                         {
+                            var qww = listKl.klasses.Where(p => p.id == ListUKl.id_klass).First();
+                            string klass = ListUKl.id_klass + "_" + qww.klass_n + qww.kod;
                             ListUser listUT = new ListUser();
                             listUT.Users = listU.Users.Where(p => masKlass.Distinct().Contains(p.id_klass) && p.role == 0 && p.id_klass == ListUKl.id_klass).ToList();
                             workSheet.Cells[str, 1].Value = ListUKl.id;
-                            workSheet.Cells[str, 2].Value = ListUKl.id_klass;
+                            workSheet.Cells[str, 2].Value = klass;
                             workSheet.Cells[str, 3].Value = ListUKl.login;
                             workSheet.Cells[str, 4].Value = ListUKl.pass;
                             str++;
                             foreach (var listUTR in listUT.Users)
                             {
                                 workSheet.Cells[str, 1].Value = listUTR.id;
-                                workSheet.Cells[str, 2].Value = listUTR.id_klass;
+                                workSheet.Cells[str, 2].Value = klass;
                                 workSheet.Cells[str, 3].Value = listUTR.login;
                                 workSheet.Cells[str, 4].Value = listUTR.pass;
                                 workSheet.Cells[str, 5].Value = listUTR.test;
@@ -279,8 +287,9 @@ namespace EM_SPT.Controllers
                         }
                         data = package.GetAsByteArray();
                         string entryName;
+                        //ZipEntry.CleanName
+                        entryName = (iOO.id + " " + iOO.kod + "_pass.xlsx");
 
-                        entryName = ZipEntry.CleanName(iOO.id + " " + iOO.kod + "_pass.xlsx");
 
                         ZipEntry newEntry = new ZipEntry(entryName);
 
@@ -311,11 +320,11 @@ namespace EM_SPT.Controllers
                 zipStream.Close();
 
                 outputMemStream.Position = 0;
-                string qw = @"\Vgruzka\" + iMO.name + "_.zip";
-                System.IO.File.WriteAllBytes(Directory.GetCurrentDirectory() + "\\wwwroot\\Vgruzka\\" + iMO.name + "_.zip", outputMemStream.ToArray());
+                string qw = @"\Vgruzka\" + iMO.name + "_pass.zip";
+                System.IO.File.WriteAllBytes(Directory.GetCurrentDirectory() + "\\wwwroot\\Vgruzka\\" + iMO.name + "_pass.zip", outputMemStream.ToArray());
             }
 
-            return null;
+            return RedirectToAction("Index", "Home");
         }
 
 
@@ -826,7 +835,7 @@ namespace EM_SPT.Controllers
                 param para = new param();
                 para = db.param.Where(p => p.id == 1).First();
 
-                FileInfo newFile = new FileInfo(@"C:\1\s110.xlsx");
+                FileInfo newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s110.xlsx");
                 byte[] data;
                 using (var package = new ExcelPackage(newFile))
                 {
@@ -994,7 +1003,7 @@ namespace EM_SPT.Controllers
                 {
                     para = db.param.Where(p => p.id == 2).First();
                 }
-                FileInfo newFile = new FileInfo(@"C:\1\s140.xlsx");
+                FileInfo newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s140.xlsx");
                 byte[] data;
                 using (var package = new ExcelPackage(newFile))
                 {
@@ -1266,7 +1275,7 @@ namespace EM_SPT.Controllers
                 {
                     param para = new param();
                     para = db.param.Where(p => p.id == 1).First();
-                    FileInfo newFile = new FileInfo(@"C:\1\s110.xlsx");
+                    FileInfo newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s110.xlsx");
                     byte[] data;
                     using (var package = new ExcelPackage(newFile))
                     {
@@ -1413,7 +1422,7 @@ namespace EM_SPT.Controllers
                 {
                     param para = new param();
                     para = db.param.Where(p => p.id == 2).First();
-                    FileInfo newFile = new FileInfo(@"C:\1\s140.xlsx");
+                    FileInfo newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s140.xlsx");
                     byte[] data;
                     using (var package = new ExcelPackage(newFile))
                     {
@@ -1560,7 +1569,7 @@ namespace EM_SPT.Controllers
                 {
                     param para = new param();
                     para = db.param.Where(p => p.id == 2).First();
-                    FileInfo newFile = new FileInfo(@"C:\1\s140.xlsx");
+                    FileInfo newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s140.xlsx");
                     byte[] data;
                     using (var package = new ExcelPackage(newFile))
                     {

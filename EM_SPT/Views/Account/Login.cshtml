@@ -13,20 +13,21 @@
 
 
                     <div class="validation center" asp-validation-summary="ModelOnly" />
-                    <div class="form-row shadow p-3 mb-5 bg-white rounded">
+                    <div class="form-row  rounded">
                         <div class="alert col-md-12">
                             <label asp-for="Login">Введите логин <b style="color:transparent">__</b> </label>
-                            <input class="btn btn-outline-success" type="text" asp-for="Login" />
+                            <input class="btn btn-outline-success" type="text" asp-for="Login" data-toggle="tooltip" data-placement="top" title="Вводите логин на английской расскладке. Логин состоит из из номера класса 'K(0-99999)' и номера ученика 'T(0-9999)'" />
                             <span asp-validation-for="Login" />
                         </div>
                         <div class="alert col-md-12">
                             <label asp-for="Password">Введите пароль</label>
-                            <input class="btn btn-outline-success" asp-for="Password" />
+                            <input class="btn btn-outline-success" asp-for="Password" data-toggle="tooltip" data-placement="top" title="Пароль состоит только из цифр" />
                             <span asp-validation-for="Password" />
                         </div>
                         <div class="col-md-12">
                             <input type="submit" value="Войти" class="btn btn-outline-success" />
                         </div>
+
                     </div>
 
 

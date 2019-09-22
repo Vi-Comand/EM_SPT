@@ -15,6 +15,7 @@
                     <div class="validation center" asp-validation-summary="ModelOnly" />
                     <div class="form-row  rounded">
                         <div class="alert col-md-12">
+                            <p class="font-weight-light" style="font-size: small;">Вводите логин на английской расскладке.Пример логина(K123T2)/ Пример пароля (12345678)</p>
                             <label asp-for="Login">Введите логин <b style="color:transparent">__</b> </label>
                             <input class="btn btn-outline-success" type="text" asp-for="Login" data-toggle="tooltip" data-placement="top" title="Вводите логин на английской расскладке. Логин состоит из из номера класса 'K(0-99999)' и номера ученика 'T(0-9999)'" />
                             <span asp-validation-for="Login" />

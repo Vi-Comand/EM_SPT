@@ -58,7 +58,7 @@ namespace EM_SPT.Controllers
                 {
                     HomeController ff = new HomeController();
                     dateVigruz = DateTime.Now.ToShortDateString();
-                    ff.VigruzkaMO();
+                    //ff.VigruzkaMO();
                 }
             }
 
@@ -142,6 +142,24 @@ namespace EM_SPT.Controllers
                 par.Mos = listMO;
                 return View("adm_full", par);
             }
+            if (user.role == 5)
+            {
+                SpisParam par = new SpisParam();
+                par.Params = db.param.ToList();
+                List<mo_kol> listMO = new List<mo_kol>();
+                int[] masMO = (from k in db.mo select k.id).ToArray();
+
+                foreach (int iMO in masMO)
+                {
+                    mo_kol mo_Kol = new mo_kol();
+                    mo_Kol.name = db.mo.Find(iMO).name;
+                    listMO.Add(mo_Kol);
+                }
+                listMO.Sort((a, b) => a.name.CompareTo(b.name));
+
+                par.Mos = listMO;
+                return View("adm_stat", par);
+            }
             else { return RedirectToAction("start", "Home"); }
 
 
@@ -221,11 +239,86 @@ namespace EM_SPT.Controllers
             ViewData["SumKolVUZ_t"] = listMO.Sum(p => p.kol_VUZ_t);
             return View("adm_full", par);
         }
+
+        public IActionResult Spisok_stat()
+        {
+            SpisParam par = new SpisParam();
+            par.Params = db.param.ToList();
+            List<mo_kol> listMO = new List<mo_kol>();
+            List<TestVOO> listOO = new List<TestVOO>();
+            List<TestVKlass> listKl = new List<TestVKlass>();
+
+            ListUser listU = new ListUser();
+            listU.Users = db.User.Where(p => p.test == 1).ToList();
+
+
+            int[] masMO = (from k in db.mo select k.id).ToArray();
+            int sum = 0;
+            int sumt = 0;
+            foreach (int iMO in masMO)
+            {
+                int[] masOO = (from k in db.oo.Where(p => p.id_mo == iMO) select k.id).ToArray();
+                foreach (int iOO in masOO)
+                {
+
+                    int[] masKlass = (from k in db.klass.Where(p => p.id_oo == iOO) select k.id).ToArray();
+
+                    foreach (int qwe in masKlass)
+                    {
+                        TestVKlass test = new TestVKlass();
+                        test.oo = iOO;
+                        test.id_klass = qwe;
+                        test.kol = listU.Users.Where(p => p.id_klass == qwe).Count();
+                        listKl.Add(test);
+                    }
+
+                }
+                foreach (int qwe in masOO)
+                {
+                    TestVOO testVOO = new TestVOO();
+                    testVOO.oo = qwe;
+                    testVOO.mo = iMO;
+                    testVOO.tip = db.oo.Where(p => p.id == qwe).First().tip;
+                    testVOO.kol = listKl.Where(p => p.oo == qwe).Sum(p => p.kol);
+                    listOO.Add(testVOO);
+                }
+                mo_kol mo_Kol = new mo_kol();
+                mo_Kol.id = iMO;
+                mo_Kol.name = db.mo.Find(iMO).name;
+                mo_Kol.kol_OO = listOO.Where(p => p.tip == 1 && p.mo == iMO).Count();
+                mo_Kol.kol_SPO = listOO.Where(p => p.tip == 2 && p.mo == iMO).Count();
+                mo_Kol.kol_VUZ = listOO.Where(p => p.tip == 3 && p.mo == iMO).Count();
+                mo_Kol.kol_OO_t = listOO.Where(p => p.tip == 1 && p.mo == iMO).Sum(p => p.kol);
+                mo_Kol.kol_SPO_t = listOO.Where(p => p.tip == 2 && p.mo == iMO).Sum(p => p.kol);
+                mo_Kol.kol_VUZ_t = listOO.Where(p => p.tip == 3 && p.mo == iMO).Sum(p => p.kol);
+                listMO.Add(mo_Kol);
+                int s1 = listMO.Where(p => p.id == iMO).Sum(p => p.kol_OO) + listMO.Where(p => p.id == iMO).Sum(p => p.kol_SPO) + listMO.Where(p => p.id == iMO).Sum(p => p.kol_VUZ);
+                int s2 = listMO.Where(p => p.id == iMO).Sum(p => p.kol_OO_t) + listMO.Where(p => p.id == iMO).Sum(p => p.kol_SPO_t) + listMO.Where(p => p.id == iMO).Sum(p => p.kol_VUZ_t);
+                ViewData["SumKolVOO" + iMO] = s1;
+                ViewData["SumKolVTest" + iMO] = s2;
+                sum = sum + s1;
+                sumt = sumt + s2;
+            }
+
+            //db.Database.ExecuteSqlCommand("TRUNCATE TABLE mo");
+            listMO.Sort((a, b) => a.name.CompareTo(b.name));
+            par.Mos = listMO;
+            ViewData["Sum"] = sum;
+            ViewData["Sumt"] = sumt;
+            ViewData["SumKolOO"] = listMO.Sum(p => p.kol_OO);
+            ViewData["SumKolSPO"] = listMO.Sum(p => p.kol_SPO);
+            ViewData["SumKolVUZ"] = listMO.Sum(p => p.kol_VUZ);
+            ViewData["SumKolOO_t"] = listMO.Sum(p => p.kol_OO_t);
+            ViewData["SumKolSPO_t"] = listMO.Sum(p => p.kol_SPO_t);
+            ViewData["SumKolVUZ_t"] = listMO.Sum(p => p.kol_VUZ_t);
+            return View("adm_stat", par);
+        }
+
         public async Task<IActionResult> Pass_excel()
         {
             await Task.Yield();
             ListMo listMO = new ListMo();
-            listMO.Mos = db.mo.ToList();
+            listMO.Mos = db.mo.Where(p => p.id == 15).ToList();
             ListOos listOO = new ListOos();
             ListKlass listKl = new ListKlass();
             listKl.klasses = db.klass.ToList();

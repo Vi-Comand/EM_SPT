@@ -132,8 +132,8 @@
                                             <td>@Model.Mos[i].kol_SPO_t</td>
                                             <td>@Model.Mos[i].kol_VUZ</td>
                                             <td>@Model.Mos[i].kol_VUZ_t</td>
-                                            <td class="tab-itog">@ViewData["SumKolVOO" + Model.Mos[i].id]</td>
-                                            <td class="tab-itog">@ViewData["SumKolVTest" + Model.Mos[i].id]</td>
+                                            <td class="tab-itog">@Model.Mos[i].sum_OO</td>
+                                            <td class="tab-itog">@Model.Mos[i].sum_t</td>
                                         </tr>
                                     }
                                 </tbody>
@@ -171,6 +171,9 @@
 
             <div class="form-row shadow p-3 mb-5 bg-white rounded">
                 <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="Pass_excel">
+                    <input class="btn btn-outline-success" type="submit" id="wq" value="Сформировать" />
+                </form>
+                <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="Result_po_click_MO">
                     <input class="btn btn-outline-success" type="submit" id="wq" value="Сформировать" />
                 </form>
                 <table class="tab">

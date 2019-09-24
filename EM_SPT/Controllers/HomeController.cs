@@ -165,8 +165,7 @@ namespace EM_SPT.Controllers
 
 
         }
-
-        public IActionResult Spisok_full()
+      /*  public IActionResult Spisok_full1()
         {
             SpisParam par = new SpisParam();
             par.Params = db.param.ToList();
@@ -174,69 +173,121 @@ namespace EM_SPT.Controllers
             List<TestVOO> listOO = new List<TestVOO>();
             List<TestVKlass> listKl = new List<TestVKlass>();
 
-            ListUser listU = new ListUser();
-            listU.Users = db.User.Where(p => p.test == 1).ToList();
+            List<Spisok_full> listU = new List<Spisok_full>();
+            var list_oo = db.oo;
+            var list_mo = db.mo;
+            listU = (from u in db.User.Where(p => p.test == 1)
+                        join kl in db.klass on u.id_klass equals kl.id
+                        join oo in db.oo on kl.id_oo equals oo.id
+                        join mo in db.mo on oo.id_mo equals mo.id
+                        select new Spisok_full
+                        {
+                            id_user = u.id,
+                            id_mo = mo.id,
+                           // name_mo = mo.name,
+                            id_oo = oo.id,
+                            tip=oo.tip
 
 
-            int[] masMO = (from k in db.mo select k.id).ToArray();
-            int sum = 0;
-            int sumt = 0;
-            foreach (int iMO in masMO)
+                            
+                        }).ToList();
+
+            foreach (mo mo in list_mo)
             {
-                int[] masOO = (from k in db.oo.Where(p => p.id_mo == iMO) select k.id).ToArray();
-                foreach (int iOO in masOO)
-                {
-
-                    int[] masKlass = (from k in db.klass.Where(p => p.id_oo == iOO) select k.id).ToArray();
-
-                    foreach (int qwe in masKlass)
-                    {
-                        TestVKlass test = new TestVKlass();
-                        test.oo = iOO;
-                        test.id_klass = qwe;
-                        test.kol = listU.Users.Where(p => p.id_klass == qwe).Count();
-                        listKl.Add(test);
-                    }
-
-                }
-                foreach (int qwe in masOO)
-                {
-                    TestVOO testVOO = new TestVOO();
-                    testVOO.oo = qwe;
-                    testVOO.mo = iMO;
-                    testVOO.tip = db.oo.Where(p => p.id == qwe).First().tip;
-                    testVOO.kol = listKl.Where(p => p.oo == qwe).Sum(p => p.kol);
-                    listOO.Add(testVOO);
-                }
                 mo_kol mo_Kol = new mo_kol();
-                mo_Kol.id = iMO;
-                mo_Kol.name = db.mo.Find(iMO).name;
-                mo_Kol.kol_OO = listOO.Where(p => p.tip == 1 && p.mo == iMO).Count();
-                mo_Kol.kol_SPO = listOO.Where(p => p.tip == 2 && p.mo == iMO).Count();
-                mo_Kol.kol_VUZ = listOO.Where(p => p.tip == 3 && p.mo == iMO).Count();
-                mo_Kol.kol_OO_t = listOO.Where(p => p.tip == 1 && p.mo == iMO).Sum(p => p.kol);
-                mo_Kol.kol_SPO_t = listOO.Where(p => p.tip == 2 && p.mo == iMO).Sum(p => p.kol);
-                mo_Kol.kol_VUZ_t = listOO.Where(p => p.tip == 3 && p.mo == iMO).Sum(p => p.kol);
+                mo_Kol.id =mo.id ;
+                mo_Kol.name = mo.name;
+                mo_Kol.kol_OO = list_oo.Where(p => p.tip == 1 && p.id_mo == mo.id).Count();
+                mo_Kol.kol_SPO = list_oo.Where(p => p.tip == 2 && p.id_mo == mo.id).Count();
+                mo_Kol.kol_VUZ = list_oo.Where(p => p.tip == 3 && p.id_mo == mo.id).Count();
+                mo_Kol.kol_OO_t = listU.Where(p => p.tip == 1 && p.id_mo == mo.id).Count();
+                mo_Kol.kol_SPO_t = listU.Where(p => p.tip == 2 && p.id_mo == mo.id).Count();
+                mo_Kol.kol_VUZ_t = listU.Where(p => p.tip == 3 && p.id_mo == mo.id).Count();
+                mo_Kol.sum_OO = mo_Kol.kol_OO + mo_Kol.kol_SPO + mo_Kol.kol_VUZ;
+                mo_Kol.sum_t = mo_Kol.kol_OO_t + mo_Kol.kol_SPO_t + mo_Kol.kol_VUZ_t;
+
                 listMO.Add(mo_Kol);
-                int s1 = listMO.Where(p => p.id == iMO).Sum(p => p.kol_OO) + listMO.Where(p => p.id == iMO).Sum(p => p.kol_SPO) + listMO.Where(p => p.id == iMO).Sum(p => p.kol_VUZ);
-                int s2 = listMO.Where(p => p.id == iMO).Sum(p => p.kol_OO_t) + listMO.Where(p => p.id == iMO).Sum(p => p.kol_SPO_t) + listMO.Where(p => p.id == iMO).Sum(p => p.kol_VUZ_t);
-                ViewData["SumKolVOO" + iMO] = s1;
-                ViewData["SumKolVTest" + iMO] = s2;
-                sum = sum + s1;
-                sumt = sumt + s2;
             }
 
-            //db.Database.ExecuteSqlCommand("TRUNCATE TABLE mo");
+
+
+
             listMO.Sort((a, b) => a.name.CompareTo(b.name));
             par.Mos = listMO;
-            ViewData["Sum"] = sum;
-            ViewData["Sumt"] = sumt;
+            ViewData["Sum"] = list_oo.Count();
+            ViewData["Sumt"] = listU.Count();
             ViewData["SumKolOO"] = listMO.Sum(p => p.kol_OO);
             ViewData["SumKolSPO"] = listMO.Sum(p => p.kol_SPO);
             ViewData["SumKolVUZ"] = listMO.Sum(p => p.kol_VUZ);
             ViewData["SumKolOO_t"] = listMO.Sum(p => p.kol_OO_t);
             ViewData["SumKolSPO_t"] = listMO.Sum(p => p.kol_SPO_t);
             ViewData["SumKolVUZ_t"] = listMO.Sum(p => p.kol_VUZ_t);
+            return View("adm_stat", par);
+
+
+           
+        
+        }*/
+            public IActionResult Spisok_full()
+        {
+
+            SpisParam par = new SpisParam();
+            par.Params = db.param.ToList();
+            List<mo_kol> listMO = new List<mo_kol>();
+            List<TestVOO> listOO = new List<TestVOO>();
+            List<TestVKlass> listKl = new List<TestVKlass>();
+
+            List<Spisok_full> listU = new List<Spisok_full>();
+            var list_oo = db.oo;
+            var list_mo = db.mo;
+            listU = (from u in db.User.Where(p => p.test == 1)
+                     join kl in db.klass on u.id_klass equals kl.id
+                     join oo in db.oo on kl.id_oo equals oo.id
+                     join mo in db.mo on oo.id_mo equals mo.id
+                     select new Spisok_full
+                     {
+                         id_user = u.id,
+                         id_mo = mo.id,
+                         // name_mo = mo.name,
+                         id_oo = oo.id,
+                         tip = oo.tip
+
+
+
+                     }).ToList();
+
+            foreach (mo mo in list_mo)
+            {
+                mo_kol mo_Kol = new mo_kol();
+                mo_Kol.id = mo.id;
+                mo_Kol.name = mo.name;
+                mo_Kol.kol_OO = list_oo.Where(p => p.tip == 1 && p.id_mo == mo.id).Count();
+                mo_Kol.kol_SPO = list_oo.Where(p => p.tip == 2 && p.id_mo == mo.id).Count();
+                mo_Kol.kol_VUZ = list_oo.Where(p => p.tip == 3 && p.id_mo == mo.id).Count();
+                mo_Kol.kol_OO_t = listU.Where(p => p.tip == 1 && p.id_mo == mo.id).Count();
+                mo_Kol.kol_SPO_t = listU.Where(p => p.tip == 2 && p.id_mo == mo.id).Count();
+                mo_Kol.kol_VUZ_t = listU.Where(p => p.tip == 3 && p.id_mo == mo.id).Count();
+                mo_Kol.sum_OO = mo_Kol.kol_OO + mo_Kol.kol_SPO + mo_Kol.kol_VUZ;
+                mo_Kol.sum_t = mo_Kol.kol_OO_t + mo_Kol.kol_SPO_t + mo_Kol.kol_VUZ_t;
+
+                listMO.Add(mo_Kol);
+            }
+
+
+
+
+            listMO.Sort((a, b) => a.name.CompareTo(b.name));
+            par.Mos = listMO;
+            ViewData["Sum"] = list_oo.Count();
+            ViewData["Sumt"] = listU.Count();
+            ViewData["SumKolOO"] = listMO.Sum(p => p.kol_OO);
+            ViewData["SumKolSPO"] = listMO.Sum(p => p.kol_SPO);
+            ViewData["SumKolVUZ"] = listMO.Sum(p => p.kol_VUZ);
+            ViewData["SumKolOO_t"] = listMO.Sum(p => p.kol_OO_t);
+            ViewData["SumKolSPO_t"] = listMO.Sum(p => p.kol_SPO_t);
+            ViewData["SumKolVUZ_t"] = listMO.Sum(p => p.kol_VUZ_t);
+        
+
             return View("adm_full", par);
         }
 
@@ -248,63 +299,49 @@ namespace EM_SPT.Controllers
             List<TestVOO> listOO = new List<TestVOO>();
             List<TestVKlass> listKl = new List<TestVKlass>();
 
-            ListUser listU = new ListUser();
-            listU.Users = db.User.Where(p => p.test == 1).ToList();
+            List<Spisok_full> listU = new List<Spisok_full>();
+            var list_oo = db.oo;
+            var list_mo = db.mo;
+            listU = (from u in db.User.Where(p => p.test == 1)
+                     join kl in db.klass on u.id_klass equals kl.id
+                     join oo in db.oo on kl.id_oo equals oo.id
+                     join mo in db.mo on oo.id_mo equals mo.id
+                     select new Spisok_full
+                     {
+                         id_user = u.id,
+                         id_mo = mo.id,
+                         // name_mo = mo.name,
+                         id_oo = oo.id,
+                         tip = oo.tip
 
 
-            int[] masMO = (from k in db.mo select k.id).ToArray();
-            int sum = 0;
-            int sumt = 0;
-            foreach (int iMO in masMO)
+
+                     }).ToList();
+
+            foreach (mo mo in list_mo)
             {
-                int[] masOO = (from k in db.oo.Where(p => p.id_mo == iMO) select k.id).ToArray();
-                foreach (int iOO in masOO)
-                {
-
-                    int[] masKlass = (from k in db.klass.Where(p => p.id_oo == iOO) select k.id).ToArray();
-
-                    foreach (int qwe in masKlass)
-                    {
-                        TestVKlass test = new TestVKlass();
-                        test.oo = iOO;
-                        test.id_klass = qwe;
-                        test.kol = listU.Users.Where(p => p.id_klass == qwe).Count();
-                        listKl.Add(test);
-                    }
-
-                }
-                foreach (int qwe in masOO)
-                {
-                    TestVOO testVOO = new TestVOO();
-                    testVOO.oo = qwe;
-                    testVOO.mo = iMO;
-                    testVOO.tip = db.oo.Where(p => p.id == qwe).First().tip;
-                    testVOO.kol = listKl.Where(p => p.oo == qwe).Sum(p => p.kol);
-                    listOO.Add(testVOO);
-                }
                 mo_kol mo_Kol = new mo_kol();
-                mo_Kol.id = iMO;
-                mo_Kol.name = db.mo.Find(iMO).name;
-                mo_Kol.kol_OO = listOO.Where(p => p.tip == 1 && p.mo == iMO).Count();
-                mo_Kol.kol_SPO = listOO.Where(p => p.tip == 2 && p.mo == iMO).Count();
-                mo_Kol.kol_VUZ = listOO.Where(p => p.tip == 3 && p.mo == iMO).Count();
-                mo_Kol.kol_OO_t = listOO.Where(p => p.tip == 1 && p.mo == iMO).Sum(p => p.kol);
-                mo_Kol.kol_SPO_t = listOO.Where(p => p.tip == 2 && p.mo == iMO).Sum(p => p.kol);
-                mo_Kol.kol_VUZ_t = listOO.Where(p => p.tip == 3 && p.mo == iMO).Sum(p => p.kol);
+                mo_Kol.id = mo.id;
+                mo_Kol.name = mo.name;
+                mo_Kol.kol_OO = list_oo.Where(p => p.tip == 1 && p.id_mo == mo.id).Count();
+                mo_Kol.kol_SPO = list_oo.Where(p => p.tip == 2 && p.id_mo == mo.id).Count();
+                mo_Kol.kol_VUZ = list_oo.Where(p => p.tip == 3 && p.id_mo == mo.id).Count();
+                mo_Kol.kol_OO_t = listU.Where(p => p.tip == 1 && p.id_mo == mo.id).Count();
+                mo_Kol.kol_SPO_t = listU.Where(p => p.tip == 2 && p.id_mo == mo.id).Count();
+                mo_Kol.kol_VUZ_t = listU.Where(p => p.tip == 3 && p.id_mo == mo.id).Count();
+                mo_Kol.sum_OO = mo_Kol.kol_OO + mo_Kol.kol_SPO + mo_Kol.kol_VUZ;
+                mo_Kol.sum_t = mo_Kol.kol_OO_t + mo_Kol.kol_SPO_t + mo_Kol.kol_VUZ_t;
+
                 listMO.Add(mo_Kol);
-                int s1 = listMO.Where(p => p.id == iMO).Sum(p => p.kol_OO) + listMO.Where(p => p.id == iMO).Sum(p => p.kol_SPO) + listMO.Where(p => p.id == iMO).Sum(p => p.kol_VUZ);
-                int s2 = listMO.Where(p => p.id == iMO).Sum(p => p.kol_OO_t) + listMO.Where(p => p.id == iMO).Sum(p => p.kol_SPO_t) + listMO.Where(p => p.id == iMO).Sum(p => p.kol_VUZ_t);
-                ViewData["SumKolVOO" + iMO] = s1;
-                ViewData["SumKolVTest" + iMO] = s2;
-                sum = sum + s1;
-                sumt = sumt + s2;
             }
 
-            //db.Database.ExecuteSqlCommand("TRUNCATE TABLE mo");
+
+
+
             listMO.Sort((a, b) => a.name.CompareTo(b.name));
             par.Mos = listMO;
-            ViewData["Sum"] = sum;
-            ViewData["Sumt"] = sumt;
+            ViewData["Sum"] = list_oo.Count();
+            ViewData["Sumt"] = listU.Count();
             ViewData["SumKolOO"] = listMO.Sum(p => p.kol_OO);
             ViewData["SumKolSPO"] = listMO.Sum(p => p.kol_SPO);
             ViewData["SumKolVUZ"] = listMO.Sum(p => p.kol_VUZ);
@@ -312,9 +349,749 @@ namespace EM_SPT.Controllers
             ViewData["SumKolSPO_t"] = listMO.Sum(p => p.kol_SPO_t);
             ViewData["SumKolVUZ_t"] = listMO.Sum(p => p.kol_VUZ_t);
             return View("adm_stat", par);
-        }
 
-        public async Task<IActionResult> Pass_excel()
+        }
+        public async Task<IActionResult> Result_po_click_MO()
+        {
+           /* var ListResult = (from u in db.User.Where(p => p.test == 1)
+                     join kl in db.klass on u.id_klass equals kl.id
+                     join oo in db.oo on kl.id_oo equals oo.id
+                     join mo in db.mo on oo.id_mo equals mo.id
+                              join ans in db.answer on u.id equals ans.id_user
+                              select new VigruzkaExcel
+                              {
+                                  mo = mo.name,
+                                  oo = oo.id + " " + oo.kod,
+                                  klass_n = kl.klass_n.ToString() + " " + kl.kod,
+                                  login = u.login,
+                                  kod = kl.kod,
+                                  ans = ans
+                              }).ToList();*/
+
+
+
+
+            if (!Directory.Exists(@"~\Vgruzka\"))
+            {
+                Directory.CreateDirectory(@"~\Vgruzka\");
+
+            }
+
+            int[] skl = (from k in db.oo.Where(p => p.id_mo == 15 && p.tip == 1) select k.id).ToArray();
+            int[] spo  = (from k in db.oo.Where(p => p.id_mo == 15 &&  p.tip == 2) select k.id).ToArray();
+            int[] vuz= (from k in db.oo.Where(p => p.id_mo == 15 && p.tip == 3 ) select k.id).ToArray();
+            var str1 = (from u in db.User.Where(p => p.test == 1 && p.role == 0)
+                 join kl in db.klass.Where(p => skl.Contains(p.id_oo) && p.klass_n < 10 && p.klass_n > 6) on u.id_klass equals kl.id
+                 join oo in db.oo on kl.id_oo equals oo.id
+                 join mo in db.mo on oo.id_mo equals mo.id
+                 join ans in db.answer on u.id equals ans.id_user
+                 select new VigruzkaExcel
+                 {
+                     mo = mo.name,
+                     oo = oo.id + " " + oo.kod,
+                     klass_n = kl.klass_n.ToString() + " " + kl.kod,
+                     login = u.login,
+                     kod = kl.kod,
+                     ans = ans
+                 }).OrderBy(p => p.oo).ToList();
+
+
+
+
+            var str2 =
+                (from u in db.User.Where(p => p.test == 1 && p.role == 0)
+                 join kl in db.klass.Where(p => skl.Contains(p.id_oo) && p.klass_n > 9) on u.id_klass equals kl.id
+                 join oo in db.oo on kl.id_oo equals oo.id
+                 join mo in db.mo on oo.id_mo equals mo.id
+                 join ans in db.answer on u.id equals ans.id_user
+                 select new VigruzkaExcel
+                 {
+                     mo = mo.name,
+                     oo = oo.id + " " + oo.kod,
+                     klass_n = kl.klass_n.ToString() + " " + kl.kod,
+                     login = u.login,
+                     kod = kl.kod,
+                     ans = ans
+                 }).OrderBy(p => p.oo).ToList();
+
+
+
+         
+            var str3 =
+                 (from u in db.User.Where(p => p.test == 1 && p.role == 0)
+                  join kl in db.klass.Where(p => spo.Contains(p.id_oo) && p.klass_n < 7) on u.id_klass equals kl.id
+                  join oo in db.oo on kl.id_oo equals oo.id
+                  join mo in db.mo on oo.id_mo equals mo.id
+                  join ans in db.answer on u.id equals ans.id_user
+                  select new VigruzkaExcel
+                  {
+                      mo = mo.name,
+                      oo = oo.id + " " + oo.kod,
+                      klass_n = kl.klass_n.ToString() + " " + kl.kod,
+                      login = u.login,
+                      kod = kl.kod,
+                      ans = ans
+                  }).OrderBy(p => p.oo).ToList();
+            var str4 =
+              (from u in db.User.Where(p => p.test == 1 && p.role == 0)
+               join kl in db.klass.Where(p => vuz.Contains(p.id_oo) && p.klass_n < 7) on u.id_klass equals kl.id
+               join oo in db.oo on kl.id_oo equals oo.id
+               join mo in db.mo on oo.id_mo equals mo.id
+               join ans in db.answer on u.id equals ans.id_user
+               select new VigruzkaExcel
+               {
+                   mo = mo.name,
+                   oo = oo.id + " " + oo.kod,
+                   klass_n = kl.klass_n.ToString() + " " + kl.kod,
+                   login = u.login,
+                   kod = kl.kod,
+                   ans = ans
+               }).OrderBy(p => p.oo).ToList();
+
+
+
+
+
+
+
+            MemoryStream outputMemStream = new MemoryStream();
+            ZipOutputStream zipStream = new ZipOutputStream(outputMemStream);
+            zipStream.SetLevel(1); // уровень сжатия от 0 до 9
+            byte[] buffer = new byte[32768];
+
+            if (str1.Count != 0)
+            {
+                param para = new param();
+                para = db.param.Where(p => p.id == 1).First();
+                FileInfo newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s110.xlsx");
+                byte[] data;
+                using (var package = new ExcelPackage(newFile))
+                {
+
+                    var workSheet = package.Workbook.Worksheets[0];
+                    var workSheet1 = package.Workbook.Worksheets[1];
+                    int i = 10;
+                  /*  workSheet.DeleteRow(11 + str1.Count, 5000, true);
+                    workSheet1.DeleteRow(11 + str1.Count, 5000, true);*/
+
+
+                    workSheet.Cells[7, 2].Value = str1.Count;
+                    workSheet.Cells[2, 184].Value = para.po_v;
+                    workSheet.Cells[3, 184].Value = para.po_n;
+                    workSheet.Cells[2, 186].Value = para.pvg_v;
+                    workSheet.Cells[3, 186].Value = para.pvg_n;
+                    workSheet.Cells[2, 188].Value = para.pau_v;
+                    workSheet.Cells[3, 188].Value = para.pau_n;
+                    workSheet.Cells[2, 190].Value = para.sr_v;
+                    workSheet.Cells[3, 190].Value = para.sr_n;
+                    workSheet.Cells[2, 192].Value = para.i_v;
+                    workSheet.Cells[3, 192].Value = para.i_n;
+                    workSheet.Cells[2, 194].Value = para.t_v;
+                    workSheet.Cells[3, 194].Value = para.t_n;
+                    workSheet.Cells[2, 196].Value = para.pr_v;
+                    workSheet.Cells[3, 196].Value = para.pr_n;
+                    workSheet.Cells[2, 198].Value = para.poo_v;
+                    workSheet.Cells[3, 198].Value = para.poo_n;
+                    workSheet.Cells[2, 200].Value = para.sa_v;
+                    workSheet.Cells[3, 200].Value = para.sa_n;
+                    workSheet.Cells[2, 202].Value = para.sp_v;
+                    workSheet.Cells[3, 202].Value = para.sp_n;
+                    workSheet.Cells[2, 204].Value = para.fr_v;
+                    workSheet.Cells[3, 204].Value = para.fr_n;
+                    workSheet.Cells[2, 205].Value = para.fz_v;
+                    workSheet.Cells[3, 205].Value = para.fz_n;
+                    foreach (var stroka in str1)
+                    {
+                        answer row = stroka.ans;
+
+                        i++;
+
+
+                        workSheet.Cells[i, 2].Value = stroka.mo;
+                        workSheet.Cells[i, 3].Value = stroka.oo;
+                        workSheet.Cells[i, 4].Value = stroka.klass_n;
+                        workSheet.Cells[i, 5].Value = stroka.login;
+                        if (row != null)
+                        {
+                            workSheet.Cells[i, 6].Value = row.pol;
+                            workSheet.Cells[i, 7].Value = row.vozr;
+                            workSheet.Cells[i, 8].Value = row.sek;
+                            row.AddMas();
+                            int a0 = 0;
+                            int a1 = 0;
+                            int a2 = 0;
+                            int a3 = 0;
+                            int ser = 0;
+                            int bolshe_20 = 0;
+                            int bolshe_70 = 0;
+                            for (int j = 9; j < 119; j++)
+                            {
+                                if (bolshe_20 != 1)
+                                {
+                                    if (row.mas[j - 9] == (j - 10 != -1 ? row.mas[j - 10] : row.mas[0]))
+                                    {
+                                        ser++;
+                                    }
+                                    else
+                                    {
+                                        if (ser > 20)
+                                            bolshe_20 = 1;
+
+                                        if (row.mas[j - 10] == 0)
+                                        {
+                                            a0 = a0 + ser;
+
+                                        }
+                                        if (row.mas[j - 10] == 1)
+                                        {
+                                            a1 = a1 + ser;
+
+
+                                        }
+                                        if (row.mas[j - 10] == 2)
+                                        {
+                                            a2 = a2 + ser;
+
+
+                                        }
+                                        if (row.mas[j - 10] == 3)
+                                        {
+                                            a3 = a3 + ser;
+
+
+                                        }
+                                        ser = 1;
+
+
+                                    }
+                                    if (j - 9 == 109)
+                                        if (ser > 20)
+                                            bolshe_20 = 1;
+
+                                }
+
+                                workSheet.Cells[i, j].Value = row.mas[j - 9];
+                            }
+                            if (a1 > 77 || a2 > 77 || a3 > 77 || a0 > 77)
+                                bolshe_70 = 1;
+                            workSheet.Cells[i, 182].Value = (bolshe_70 == 1 || bolshe_20 == 1 ? 1 : 0);
+                        }
+                    }
+
+
+                    data = package.GetAsByteArray();
+                    string entryName;
+
+                    entryName = ZipEntry.CleanName("7-9_klass.xlsx");
+
+                    ZipEntry newEntry = new ZipEntry(entryName);
+                    newEntry.DateTime = package.File.LastWriteTime;
+                    newEntry.Size = data.Length;
+                    zipStream.PutNextEntry(newEntry);
+
+
+
+                    using (MemoryStream streamReader = new MemoryStream(data))
+                    {
+                        StreamUtils.Copy(streamReader, zipStream, buffer);
+
+                    }
+                    zipStream.CloseEntry();
+
+
+
+                }
+
+            }
+
+
+
+            if (str2.Count != 0)
+            {
+                param para = new param();
+                para = db.param.Where(p => p.id == 2).First();
+                FileInfo newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s140.xlsx");
+                byte[] data;
+                using (var package = new ExcelPackage(newFile))
+                {
+
+                    var workSheet = package.Workbook.Worksheets[0];
+                    var workSheet1 = package.Workbook.Worksheets[1];
+
+                    int i = 10;
+                    /*workSheet.DeleteRow(11 + str2.Count, 5000, true);
+                    workSheet1.DeleteRow(11 + str2.Count, 5000, true);*/
+
+
+                    workSheet.Cells[7, 2].Value = str2.Count;
+                    workSheet.Cells[2, 217].Value = para.po_v;
+                    workSheet.Cells[3, 217].Value = para.po_n;
+                    workSheet.Cells[2, 219].Value = para.pvg_v;
+                    workSheet.Cells[3, 219].Value = para.pvg_n;
+                    workSheet.Cells[2, 221].Value = para.pau_v;
+                    workSheet.Cells[3, 221].Value = para.pau_n;
+                    workSheet.Cells[2, 223].Value = para.sr_v;
+                    workSheet.Cells[3, 223].Value = para.sr_n;
+                    workSheet.Cells[2, 225].Value = para.i_v;
+                    workSheet.Cells[3, 225].Value = para.i_n;
+                    workSheet.Cells[2, 227].Value = para.t_v;
+                    workSheet.Cells[3, 227].Value = para.t_n;
+                    workSheet.Cells[2, 229].Value = para.f_v;
+                    workSheet.Cells[3, 229].Value = para.f_n;
+                    workSheet.Cells[2, 231].Value = para.nso_v;
+                    workSheet.Cells[3, 231].Value = para.nso_n;
+                    workSheet.Cells[2, 233].Value = para.pr_v;
+                    workSheet.Cells[3, 233].Value = para.pr_n;
+                    workSheet.Cells[2, 235].Value = para.poo_v;
+                    workSheet.Cells[3, 235].Value = para.poo_n;
+                    workSheet.Cells[2, 237].Value = para.sa_v;
+                    workSheet.Cells[3, 237].Value = para.sa_n;
+                    workSheet.Cells[2, 239].Value = para.sp_v;
+                    workSheet.Cells[3, 239].Value = para.sp_n;
+                    workSheet.Cells[2, 241].Value = para.s_v;
+                    workSheet.Cells[3, 241].Value = para.s_n;
+                    workSheet.Cells[2, 243].Value = para.fr_v;
+                    workSheet.Cells[3, 243].Value = para.fr_n;
+                    workSheet.Cells[2, 244].Value = para.fz_v;
+                    workSheet.Cells[3, 244].Value = para.fz_n;
+                    foreach (var stroka in str2)
+                    {
+                        answer row = stroka.ans;
+
+                        i++;
+
+
+                        workSheet.Cells[i, 2].Value = stroka.mo;
+                        workSheet.Cells[i, 3].Value = stroka.oo;
+                        workSheet.Cells[i, 4].Value = stroka.klass_n;
+                        workSheet.Cells[i, 5].Value = stroka.login;
+                        if (row != null)
+                        {
+                            workSheet.Cells[i, 6].Value = row.pol;
+                            workSheet.Cells[i, 7].Value = row.vozr;
+                            workSheet.Cells[i, 8].Value = row.sek;
+                            row.AddMas();
+                            int a0 = 0;
+                            int a1 = 0;
+                            int a2 = 0;
+                            int a3 = 0;
+                            int ser = 0;
+                            int bolshe_20 = 0;
+                            int bolshe_70 = 0;
+                            for (int j = 9; j < 149; j++)
+                            {
+                                if (bolshe_20 != 1)
+                                {
+                                    if (row.mas[j - 9] == (j - 10 != -1 ? row.mas[j - 10] : row.mas[0]))
+                                    {
+                                        ser++;
+                                    }
+                                    else
+                                    {
+                                        if (ser > 20)
+                                            bolshe_20 = 1;
+
+                                        if (row.mas[j - 10] == 0)
+                                        {
+                                            a0 = a0 + ser;
+
+                                        }
+                                        if (row.mas[j - 10] == 1)
+                                        {
+                                            a1 = a1 + ser;
+
+
+                                        }
+                                        if (row.mas[j - 10] == 2)
+                                        {
+                                            a2 = a2 + ser;
+
+
+                                        }
+                                        if (row.mas[j - 10] == 3)
+                                        {
+                                            a3 = a3 + ser;
+
+
+                                        }
+                                        ser = 1;
+
+
+                                    }
+                                    if (j - 9 == 139)
+                                        if (ser > 20)
+                                            bolshe_20 = 1;
+
+                                }
+
+                                workSheet.Cells[i, j].Value = row.mas[j - 9];
+                            }
+                            if (a1 > 98 || a2 > 98 || a3 > 98 || a0 > 98)
+                                bolshe_70 = 1;
+                            workSheet.Cells[i, 215].Value = (bolshe_70 == 1 || bolshe_20 == 1 ? 1 : 0);
+                        }
+
+                    }
+
+                    data = package.GetAsByteArray();
+                    string entryName = ZipEntry.CleanName("10-11_klass.xlsx");
+                    ZipEntry newEntry = new ZipEntry(entryName);
+                    newEntry.DateTime = package.File.LastWriteTime;
+                    newEntry.Size = data.Length;
+                    zipStream.PutNextEntry(newEntry);
+
+
+
+                    using (MemoryStream streamReader = new MemoryStream(data))
+                    {
+                        StreamUtils.Copy(streamReader, zipStream, buffer);
+
+                    }
+                    zipStream.CloseEntry();
+
+                }
+
+            }
+
+            if (str3.Count != 0)
+            {
+                param para = new param();
+                para = db.param.Where(p => p.id == 2).First();
+                FileInfo newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s140.xlsx");
+                byte[] data;
+                using (var package = new ExcelPackage(newFile))
+                {
+
+                    var workSheet = package.Workbook.Worksheets[0];
+                    var workSheet1 = package.Workbook.Worksheets[1];
+
+                    int i = 10;
+                  /*  workSheet.DeleteRow(11 + str3.Count, 5000, true);
+                    workSheet1.DeleteRow(11 + str3.Count, 5000, true);*/
+
+
+                    workSheet.Cells[7, 2].Value = str3.Count;
+                    workSheet.Cells[2, 217].Value = para.po_v;
+                    workSheet.Cells[3, 217].Value = para.po_n;
+                    workSheet.Cells[2, 219].Value = para.pvg_v;
+                    workSheet.Cells[3, 219].Value = para.pvg_n;
+                    workSheet.Cells[2, 221].Value = para.pau_v;
+                    workSheet.Cells[3, 221].Value = para.pau_n;
+                    workSheet.Cells[2, 223].Value = para.sr_v;
+                    workSheet.Cells[3, 223].Value = para.sr_n;
+                    workSheet.Cells[2, 225].Value = para.i_v;
+                    workSheet.Cells[3, 225].Value = para.i_n;
+                    workSheet.Cells[2, 227].Value = para.t_v;
+                    workSheet.Cells[3, 227].Value = para.t_n;
+                    workSheet.Cells[2, 229].Value = para.f_v;
+                    workSheet.Cells[3, 229].Value = para.f_n;
+                    workSheet.Cells[2, 231].Value = para.nso_v;
+                    workSheet.Cells[3, 231].Value = para.nso_n;
+                    workSheet.Cells[2, 233].Value = para.pr_v;
+                    workSheet.Cells[3, 233].Value = para.pr_n;
+                    workSheet.Cells[2, 235].Value = para.poo_v;
+                    workSheet.Cells[3, 235].Value = para.poo_n;
+                    workSheet.Cells[2, 237].Value = para.sa_v;
+                    workSheet.Cells[3, 237].Value = para.sa_n;
+                    workSheet.Cells[2, 239].Value = para.sp_v;
+                    workSheet.Cells[3, 239].Value = para.sp_n;
+                    workSheet.Cells[2, 241].Value = para.s_v;
+                    workSheet.Cells[3, 241].Value = para.s_n;
+                    workSheet.Cells[2, 243].Value = para.fr_v;
+                    workSheet.Cells[3, 243].Value = para.fr_n;
+                    workSheet.Cells[2, 244].Value = para.fz_v;
+                    workSheet.Cells[3, 244].Value = para.fz_n;
+                    foreach (var stroka in str3)
+                    {
+                        answer row = stroka.ans;
+
+                        i++;
+
+
+                        workSheet.Cells[i, 2].Value = stroka.mo;
+                        workSheet.Cells[i, 3].Value = stroka.oo;
+                        workSheet.Cells[i, 4].Value = stroka.klass_n;
+                        workSheet.Cells[i, 5].Value = stroka.login;
+                        if (row != null)
+                        {
+                            workSheet.Cells[i, 6].Value = row.pol;
+                            workSheet.Cells[i, 7].Value = row.vozr;
+                            workSheet.Cells[i, 8].Value = row.sek;
+                            row.AddMas();
+                            int a0 = 0;
+                            int a1 = 0;
+                            int a2 = 0;
+                            int a3 = 0;
+                            int ser = 0;
+                            int bolshe_20 = 0;
+                            int bolshe_70 = 0;
+                            for (int j = 9; j < 149; j++)
+                            {
+                                if (bolshe_20 != 1)
+                                {
+                                    if (row.mas[j - 9] == (j - 10 != -1 ? row.mas[j - 10] : row.mas[0]))
+                                    {
+                                        ser++;
+                                    }
+                                    else
+                                    {
+                                        if (ser > 20)
+                                            bolshe_20 = 1;
+
+                                        if (row.mas[j - 10] == 0)
+                                        {
+                                            a0 = a0 + ser;
+
+                                        }
+                                        if (row.mas[j - 10] == 1)
+                                        {
+                                            a1 = a1 + ser;
+
+
+                                        }
+                                        if (row.mas[j - 10] == 2)
+                                        {
+                                            a2 = a2 + ser;
+
+
+                                        }
+                                        if (row.mas[j - 10] == 3)
+                                        {
+                                            a3 = a3 + ser;
+
+
+                                        }
+                                        ser = 1;
+
+
+                                    }
+                                    if (j - 9 == 139)
+                                        if (ser > 20)
+                                            bolshe_20 = 1;
+
+                                }
+
+                                workSheet.Cells[i, j].Value = row.mas[j - 9];
+                            }
+                            if (a1 > 98 || a2 > 98 || a3 > 98 || a0 > 98)
+                                bolshe_70 = 1;
+                            workSheet.Cells[i, 215].Value = (bolshe_70 == 1 || bolshe_20 == 1 ? 1 : 0);
+                        }
+
+                    }
+
+                    data = package.GetAsByteArray();
+                    string entryName = ZipEntry.CleanName("SPO.xlsx");
+                    ZipEntry newEntry = new ZipEntry(entryName);
+                    newEntry.DateTime = package.File.LastWriteTime;
+                    newEntry.Size = data.Length;
+                    zipStream.PutNextEntry(newEntry);
+
+
+
+                    using (MemoryStream streamReader = new MemoryStream(data))
+                    {
+                        StreamUtils.Copy(streamReader, zipStream, buffer);
+
+                    }
+                    zipStream.CloseEntry();
+
+                }
+
+
+
+
+            
+
+
+            }
+
+
+            if (str4.Count != 0)
+            {
+                param para = new param();
+                para = db.param.Where(p => p.id == 2).First();
+                FileInfo newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s140.xlsx");
+                byte[] data;
+                using (var package = new ExcelPackage(newFile))
+                {
+
+                    var workSheet = package.Workbook.Worksheets[0];
+                    var workSheet1 = package.Workbook.Worksheets[1];
+
+                    int i = 10;
+                   /* workSheet.DeleteRow(11 + str4.Count, 5000, true);
+                    workSheet1.DeleteRow(11 + str4.Count, 5000, true);*/
+
+
+                    workSheet.Cells[7, 2].Value = str4.Count;
+                    workSheet.Cells[2, 217].Value = para.po_v;
+                    workSheet.Cells[3, 217].Value = para.po_n;
+                    workSheet.Cells[2, 219].Value = para.pvg_v;
+                    workSheet.Cells[3, 219].Value = para.pvg_n;
+                    workSheet.Cells[2, 221].Value = para.pau_v;
+                    workSheet.Cells[3, 221].Value = para.pau_n;
+                    workSheet.Cells[2, 223].Value = para.sr_v;
+                    workSheet.Cells[3, 223].Value = para.sr_n;
+                    workSheet.Cells[2, 225].Value = para.i_v;
+                    workSheet.Cells[3, 225].Value = para.i_n;
+                    workSheet.Cells[2, 227].Value = para.t_v;
+                    workSheet.Cells[3, 227].Value = para.t_n;
+                    workSheet.Cells[2, 229].Value = para.f_v;
+                    workSheet.Cells[3, 229].Value = para.f_n;
+                    workSheet.Cells[2, 231].Value = para.nso_v;
+                    workSheet.Cells[3, 231].Value = para.nso_n;
+                    workSheet.Cells[2, 233].Value = para.pr_v;
+                    workSheet.Cells[3, 233].Value = para.pr_n;
+                    workSheet.Cells[2, 235].Value = para.poo_v;
+                    workSheet.Cells[3, 235].Value = para.poo_n;
+                    workSheet.Cells[2, 237].Value = para.sa_v;
+                    workSheet.Cells[3, 237].Value = para.sa_n;
+                    workSheet.Cells[2, 239].Value = para.sp_v;
+                    workSheet.Cells[3, 239].Value = para.sp_n;
+                    workSheet.Cells[2, 241].Value = para.s_v;
+                    workSheet.Cells[3, 241].Value = para.s_n;
+                    workSheet.Cells[2, 243].Value = para.fr_v;
+                    workSheet.Cells[3, 243].Value = para.fr_n;
+                    workSheet.Cells[2, 244].Value = para.fz_v;
+                    workSheet.Cells[3, 244].Value = para.fz_n;
+                    foreach (var stroka in str4)
+                    {
+                        answer row = stroka.ans;
+
+                        i++;
+
+
+                        workSheet.Cells[i, 2].Value = stroka.mo;
+                        workSheet.Cells[i, 3].Value = stroka.oo;
+                        workSheet.Cells[i, 4].Value = stroka.klass_n;
+                        workSheet.Cells[i, 5].Value = stroka.login;
+                        if (row != null)
+                        {
+                            workSheet.Cells[i, 6].Value = row.pol;
+                            workSheet.Cells[i, 7].Value = row.vozr;
+                            workSheet.Cells[i, 8].Value = row.sek;
+                            row.AddMas();
+                            int a0 = 0;
+                            int a1 = 0;
+                            int a2 = 0;
+                            int a3 = 0;
+                            int ser = 0;
+                            int bolshe_20 = 0;
+                            int bolshe_70 = 0;
+                            for (int j = 9; j < 149; j++)
+                            {
+                                if (bolshe_20 != 1)
+                                {
+                                    if (row.mas[j - 9] == (j - 10 != -1 ? row.mas[j - 10] : row.mas[0]))
+                                    {
+                                        ser++;
+                                    }
+                                    else
+                                    {
+                                        if (ser > 20)
+                                            bolshe_20 = 1;
+
+                                        if (row.mas[j - 10] == 0)
+                                        {
+                                            a0 = a0 + ser;
+
+                                        }
+                                        if (row.mas[j - 10] == 1)
+                                        {
+                                            a1 = a1 + ser;
+
+
+                                        }
+                                        if (row.mas[j - 10] == 2)
+                                        {
+                                            a2 = a2 + ser;
+
+
+                                        }
+                                        if (row.mas[j - 10] == 3)
+                                        {
+                                            a3 = a3 + ser;
+
+
+                                        }
+                                        ser = 1;
+
+
+                                    }
+                                    if (j - 9 == 139)
+                                        if (ser > 20)
+                                            bolshe_20 = 1;
+
+                                }
+
+                                workSheet.Cells[i, j].Value = row.mas[j - 9];
+                            }
+                            if (a1 > 98 || a2 > 98 || a3 > 98 || a0 > 98)
+                                bolshe_70 = 1;
+                            workSheet.Cells[i, 215].Value = (bolshe_70 == 1 || bolshe_20 == 1 ? 1 : 0);
+                        }
+
+                    }
+
+                    data = package.GetAsByteArray();
+                    string entryName = ZipEntry.CleanName("VUZ.xlsx");
+                    ZipEntry newEntry = new ZipEntry(entryName);
+                    newEntry.DateTime = package.File.LastWriteTime;
+                    newEntry.Size = data.Length;
+                    zipStream.PutNextEntry(newEntry);
+
+
+
+                    using (MemoryStream streamReader = new MemoryStream(data))
+                    {
+                        StreamUtils.Copy(streamReader, zipStream, buffer);
+
+                    }
+                    zipStream.CloseEntry();
+
+                }
+
+
+
+
+
+
+
+            }
+
+
+
+            //using (FileStream file = new FileStream("file.bin", FileMode.Create, System.IO.FileAccess.Write))
+            //{
+            //    byte[] bytes = new byte[outputMemStream.Length];
+            //    outputMemStream.Read(bytes, 0, (int)outputMemStream.Length);
+            //    file.Write(bytes, 0, bytes.Length);
+            //    outputMemStream.Close();
+
+            //}
+            zipStream.IsStreamOwner = false;
+            zipStream.Close();
+
+            outputMemStream.Position = 0;
+            string qw = @"\Vgruzka\" + "Краснодар" + "_.zip";
+            System.IO.File.WriteAllBytes(Directory.GetCurrentDirectory() + "\\wwwroot\\Vgruzka\\" +"Краснодар" + "_.zip", outputMemStream.ToArray());
+
+
+
+
+            return View("adm_full");
+
+
+
+
+
+
+
+
+
+        }
+    public async Task<IActionResult> Pass_excel()
         {
             await Task.Yield();
             ListMo listMO = new ListMo();
@@ -332,7 +1109,7 @@ namespace EM_SPT.Controllers
                 MemoryStream outputMemStream = new MemoryStream();
                 ZipOutputStream zipStream = new ZipOutputStream(outputMemStream);
                 zipStream.SetLevel(3); // уровень сжатия от 0 до 9
-                ZipConstants.DefaultCodePage = 866;
+                ZipConstants.DefaultCodePage = 866;// формирование названия Zip на русском
 
                 byte[] buffer = new byte[4096];
                 listOO.oos = db.oo.Where(p => p.id_mo == iMO.id).ToList();
@@ -1836,7 +2613,7 @@ namespace EM_SPT.Controllers
 
 
         }
-        [AllowAnonymous]
+    
         public async Task<IActionResult> Answer(CompositeModel model)
         {
             if (model == null)

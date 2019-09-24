@@ -19,9 +19,9 @@
         <li>
             <a href="#klass" style="float: left;" class="nav-link active" data-toggle="tab">Управление ОО</a>
         </li>
-        <li>
+        @*<li>
             <a href="#otch" style="float: left;" class="nav-link" data-toggle="tab">Формирование отчетов</a>
-        </li>
+        </li>*@
 
     </ul>
     <div class="tab-content">
@@ -138,18 +138,19 @@
         <div class="tab-pane fade " id="otch">
             <div class="form-row shadow p-3 mb-5 bg-white rounded">
                 <div class="form-group col-md-12">
-                    <div class="form-group col-md-4">
+                    <p>Сформированные отчеты недействительны!!! Результаты случайные.</p>
+                    @*<div class="form-group col-md-4">
                         <select id="inputState" class="form-control" required>
                             <option value="" selected>Выберите код OO</option>
 
-                        </select>
-                    </div>
-                    <button class="btn btn-outline-success form-group col-md-4">Загрузить отчет по ОО</button>
+                        </select>*@
+                    @*</div>*@
+                    @*<button class="btn btn-outline-success form-group col-md-4">Загрузить отчет по ОО</button>*@
                 </div>
-                <form action="~/Vgruzka/@Model.mo_name.ToString()_.zip">
+                @*<form action="~/Vgruzka/@Model.mo_name.ToString()_.zip">
 
                     <button type="submit" class="btn btn-outline-success" style="background: url(/icon/excel.png) no-repeat 280.5px 7.5px rgba(7, 255, 126, 0.2); background-size: 10%; height: 50px; width:320px">Загрузить отчет по МО</button>
-                </form>
+                </form>*@
 
                 <div class="form-group col-md-12">
 

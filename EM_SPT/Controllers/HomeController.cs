@@ -4,6 +4,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Hosting;
@@ -18,6 +19,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 
 namespace EM_SPT.Controllers
@@ -128,13 +130,13 @@ namespace EM_SPT.Controllers
             {
                 SpisParam par = new SpisParam();
                 par.Params = db.param.ToList();
+                List<mo> mo = db.mo.ToList();
                 List<mo_kol> listMO = new List<mo_kol>();
-                int[] masMO = (from k in db.mo select k.id).ToArray();
-
-                foreach (int iMO in masMO)
+                foreach (mo row in mo)
                 {
                     mo_kol mo_Kol = new mo_kol();
-                    mo_Kol.name = db.mo.Find(iMO).name;
+                    mo_Kol.id = row.id;
+                    mo_Kol.name = row.name;
                     listMO.Add(mo_Kol);
                 }
                 listMO.Sort((a, b) => a.name.CompareTo(b.name));
@@ -146,13 +148,13 @@ namespace EM_SPT.Controllers
             {
                 SpisParam par = new SpisParam();
                 par.Params = db.param.ToList();
+                List<mo> mo = db.mo.ToList();
                 List<mo_kol> listMO = new List<mo_kol>();
-                int[] masMO = (from k in db.mo select k.id).ToArray();
-
-                foreach (int iMO in masMO)
+                foreach (mo row in mo)
                 {
                     mo_kol mo_Kol = new mo_kol();
-                    mo_Kol.name = db.mo.Find(iMO).name;
+                    mo_Kol.id = row.id;
+                    mo_Kol.name = row.name;
                     listMO.Add(mo_Kol);
                 }
                 listMO.Sort((a, b) => a.name.CompareTo(b.name));
@@ -269,7 +271,7 @@ namespace EM_SPT.Controllers
                 mo_Kol.kol_VUZ_t = listU.Where(p => p.tip == 3 && p.id_mo == mo.id).Count();
                 mo_Kol.sum_OO = mo_Kol.kol_OO + mo_Kol.kol_SPO + mo_Kol.kol_VUZ;
                 mo_Kol.sum_t = mo_Kol.kol_OO_t + mo_Kol.kol_SPO_t + mo_Kol.kol_VUZ_t;
-
+               
                 listMO.Add(mo_Kol);
             }
 
@@ -351,22 +353,40 @@ namespace EM_SPT.Controllers
             return View("adm_stat", par);
 
         }
-        public async Task<IActionResult> Result_po_click_MO()
+        public async Task<IActionResult> Result_po_click_MO(int id, string name)
         {
-           /* var ListResult = (from u in db.User.Where(p => p.test == 1)
-                     join kl in db.klass on u.id_klass equals kl.id
-                     join oo in db.oo on kl.id_oo equals oo.id
-                     join mo in db.mo on oo.id_mo equals mo.id
-                              join ans in db.answer on u.id equals ans.id_user
-                              select new VigruzkaExcel
-                              {
-                                  mo = mo.name,
-                                  oo = oo.id + " " + oo.kod,
-                                  klass_n = kl.klass_n.ToString() + " " + kl.kod,
-                                  login = u.login,
-                                  kod = kl.kod,
-                                  ans = ans
-                              }).ToList();*/
+
+
+            var cancellationTokenSource = new CancellationTokenSource();
+            var channel = await hubConnection.StreamAsChannelAsync<int>(
+                "Counter", 10, 500, cancellationTokenSource.Token);
+
+            // Wait asynchronously for data to become available
+            while (await channel.WaitToReadAsync())
+            {
+                // Read all currently available data synchronously, before waiting for more data
+                while (channel.TryRead(out var count))
+                {
+                    Console.WriteLine($"{count}");
+                }
+            }
+
+            Console.WriteLine("Streaming completed");
+
+            /* var ListResult = (from u in db.User.Where(p => p.test == 1)
+                      join kl in db.klass on u.id_klass equals kl.id
+                      join oo in db.oo on kl.id_oo equals oo.id
+                      join mo in db.mo on oo.id_mo equals mo.id
+                               join ans in db.answer on u.id equals ans.id_user
+                               select new VigruzkaExcel
+                               {
+                                   mo = mo.name,
+                                   oo = oo.id + " " + oo.kod,
+                                   klass_n = kl.klass_n.ToString() + " " + kl.kod,
+                                   login = u.login,
+                                   kod = kl.kod,
+                                   ans = ans
+                               }).ToList();*/
 
 
 
@@ -377,9 +397,9 @@ namespace EM_SPT.Controllers
 
             }
 
-            int[] skl = (from k in db.oo.Where(p => p.id_mo == 15 && p.tip == 1) select k.id).ToArray();
-            int[] spo  = (from k in db.oo.Where(p => p.id_mo == 15 &&  p.tip == 2) select k.id).ToArray();
-            int[] vuz= (from k in db.oo.Where(p => p.id_mo == 15 && p.tip == 3 ) select k.id).ToArray();
+            int[] skl = (from k in db.oo.Where(p => p.id_mo == id && p.tip == 1) select k.id).ToArray();
+            int[] spo  = (from k in db.oo.Where(p => p.id_mo == id &&  p.tip == 2) select k.id).ToArray();
+            int[] vuz= (from k in db.oo.Where(p => p.id_mo == id && p.tip == 3 ) select k.id).ToArray();
             var str1 = (from u in db.User.Where(p => p.test == 1 && p.role == 0)
                  join kl in db.klass.Where(p => skl.Contains(p.id_oo) && p.klass_n < 10 && p.klass_n > 6) on u.id_klass equals kl.id
                  join oo in db.oo on kl.id_oo equals oo.id
@@ -456,14 +476,14 @@ namespace EM_SPT.Controllers
 
             MemoryStream outputMemStream = new MemoryStream();
             ZipOutputStream zipStream = new ZipOutputStream(outputMemStream);
-            zipStream.SetLevel(1); // уровень сжатия от 0 до 9
-            byte[] buffer = new byte[32768];
-
+            zipStream.SetLevel(9); // уровень сжатия от 0 до 9
+            byte[] buffer = new byte[327680000];
+            FileInfo newFile;
             if (str1.Count != 0)
             {
                 param para = new param();
                 para = db.param.Where(p => p.id == 1).First();
-                FileInfo newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s110.xlsx");
+                 newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s110.xlsx");
                 byte[] data;
                 using (var package = new ExcelPackage(newFile))
                 {
@@ -471,8 +491,8 @@ namespace EM_SPT.Controllers
                     var workSheet = package.Workbook.Worksheets[0];
                     var workSheet1 = package.Workbook.Worksheets[1];
                     int i = 10;
-                  /*  workSheet.DeleteRow(11 + str1.Count, 5000, true);
-                    workSheet1.DeleteRow(11 + str1.Count, 5000, true);*/
+                    workSheet.DeleteRow(11 + str1.Count, 50000, true);
+                    workSheet1.DeleteRow(11 + str1.Count, 50000, true);
 
 
                     workSheet.Cells[7, 2].Value = str1.Count;
@@ -610,7 +630,7 @@ namespace EM_SPT.Controllers
             {
                 param para = new param();
                 para = db.param.Where(p => p.id == 2).First();
-                FileInfo newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s140.xlsx");
+                 newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s140.xlsx");
                 byte[] data;
                 using (var package = new ExcelPackage(newFile))
                 {
@@ -619,8 +639,8 @@ namespace EM_SPT.Controllers
                     var workSheet1 = package.Workbook.Worksheets[1];
 
                     int i = 10;
-                    /*workSheet.DeleteRow(11 + str2.Count, 5000, true);
-                    workSheet1.DeleteRow(11 + str2.Count, 5000, true);*/
+                    workSheet.DeleteRow(11 + str2.Count, 50000, true);
+                    workSheet1.DeleteRow(11 + str2.Count, 50000, true);
 
 
                     workSheet.Cells[7, 2].Value = str2.Count;
@@ -757,7 +777,7 @@ namespace EM_SPT.Controllers
             {
                 param para = new param();
                 para = db.param.Where(p => p.id == 2).First();
-                FileInfo newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s140.xlsx");
+                 newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s140.xlsx");
                 byte[] data;
                 using (var package = new ExcelPackage(newFile))
                 {
@@ -766,8 +786,8 @@ namespace EM_SPT.Controllers
                     var workSheet1 = package.Workbook.Worksheets[1];
 
                     int i = 10;
-                  /*  workSheet.DeleteRow(11 + str3.Count, 5000, true);
-                    workSheet1.DeleteRow(11 + str3.Count, 5000, true);*/
+                   workSheet.DeleteRow(11 + str3.Count, 50000, true);
+                    workSheet1.DeleteRow(11 + str3.Count, 50000, true);
 
 
                     workSheet.Cells[7, 2].Value = str3.Count;
@@ -911,7 +931,7 @@ namespace EM_SPT.Controllers
             {
                 param para = new param();
                 para = db.param.Where(p => p.id == 2).First();
-                FileInfo newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s140.xlsx");
+                 newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s140.xlsx");
                 byte[] data;
                 using (var package = new ExcelPackage(newFile))
                 {
@@ -920,8 +940,8 @@ namespace EM_SPT.Controllers
                     var workSheet1 = package.Workbook.Worksheets[1];
 
                     int i = 10;
-                   /* workSheet.DeleteRow(11 + str4.Count, 5000, true);
-                    workSheet1.DeleteRow(11 + str4.Count, 5000, true);*/
+                    workSheet.DeleteRow(11 + str4.Count, 50000, true);
+                    workSheet1.DeleteRow(11 + str4.Count, 50000, true);
 
 
                     workSheet.Cells[7, 2].Value = str4.Count;
@@ -1074,8 +1094,8 @@ namespace EM_SPT.Controllers
             zipStream.Close();
 
             outputMemStream.Position = 0;
-            string qw = @"\Vgruzka\" + "Краснодар" + "_.zip";
-            System.IO.File.WriteAllBytes(Directory.GetCurrentDirectory() + "\\wwwroot\\Vgruzka\\" +"Краснодар" + "_.zip", outputMemStream.ToArray());
+            string qw = @"\Vgruzka\" + name + "_.zip";
+            System.IO.File.WriteAllBytes(Directory.GetCurrentDirectory() + "\\wwwroot\\Vgruzka\\" + name + "_.zip", outputMemStream.ToArray());
 
 
 
@@ -2640,5 +2660,12 @@ namespace EM_SPT.Controllers
 
 
 
+    }
+    public class ChatHub : Hub
+    {
+        public async Task Send(string message)
+        {
+            await this.Clients.All.SendAsync("Send", message);
+        }
     }
 }

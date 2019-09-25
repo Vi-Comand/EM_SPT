@@ -35,7 +35,7 @@ namespace EM_SPT
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             services.AddDbContext<DataContext>(options => options.UseMySql(configuration["ConnectionStrings:DefaultConnection"]));
-
+            services.AddSignalR();
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -67,6 +67,10 @@ namespace EM_SPT
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseAuthentication();
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<ChatHub>("/chat");
+            });
             app.UseMvc(routes =>
             {
                 /* routes.MapRoute(

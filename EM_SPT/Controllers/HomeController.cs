@@ -166,6 +166,10 @@ namespace EM_SPT.Controllers
 
         }
 
+
+
+
+
         public IActionResult Spisok_full()
         {
             SpisParam par = new SpisParam();

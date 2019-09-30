@@ -59,7 +59,7 @@ namespace EM_SPT.Controllers
             {
                 if (DateTime.Now.Hour >= hour && DateTime.Now.Hour <= 23 && dateVigruz != DateTime.Now.ToShortDateString())
                 {
-                    HomeController ff = new HomeController();
+                    //HomeController ff = new HomeController();
                     dateVigruz = DateTime.Now.ToShortDateString();
                     //ff.VigruzkaMO();
                 }
@@ -278,46 +278,46 @@ namespace EM_SPT.Controllers
         public IActionResult izmDB()
         {
 
-           int[] id_ans = (from u in db.answer
+            int[] id_ans = (from u in db.answer
 
 
 
-                          select 
-                         
-                               u.id_user
+                            select
+
+                                 u.id_user
 
 
 
 
 
-                          ).ToArray();
-            int[] id_u = (from u in db.User.Where(x=>x.test!=0)
+                           ).ToArray();
+            int[] id_u = (from u in db.User.Where(x => x.test != 0)
 
 
 
 
                           select
-                          
+
                             u.id
-                             
+
 
 
                           ).ToArray();
-           List<int> id_mass=new List<int>();
-            for (int j=0;j<id_u.Count();j++)
+            List<int> id_mass = new List<int>();
+            for (int j = 0; j < id_u.Count(); j++)
             {
                 int id = id_u[j];
                 bool net = false;
                 for (int i = 0; i < id_ans.Count(); i++)
                     if (id == id_ans[i])
                     {
-                        
+
                         net = false;
                         break;
                     }
                     else { net = true; }
-                if(net)
-                id_mass.Add(id);
+                if (net)
+                    id_mass.Add(id);
             }
 
             foreach (int id in id_mass)
@@ -328,15 +328,15 @@ namespace EM_SPT.Controllers
                 db.SaveChanges();
             }
 
-           
-        
+
+
             return View("adm_full");
         }
 
 
 
 
-            public IActionResult Spisok_full()
+        public IActionResult Spisok_full()
         {
 
             SpisParam par = new SpisParam();
@@ -377,7 +377,7 @@ namespace EM_SPT.Controllers
                 mo_Kol.kol_VUZ_t = listU.Where(p => p.tip == 3 && p.id_mo == mo.id).Count();
                 mo_Kol.sum_OO = mo_Kol.kol_OO + mo_Kol.kol_SPO + mo_Kol.kol_VUZ;
                 mo_Kol.sum_t = mo_Kol.kol_OO_t + mo_Kol.kol_SPO_t + mo_Kol.kol_VUZ_t;
-               
+
                 listMO.Add(mo_Kol);
             }
 
@@ -459,26 +459,26 @@ namespace EM_SPT.Controllers
             return View("adm_stat", par);
 
         }
-        private readonly NotifyService _service;
+        // private readonly NotifyService _service;
         IHubContext<ChatHub> _chatHubContext;
-        public async Task<IActionResult> UpdateLoad( int lod)
-        {
+        //public async Task<IActionResult> UpdateLoad(int lod)
+        //{
 
-           // no da = new ChatHub();
-            await _service.SendNotificationAsync("fdsdf");
-            //   await das.Send("jhgjgh", das.OnConnectedAsync().Id);
-            // await hubContext.Clients.All.SendAsync("Notify", $"Добавлено:");
-            return Json(lod);
-        }
-       
+        //    // no da = new ChatHub();
+        //    // await _service.SendNotificationAsync("fdsdf");
+        //    //   await das.Send("jhgjgh", das.OnConnectedAsync().Id);
+        //    // await hubContext.Clients.All.SendAsync("Notify", $"Добавлено:");
+        //    return Json(lod);
+        //}
+
 
 
         public async Task<IActionResult> Result_po_click_MO(int id, string name)
         {
 
 
-            
-        
+
+
             /* var ListResult = (from u in db.User.Where(p => p.test == 1)
                       join kl in db.klass on u.id_klass equals kl.id
                       join oo in db.oo on kl.id_oo equals oo.id
@@ -504,8 +504,8 @@ namespace EM_SPT.Controllers
             }
 
             int[] skl = (from k in db.oo.Where(p => p.id_mo == id && p.tip == 1) select k.id).ToArray();
-            int[] spo  = (from k in db.oo.Where(p => p.id_mo == id &&  p.tip == 2) select k.id).ToArray();
-            int[] vuz= (from k in db.oo.Where(p => p.id_mo == id && p.tip == 3 ) select k.id).ToArray();
+            int[] spo = (from k in db.oo.Where(p => p.id_mo == id && p.tip == 2) select k.id).ToArray();
+            int[] vuz = (from k in db.oo.Where(p => p.id_mo == id && p.tip == 3) select k.id).ToArray();
             var str1 = (from u in db.User.Where(p => p.test == 1 && p.role == 0)
                         join kl in db.klass.Where(p => skl.Contains(p.id_oo) && p.klass_n < 10 && p.klass_n > 6) on u.id_klass equals kl.id
                         join oo in db.oo on kl.id_oo equals oo.id
@@ -575,7 +575,7 @@ namespace EM_SPT.Controllers
 
 
 
-            int lod=0;
+            int lod = 0;
 
 
 
@@ -588,7 +588,7 @@ namespace EM_SPT.Controllers
             {
                 param para = new param();
                 para = db.param.Where(p => p.id == 1).First();
-                 newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s110.xlsx");
+                newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s110.xlsx");
                 byte[] data;
                 using (var package = new ExcelPackage(newFile))
                 {
@@ -736,7 +736,7 @@ namespace EM_SPT.Controllers
             {
                 param para = new param();
                 para = db.param.Where(p => p.id == 2).First();
-                 newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s140.xlsx");
+                newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s140.xlsx");
                 byte[] data;
                 using (var package = new ExcelPackage(newFile))
                 {
@@ -883,7 +883,7 @@ namespace EM_SPT.Controllers
             {
                 param para = new param();
                 para = db.param.Where(p => p.id == 2).First();
-                 newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s140.xlsx");
+                newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s140.xlsx");
                 byte[] data;
                 using (var package = new ExcelPackage(newFile))
                 {
@@ -892,7 +892,7 @@ namespace EM_SPT.Controllers
                     var workSheet1 = package.Workbook.Worksheets[1];
 
                     int i = 10;
-                   workSheet.DeleteRow(11 + str3.Count, 50000, true);
+                    workSheet.DeleteRow(11 + str3.Count, 50000, true);
                     workSheet1.DeleteRow(11 + str3.Count, 50000, true);
 
 
@@ -1037,7 +1037,7 @@ namespace EM_SPT.Controllers
             {
                 param para = new param();
                 para = db.param.Where(p => p.id == 2).First();
-                 newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s140.xlsx");
+                newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s140.xlsx");
                 byte[] data;
                 using (var package = new ExcelPackage(newFile))
                 {
@@ -1470,7 +1470,7 @@ namespace EM_SPT.Controllers
 
         }
 
-        public  IActionResult SpisokAdmKlassa(int id)
+        public IActionResult SpisokAdmKlassa(int id)
         {
             var login = HttpContext.User.Identity.Name;
             var oo = db.User.Where(p => p.login == login).First().id_oo;

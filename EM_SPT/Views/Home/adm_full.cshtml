@@ -17,62 +17,40 @@
 <body class="gradient">
 
     <script src="lib/signalr.min.js"></script>
-    <div class="container">
-        <div class="row">&nbsp;</div>
-        <div class="row">
-            <div class="col-6">&nbsp;</div>
-            <div class="col-6">
-                User..........<input type="text" id="userInput" />
-                <br />
-                Message...<input type="text" id="messageInput" />
-                <input type="button" id="sendButton" value="Send Message" />
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12">
-                <hr />
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-6">&nbsp;</div>
-            <div class="col-6">
-                <ul id="messagesList"></ul>
-            </div>
-        </div>
-    </div>
-    <script>
-    var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
-    //Disable send button until connection is established
-    document.getElementById("sendButton").disabled = true;
+    @*  <script>
+            var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
-    connection.on("ReceiveMessage", function (user, message) {
-    var msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    var encodedMsg = user + " says " + msg;
-    var li = document.createElement("li");
-    li.textContent = encodedMsg;
-    document.getElementById("messagesList").appendChild(li);
-    });
+            //Disable send button until connection is established
+            document.getElementById("sendButton").disabled = true;
 
-    connection.start().then(function(){
-    document.getElementById("sendButton").disabled = false;
-    }).catch(function (err) {
-    return console.error(err.toString());
-    });
+            connection.on("ReceiveMessage", function (user, message) {
+                var msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                var encodedMsg = user + " says " + msg;
+                var li = document.createElement("li");
+                li.textContent = encodedMsg;
+                document.getElementById("messagesList").appendChild(li);
+            });
 
-    document.getElementById("sendButton").addEventListener("click", function (event) {
-    var user = document.getElementById("userInput").value;
-    var message = document.getElementById("messageInput").value;
-    connection.invoke("SendMessage", user, message).catch(function (err) {
-    return console.error(err.toString());
-    });
-    event.preventDefault();
-    });
+            connection.start().then(function () {
+                document.getElementById("sendButton").disabled = false;
+            }).catch(function (err) {
+                return console.error(err.toString());
+            });
 
-      
+            document.getElementById("sendButton").addEventListener("click", function (event) {
+                var user = document.getElementById("userInput").value;
+                var message = document.getElementById("messageInput").value;
+                connection.invoke("SendMessage", user, message).catch(function (err) {
+                    return console.error(err.toString());
+                });
+                event.preventDefault();
+            });
 
 
-    </script >
+
+
+        </script>*@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <ul class="nav nav-tabs">
         <li>
@@ -86,31 +64,7 @@
         </li>
     </ul>
     <div class="tab-content">
-        <div class="tab-pane active " id="klass">
-
-            <div class="container">
-                <div class="row">&nbsp;</div>
-                <div class="row">
-                    <div class="col-6">&nbsp;</div>
-                    <div class="col-6">
-                        User..........<input type="text" id="userInput" />
-                        <br />
-                        Message...<input type="text" id="messageInput" />
-                        <input type="button" id="sendButton" value="Send Message" />
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12">
-                        <hr />
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-6">&nbsp;</div>
-                    <div class="col-6">
-                        <ul id="messagesList"></ul>
-                    </div>
-                </div>
-            </div>
+        <div class="tab-pane active" id="klass">
             <script src="~/lib/aspnet/signalr/dist/browser/signalr.js"></script>
 
             @* <script>
@@ -174,7 +128,7 @@
                 });
                     </script>*@
             <div class="progress">
-                <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" id="prog" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">10%</div>
+                <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" id="prog" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">0%</div>
             </div>
             <button class="btn btn-outline-success " id="adklass" form="0">Сформировать</button>
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -211,18 +165,13 @@
 
 
 
-            <form action='@Url.Action("index")' method="post">
-                <input type="text" name="product" />
-                <input type="submit" value="Отправить" />
-            </form>
 
-            <div id="notify"></div>
             <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="SendEmail">
-                <div class="progress">
-                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" id="prog" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
-                </div>
-                <button class="btn btn-outline-success " id="adklass" form="0">Сформировать</button>
-                <button class="btn btn-outline-success " id="KolvoLoad" form="0">Сформировать1</button>
+                @*<div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" id="prog" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+                    </div>
+                    <button class="btn btn-outline-success " id="adklass" form="0">Сформировать</button>
+                    <button class="btn btn-outline-success " id="KolvoLoad" form="0">Сформировать1</button>*@
                 <button class="btn btn-outline-success " id="izmDB" form="0">Проверка</button>
                 <script>
 
@@ -236,107 +185,104 @@
                             type: "POST",
                             dataType: "json",
                             success: function (query) {
-                               // alert(query);
+                                // alert(query);
                             }
-
-
-
-            <script>
-                let hubUrl = 'http://localhost:44383/chatHub';
-                const hubConnection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
-
-                // получение сообщения от сервера
-                hubConnection.on('Notify', function (message) {
-                    //     alert("fsd");
-                    // создает элемент <p> для сообщения пользователя
-                    let elem = document.createElement("p");
-                    elem.appendChild(document.createTextNode(message));
-
-
-                    // document.getElementById("notify").appendChild(elem);
-                    var q = message.toString();
-                    var pr = document.getElementById('prog');
-                    pr.innerText = q + '%';
-                    $('#prog').attr('aria-valuenow', q).css('width', q + '%').text = q;
-                });
-                hubConnection.start();
-            </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
                         });
                     });
-                    </script>
-                    <script>
 
-                        $("#KolvoLoad").click(function () { // задаем функцию при нажатиии на элемент <button>
+                    let hubUrl = 'http://localhost:44383/chatHub';
+                    const hubConnection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
-
-
-
-                            $.ajax({
-                                url: '/Home/UpdateLoad/',
-                                type: "POST",
-                                dataType: "json",
-                                success: function (query) {
-                                    alert(query);
-                                }
+                    // получение сообщения от сервера
+                    hubConnection.on('Notify', function (message) {
+                        //     alert("fsd");
+                        // создает элемент <p> для сообщения пользователя
+                        let elem = document.createElement("p");
+                        elem.appendChild(document.createTextNode(message));
 
 
+                        // document.getElementById("notify").appendChild(elem);
+                        var q = message.toString();
+                        var pr = document.getElementById('prog');
+                        pr.innerText = q + '%';
+                        $('#prog').attr('aria-valuenow', q).css('width', q + '%').text = q;
+                    });
+                    hubConnection.start();
+                </script>
 
-                            });
-                        });
 
 
 
-                                    $("#adklass").click(function () { // задаем функцию при нажатиии на элемент <button>
-
-                                        var id = 1;
 
 
-                                        $.ajax({
-                            url: '/Home/SpisokAdmOO/',
-                        type: "POST",
-                        dataType: "json",
-                                            data: {"id": id },
-                                            success: function (query) {
-                                                var tableArr = ['<table class="tab">'];
-                                                tableArr.push('<thead ><tr><th style="width: 40%">Код ОО/ название</th><th style="width: 30%">Логин</th><th style="width: 30%">Пароль</th></tr></thead>');
-                                                for (i = 0; i < query.length; i++) {
-                                                    var q = query[i].tip == 1 ? 'СОШ' : query[i].tip == 2 ? 'СПО' : 'ВУЗ';
-                                                    tableArr.push('<tr><td>' + query[i].id_oo + ' ' + query[i].kod + '</td><td >' + query[i].login + '</td><td>' + query[i].pass + '</td></tr>');
-                                                    if (query[i].test == "1") {sum++}
-                            }
 
-                                                tableArr.push('<tfoot class=""><tr><td>Всего </td><td>' + query.length + '</td><td></td></tr></tfoot>');
-                                                tableArr.push('</table>');
-                        document.getElementById('stat2').innerHTML = tableArr.join('\n')
-                    }
-});
-});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <script>
+
+                                                                                                                                                                                            //$("#KolvoLoad").click(function () { // задаем функцию при нажатиии на элемент <button>
+
+
+
+
+                                                                                                                                                                                            //    $.ajax({
+                                                                                                                                                                                            //        url: '/Home/UpdateLoad/',
+                                                                                                                                                                                            //        type: "POST",
+                                                                                                                                                                                            //        dataType: "json",
+                                                                                                                                                                                            //        success: function (query) {
+                                                                                                                                                                                            //            alert(query);
+                                                                                                                                                                                            //        }
+
+
+
+                                                                                                                                                                                            //    });
+                                                                                                                                                                                            //});
+
+
+
+                                                                                                                                                                                            //$("#adklass").click(function () { // задаем функцию при нажатиии на элемент <button>
+
+                                                                                                                                                                                            //    var id = 1;
+
+
+                                                                                                                                                                                            //    $.ajax({
+                                                                                                                                                                                            //        url: '/Home/SpisokAdmOO/',
+                                                                                                                                                                                            //        type: "POST",
+                                                                                                                                                                                            //        dataType: "json",
+                                                                                                                                                                                            //        data: { "id": id },
+                                                                                                                                                                                            //        success: function (query) {
+                                                                                                                                                                                            //            var tableArr = ['<table class="tab">'];
+                                                                                                                                                                                            //            tableArr.push('<thead ><tr><th style="width: 40%">Код ОО/ название</th><th style="width: 30%">Логин</th><th style="width: 30%">Пароль</th></tr></thead>');
+                                                                                                                                                                                            //            for (i = 0; i < query.length; i++) {
+                                                                                                                                                                                            //                var q = query[i].tip == 1 ? 'СОШ' : query[i].tip == 2 ? 'СПО' : 'ВУЗ';
+                                                                                                                                                                                            //                tableArr.push('<tr><td>' + query[i].id_oo + ' ' + query[i].kod + '</td><td >' + query[i].login + '</td><td>' + query[i].pass + '</td></tr>');
+                                                                                                                                                                                            //                if (query[i].test == "1") { sum++ }
+                                                                                                                                                                                            //            }
+
+                                                                                                                                                                                            //            tableArr.push('<tfoot class=""><tr><td>Всего </td><td>' + query.length + '</td><td></td></tr></tfoot>');
+                                                                                                                                                                                            //            tableArr.push('</table>');
+                                                                                                                                                                                            //            document.getElementById('stat2').innerHTML = tableArr.join('\n')
+                                                                                                                                                                                            //        }
+                                                                                                                                                                                            //    });
+                                                                                                                                                                                            //});
                 </script>
             </form>
             <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="Added">
@@ -582,131 +528,131 @@
                 </div>
             </form>
         </div>
-    </div>
 
 
-    @*Modal editParam-------------------------------------------------------------------------------------*@
-    @*<div class="modal fade bs-example-modal-lg" id="editParam" tabindex="1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="myModalLabel">Изменить значения СОШ</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+
+        @*Modal editParam-------------------------------------------------------------------------------------*@
+        @*<div class="modal fade bs-example-modal-lg" id="editParam" tabindex="1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="myModalLabel">Изменить значения СОШ</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        </div>
+                        <form method="post" enctype="multipart/form-data">
+                            <div class="modal-body">
+                                <input type="hidden" asp-for="Params[0].id" />
+                                <table class="tab">
+                                    <thead>
+                                        <tr><th colspan="2">Название критерия</th><th>Значение СОШ</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><th rowspan="2">Факторы риска</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].fr_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].fr_n" /></th></tr>
+                                        <tr><th rowspan="2">Факторы защиты</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].fz_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].fz_n" /></th></tr>
+                                        <tr><th rowspan="2">Потребность в одобрении</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].po_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].po_n" /></th></tr>
+                                        <tr><th rowspan="2">Подверженность влиянию группы</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].pvg_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].pvg_n" /></th></tr>
+                                        <tr><th rowspan="2">Принятие асоциальных установок социума</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].pau_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].pau_n" /></th></tr>
+                                        <tr><th rowspan="2">Склонность к риску</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].sr_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].sr_n" /></th></tr>
+                                        <tr><th rowspan="2">Импульсивность</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].i_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].i_n" /></th></tr>
+                                        <tr><th rowspan="2">Тревожность</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].t_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].t_n" /></th></tr>
+                                        <tr><th rowspan="2">Фрустрация</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].f_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].f_n" /></th></tr>
+                                        <tr><th rowspan="2">Наркопотребление в социальном окружении</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].nso_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].nso_n" /></th></tr>
+                                        <tr><th rowspan="2">Принятие родителями</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].pr_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].pr_n" /></th></tr>
+                                        <tr><th rowspan="2">Принятие одноклассниками</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].poo_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].poo_n" /></th></tr>
+                                        <tr><th rowspan="2">Социальная активность</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].sa_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].sa_n" /></th></tr>
+                                        <tr><th rowspan="2">Самоконтроль поведения</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].sp_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].sp_n" /></th></tr>
+                                        <tr><th rowspan="2">Самоэффективность</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].s_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].s_n" /></th></tr>
+                                        <tr><th>Час начала выгрузки отчетов для МО</th><th></th><th><input class="form-control" type="text" asp-for="Params[0].h_otch" /></th></tr>
+                                    </tbody>
+                                    <tfoot>
+
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                                <button type="submit" class="" asp-controller="Home" asp-action="Save_Param">Сохранить параметры</button>
+                            </div>
+                        </form>
                     </div>
-                    <form method="post" enctype="multipart/form-data">
-                        <div class="modal-body">
-                            <input type="hidden" asp-for="Params[0].id" />
-                            <table class="tab">
-                                <thead>
-                                    <tr><th colspan="2">Название критерия</th><th>Значение СОШ</th></tr>
-                                </thead>
-                                <tbody>
-                                    <tr><th rowspan="2">Факторы риска</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].fr_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].fr_n" /></th></tr>
-                                    <tr><th rowspan="2">Факторы защиты</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].fz_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].fz_n" /></th></tr>
-                                    <tr><th rowspan="2">Потребность в одобрении</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].po_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].po_n" /></th></tr>
-                                    <tr><th rowspan="2">Подверженность влиянию группы</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].pvg_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].pvg_n" /></th></tr>
-                                    <tr><th rowspan="2">Принятие асоциальных установок социума</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].pau_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].pau_n" /></th></tr>
-                                    <tr><th rowspan="2">Склонность к риску</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].sr_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].sr_n" /></th></tr>
-                                    <tr><th rowspan="2">Импульсивность</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].i_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].i_n" /></th></tr>
-                                    <tr><th rowspan="2">Тревожность</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].t_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].t_n" /></th></tr>
-                                    <tr><th rowspan="2">Фрустрация</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].f_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].f_n" /></th></tr>
-                                    <tr><th rowspan="2">Наркопотребление в социальном окружении</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].nso_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].nso_n" /></th></tr>
-                                    <tr><th rowspan="2">Принятие родителями</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].pr_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].pr_n" /></th></tr>
-                                    <tr><th rowspan="2">Принятие одноклассниками</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].poo_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].poo_n" /></th></tr>
-                                    <tr><th rowspan="2">Социальная активность</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].sa_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].sa_n" /></th></tr>
-                                    <tr><th rowspan="2">Самоконтроль поведения</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].sp_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].sp_n" /></th></tr>
-                                    <tr><th rowspan="2">Самоэффективность</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[0].s_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[0].s_n" /></th></tr>
-                                    <tr><th>Час начала выгрузки отчетов для МО</th><th></th><th><input class="form-control" type="text" asp-for="Params[0].h_otch" /></th></tr>
-                                </tbody>
-                                <tfoot>
-
-                                </tfoot>
-                            </table>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-                            <button type="submit" class="" asp-controller="Home" asp-action="Save_Param">Сохранить параметры</button>
-                        </div>
-                    </form>
                 </div>
             </div>
-        </div>
 
-        @*Modal editParam2-------------------------------------------------------------------------------------
-        <div class="modal fade bs-example-modal-lg" id="editParam2" tabindex="1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="myModalLabel">Изменить значения СПО/ВУЗ</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            @*Modal editParam2-------------------------------------------------------------------------------------
+            <div class="modal fade bs-example-modal-lg" id="editParam2" tabindex="1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="myModalLabel">Изменить значения СПО/ВУЗ</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        </div>
+                        <form method="post" enctype="multipart/form-data">
+                            <div class="modal-body">
+                                <input type="text" asp-for="Params[1].id" />
+                                <table class="tab">
+                                    <thead>
+                                        <tr><th colspan="2">Название критерия</th><th>Значение СПО/ВУЗ</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><th rowspan="2">Факторы риска</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].fr_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].fr_n" /></th></tr>
+                                        <tr><th rowspan="2">Факторы защиты</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].fz_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].fz_n" /></th></tr>
+                                        <tr><th rowspan="2">Потребность в одобрении</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].po_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].po_n" /></th></tr>
+                                        <tr><th rowspan="2">Подверженность влиянию группы</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].pvg_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].pvg_n" /></th></tr>
+                                        <tr><th rowspan="2">Принятие асоциальных установок социума</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].pau_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].pau_n" /></th></tr>
+                                        <tr><th rowspan="2">Склонность к риску</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].sr_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].sr_n" /></th></tr>
+                                        <tr><th rowspan="2">Импульсивность</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].i_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].i_n" /></th></tr>
+                                        <tr><th rowspan="2">Тревожность</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].t_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].t_n" /></th></tr>
+                                        <tr><th rowspan="2">Фрустрация</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].f_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].f_n" /></th></tr>
+                                        <tr><th rowspan="2">Наркопотребление в социальном окружении</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].nso_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].nso_n" /></th></tr>
+                                        <tr><th rowspan="2">Принятие родителями</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].pr_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].pr_n" /></th></tr>
+                                        <tr><th rowspan="2">Принятие одноклассниками</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].poo_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].poo_n" /></th></tr>
+                                        <tr><th rowspan="2">Социальная активность</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].sa_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].sa_n" /></th></tr>
+                                        <tr><th rowspan="2">Самоконтроль поведения</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].sp_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].sp_n" /></th></tr>
+                                        <tr><th rowspan="2">Самоэффективность</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].s_v" /></th></tr>
+                                        <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].s_n" /></th></tr>
+
+                                    </tbody>
+                                    <tfoot>
+
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+                                <button type="submit" class="" asp-controller="Home" asp-action="Save_Param">Сохранить параметры</button>
+                            </div>
+                        </form>
                     </div>
-                    <form method="post" enctype="multipart/form-data">
-                        <div class="modal-body">
-                            <input type="text" asp-for="Params[1].id" />
-                            <table class="tab">
-                                <thead>
-                                    <tr><th colspan="2">Название критерия</th><th>Значение СПО/ВУЗ</th></tr>
-                                </thead>
-                                <tbody>
-                                    <tr><th rowspan="2">Факторы риска</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].fr_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].fr_n" /></th></tr>
-                                    <tr><th rowspan="2">Факторы защиты</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].fz_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].fz_n" /></th></tr>
-                                    <tr><th rowspan="2">Потребность в одобрении</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].po_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].po_n" /></th></tr>
-                                    <tr><th rowspan="2">Подверженность влиянию группы</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].pvg_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].pvg_n" /></th></tr>
-                                    <tr><th rowspan="2">Принятие асоциальных установок социума</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].pau_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].pau_n" /></th></tr>
-                                    <tr><th rowspan="2">Склонность к риску</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].sr_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].sr_n" /></th></tr>
-                                    <tr><th rowspan="2">Импульсивность</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].i_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].i_n" /></th></tr>
-                                    <tr><th rowspan="2">Тревожность</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].t_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].t_n" /></th></tr>
-                                    <tr><th rowspan="2">Фрустрация</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].f_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].f_n" /></th></tr>
-                                    <tr><th rowspan="2">Наркопотребление в социальном окружении</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].nso_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].nso_n" /></th></tr>
-                                    <tr><th rowspan="2">Принятие родителями</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].pr_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].pr_n" /></th></tr>
-                                    <tr><th rowspan="2">Принятие одноклассниками</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].poo_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].poo_n" /></th></tr>
-                                    <tr><th rowspan="2">Социальная активность</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].sa_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].sa_n" /></th></tr>
-                                    <tr><th rowspan="2">Самоконтроль поведения</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].sp_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].sp_n" /></th></tr>
-                                    <tr><th rowspan="2">Самоэффективность</th><th>Верхнее</th><th><input class="form-control" type="text" asp-for="Params[1].s_v" /></th></tr>
-                                    <tr><th>Нижнее</th><th><input class="form-control" type="text" asp-for="Params[1].s_n" /></th></tr>
-
-                                </tbody>
-                                <tfoot>
-
-                                </tfoot>
-                            </table>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-                            <button type="submit" class="" asp-controller="Home" asp-action="Save_Param">Сохранить параметры</button>
-                        </div>
-                    </form>
                 </div>
-            </div>
-        </div>*@
+            </div>*@
 </body>
 </html>

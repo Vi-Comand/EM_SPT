@@ -7,12 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using System.IO;
 using System.Text;
 using static EM_SPT.Controllers.HomeController;
+
 
 namespace EM_SPT
 {
@@ -31,7 +29,7 @@ namespace EM_SPT
             var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
                  .AddJsonFile("appsettings.json");
             var configuration = builder.Build();
-       
+
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             services.AddDbContext<DataContext>(options => options.UseMySql(configuration["ConnectionStrings:DefaultConnection"]));
@@ -52,7 +50,7 @@ namespace EM_SPT
             services.AddMvc()
            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddHostedService<TimedHostedService>();
-
+            services.AddSignalR();
         }
 
 
@@ -67,6 +65,10 @@ namespace EM_SPT
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseAuthentication();
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<ChatHub>("/chatHub");
+            });
             app.UseMvc(routes =>
             {
                 /* routes.MapRoute(

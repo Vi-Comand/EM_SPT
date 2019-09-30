@@ -4,6 +4,8 @@ using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Hosting;
@@ -56,9 +58,9 @@ namespace EM_SPT.Controllers
             {
                 if (DateTime.Now.Hour >= hour && DateTime.Now.Hour <= 23 && dateVigruz != DateTime.Now.ToShortDateString())
                 {
-                    HomeController ff = new HomeController();
-                    dateVigruz = DateTime.Now.ToShortDateString();
-                    //ff.VigruzkaMO();
+                    /*  HomeController ff = new HomeController(hubContext);
+                      dateVigruz = DateTime.Now.ToShortDateString();
+                      //ff.VigruzkaMO();*/
                 }
             }
 
@@ -78,6 +80,21 @@ namespace EM_SPT.Controllers
 
         }
 
+
+        public class ChatHub : Hub
+        {
+
+
+            public async Task SendMessage(string user, string message)
+            {
+                // var q = Context.ConnectionId;
+
+                //  var context = this.Context.GetHttpContext();
+
+                await Clients.All.SendAsync("ReceiveMessage", user, message);
+            }
+
+        }
 
 
 
@@ -165,70 +182,98 @@ namespace EM_SPT.Controllers
 
 
         }
-      /*  public IActionResult Spisok_full1()
+        int g_load = 0;
+        ChatHub Ch = new ChatHub();
+
+        IHubContext<ChatHub> hubContext;
+
+        public HomeController(IHubContext<ChatHub> hubContext)
         {
-            SpisParam par = new SpisParam();
-            par.Params = db.param.ToList();
-            List<mo_kol> listMO = new List<mo_kol>();
-            List<TestVOO> listOO = new List<TestVOO>();
-            List<TestVKlass> listKl = new List<TestVKlass>();
-
-            List<Spisok_full> listU = new List<Spisok_full>();
-            var list_oo = db.oo;
-            var list_mo = db.mo;
-            listU = (from u in db.User.Where(p => p.test == 1)
-                        join kl in db.klass on u.id_klass equals kl.id
-                        join oo in db.oo on kl.id_oo equals oo.id
-                        join mo in db.mo on oo.id_mo equals mo.id
-                        select new Spisok_full
-                        {
-                            id_user = u.id,
-                            id_mo = mo.id,
-                           // name_mo = mo.name,
-                            id_oo = oo.id,
-                            tip=oo.tip
+            this.hubContext = hubContext;
+        }
 
 
-                            
-                        }).ToList();
+        public async Task<IActionResult> load(int load)
+        {
 
-            foreach (mo mo in list_mo)
+
+
+
+
+            for (int i = 1; i < 10; i++)
             {
-                mo_kol mo_Kol = new mo_kol();
-                mo_Kol.id =mo.id ;
-                mo_Kol.name = mo.name;
-                mo_Kol.kol_OO = list_oo.Where(p => p.tip == 1 && p.id_mo == mo.id).Count();
-                mo_Kol.kol_SPO = list_oo.Where(p => p.tip == 2 && p.id_mo == mo.id).Count();
-                mo_Kol.kol_VUZ = list_oo.Where(p => p.tip == 3 && p.id_mo == mo.id).Count();
-                mo_Kol.kol_OO_t = listU.Where(p => p.tip == 1 && p.id_mo == mo.id).Count();
-                mo_Kol.kol_SPO_t = listU.Where(p => p.tip == 2 && p.id_mo == mo.id).Count();
-                mo_Kol.kol_VUZ_t = listU.Where(p => p.tip == 3 && p.id_mo == mo.id).Count();
-                mo_Kol.sum_OO = mo_Kol.kol_OO + mo_Kol.kol_SPO + mo_Kol.kol_VUZ;
-                mo_Kol.sum_t = mo_Kol.kol_OO_t + mo_Kol.kol_SPO_t + mo_Kol.kol_VUZ_t;
-
-                listMO.Add(mo_Kol);
+                await hubContext.Clients.All.SendAsync("Notify", i);
+                // g_load = i;
+                // a = Ch.SendMessage("asd", "sd");
             }
+            return Json(g_load);
+            return null;
+        }
+
+        /*  public IActionResult Spisok_full1()
+          {
+              SpisParam par = new SpisParam();
+              par.Params = db.param.ToList();
+              List<mo_kol> listMO = new List<mo_kol>();
+              List<TestVOO> listOO = new List<TestVOO>();
+              List<TestVKlass> listKl = new List<TestVKlass>();
+
+              List<Spisok_full> listU = new List<Spisok_full>();
+              var list_oo = db.oo;
+              var list_mo = db.mo;
+              listU = (from u in db.User.Where(p => p.test == 1)
+                          join kl in db.klass on u.id_klass equals kl.id
+                          join oo in db.oo on kl.id_oo equals oo.id
+                          join mo in db.mo on oo.id_mo equals mo.id
+                          select new Spisok_full
+                          {
+                              id_user = u.id,
+                              id_mo = mo.id,
+                             // name_mo = mo.name,
+                              id_oo = oo.id,
+                              tip=oo.tip
+
+
+
+                          }).ToList();
+
+              foreach (mo mo in list_mo)
+              {
+                  mo_kol mo_Kol = new mo_kol();
+                  mo_Kol.id =mo.id ;
+                  mo_Kol.name = mo.name;
+                  mo_Kol.kol_OO = list_oo.Where(p => p.tip == 1 && p.id_mo == mo.id).Count();
+                  mo_Kol.kol_SPO = list_oo.Where(p => p.tip == 2 && p.id_mo == mo.id).Count();
+                  mo_Kol.kol_VUZ = list_oo.Where(p => p.tip == 3 && p.id_mo == mo.id).Count();
+                  mo_Kol.kol_OO_t = listU.Where(p => p.tip == 1 && p.id_mo == mo.id).Count();
+                  mo_Kol.kol_SPO_t = listU.Where(p => p.tip == 2 && p.id_mo == mo.id).Count();
+                  mo_Kol.kol_VUZ_t = listU.Where(p => p.tip == 3 && p.id_mo == mo.id).Count();
+                  mo_Kol.sum_OO = mo_Kol.kol_OO + mo_Kol.kol_SPO + mo_Kol.kol_VUZ;
+                  mo_Kol.sum_t = mo_Kol.kol_OO_t + mo_Kol.kol_SPO_t + mo_Kol.kol_VUZ_t;
+
+                  listMO.Add(mo_Kol);
+              }
 
 
 
 
-            listMO.Sort((a, b) => a.name.CompareTo(b.name));
-            par.Mos = listMO;
-            ViewData["Sum"] = list_oo.Count();
-            ViewData["Sumt"] = listU.Count();
-            ViewData["SumKolOO"] = listMO.Sum(p => p.kol_OO);
-            ViewData["SumKolSPO"] = listMO.Sum(p => p.kol_SPO);
-            ViewData["SumKolVUZ"] = listMO.Sum(p => p.kol_VUZ);
-            ViewData["SumKolOO_t"] = listMO.Sum(p => p.kol_OO_t);
-            ViewData["SumKolSPO_t"] = listMO.Sum(p => p.kol_SPO_t);
-            ViewData["SumKolVUZ_t"] = listMO.Sum(p => p.kol_VUZ_t);
-            return View("adm_stat", par);
+              listMO.Sort((a, b) => a.name.CompareTo(b.name));
+              par.Mos = listMO;
+              ViewData["Sum"] = list_oo.Count();
+              ViewData["Sumt"] = listU.Count();
+              ViewData["SumKolOO"] = listMO.Sum(p => p.kol_OO);
+              ViewData["SumKolSPO"] = listMO.Sum(p => p.kol_SPO);
+              ViewData["SumKolVUZ"] = listMO.Sum(p => p.kol_VUZ);
+              ViewData["SumKolOO_t"] = listMO.Sum(p => p.kol_OO_t);
+              ViewData["SumKolSPO_t"] = listMO.Sum(p => p.kol_SPO_t);
+              ViewData["SumKolVUZ_t"] = listMO.Sum(p => p.kol_VUZ_t);
+              return View("adm_stat", par);
 
 
-           
-        
-        }*/
-            public IActionResult Spisok_full()
+
+
+          }*/
+        public IActionResult Spisok_full()
         {
 
             SpisParam par = new SpisParam();
@@ -286,7 +331,7 @@ namespace EM_SPT.Controllers
             ViewData["SumKolOO_t"] = listMO.Sum(p => p.kol_OO_t);
             ViewData["SumKolSPO_t"] = listMO.Sum(p => p.kol_SPO_t);
             ViewData["SumKolVUZ_t"] = listMO.Sum(p => p.kol_VUZ_t);
-        
+
 
             return View("adm_full", par);
         }
@@ -353,20 +398,20 @@ namespace EM_SPT.Controllers
         }
         public async Task<IActionResult> Result_po_click_MO()
         {
-           /* var ListResult = (from u in db.User.Where(p => p.test == 1)
-                     join kl in db.klass on u.id_klass equals kl.id
-                     join oo in db.oo on kl.id_oo equals oo.id
-                     join mo in db.mo on oo.id_mo equals mo.id
-                              join ans in db.answer on u.id equals ans.id_user
-                              select new VigruzkaExcel
-                              {
-                                  mo = mo.name,
-                                  oo = oo.id + " " + oo.kod,
-                                  klass_n = kl.klass_n.ToString() + " " + kl.kod,
-                                  login = u.login,
-                                  kod = kl.kod,
-                                  ans = ans
-                              }).ToList();*/
+            /* var ListResult = (from u in db.User.Where(p => p.test == 1)
+                      join kl in db.klass on u.id_klass equals kl.id
+                      join oo in db.oo on kl.id_oo equals oo.id
+                      join mo in db.mo on oo.id_mo equals mo.id
+                               join ans in db.answer on u.id equals ans.id_user
+                               select new VigruzkaExcel
+                               {
+                                   mo = mo.name,
+                                   oo = oo.id + " " + oo.kod,
+                                   klass_n = kl.klass_n.ToString() + " " + kl.kod,
+                                   login = u.login,
+                                   kod = kl.kod,
+                                   ans = ans
+                               }).ToList();*/
 
 
 
@@ -378,22 +423,22 @@ namespace EM_SPT.Controllers
             }
 
             int[] skl = (from k in db.oo.Where(p => p.id_mo == 15 && p.tip == 1) select k.id).ToArray();
-            int[] spo  = (from k in db.oo.Where(p => p.id_mo == 15 &&  p.tip == 2) select k.id).ToArray();
-            int[] vuz= (from k in db.oo.Where(p => p.id_mo == 15 && p.tip == 3 ) select k.id).ToArray();
+            int[] spo = (from k in db.oo.Where(p => p.id_mo == 15 && p.tip == 2) select k.id).ToArray();
+            int[] vuz = (from k in db.oo.Where(p => p.id_mo == 15 && p.tip == 3) select k.id).ToArray();
             var str1 = (from u in db.User.Where(p => p.test == 1 && p.role == 0)
-                 join kl in db.klass.Where(p => skl.Contains(p.id_oo) && p.klass_n < 10 && p.klass_n > 6) on u.id_klass equals kl.id
-                 join oo in db.oo on kl.id_oo equals oo.id
-                 join mo in db.mo on oo.id_mo equals mo.id
-                 join ans in db.answer on u.id equals ans.id_user
-                 select new VigruzkaExcel
-                 {
-                     mo = mo.name,
-                     oo = oo.id + " " + oo.kod,
-                     klass_n = kl.klass_n.ToString() + " " + kl.kod,
-                     login = u.login,
-                     kod = kl.kod,
-                     ans = ans
-                 }).OrderBy(p => p.oo).ToList();
+                        join kl in db.klass.Where(p => skl.Contains(p.id_oo) && p.klass_n < 10 && p.klass_n > 6) on u.id_klass equals kl.id
+                        join oo in db.oo on kl.id_oo equals oo.id
+                        join mo in db.mo on oo.id_mo equals mo.id
+                        join ans in db.answer on u.id equals ans.id_user
+                        select new VigruzkaExcel
+                        {
+                            mo = mo.name,
+                            oo = oo.id + " " + oo.kod,
+                            klass_n = kl.klass_n.ToString() + " " + kl.kod,
+                            login = u.login,
+                            kod = kl.kod,
+                            ans = ans
+                        }).OrderBy(p => p.oo).ToList();
 
 
 
@@ -416,7 +461,7 @@ namespace EM_SPT.Controllers
 
 
 
-         
+
             var str3 =
                  (from u in db.User.Where(p => p.test == 1 && p.role == 0)
                   join kl in db.klass.Where(p => spo.Contains(p.id_oo) && p.klass_n < 7) on u.id_klass equals kl.id
@@ -471,8 +516,8 @@ namespace EM_SPT.Controllers
                     var workSheet = package.Workbook.Worksheets[0];
                     var workSheet1 = package.Workbook.Worksheets[1];
                     int i = 10;
-                  /*  workSheet.DeleteRow(11 + str1.Count, 5000, true);
-                    workSheet1.DeleteRow(11 + str1.Count, 5000, true);*/
+                    /*  workSheet.DeleteRow(11 + str1.Count, 5000, true);
+                      workSheet1.DeleteRow(11 + str1.Count, 5000, true);*/
 
 
                     workSheet.Cells[7, 2].Value = str1.Count;
@@ -766,8 +811,8 @@ namespace EM_SPT.Controllers
                     var workSheet1 = package.Workbook.Worksheets[1];
 
                     int i = 10;
-                  /*  workSheet.DeleteRow(11 + str3.Count, 5000, true);
-                    workSheet1.DeleteRow(11 + str3.Count, 5000, true);*/
+                    /*  workSheet.DeleteRow(11 + str3.Count, 5000, true);
+                      workSheet1.DeleteRow(11 + str3.Count, 5000, true);*/
 
 
                     workSheet.Cells[7, 2].Value = str3.Count;
@@ -901,7 +946,7 @@ namespace EM_SPT.Controllers
 
 
 
-            
+
 
 
             }
@@ -920,8 +965,8 @@ namespace EM_SPT.Controllers
                     var workSheet1 = package.Workbook.Worksheets[1];
 
                     int i = 10;
-                   /* workSheet.DeleteRow(11 + str4.Count, 5000, true);
-                    workSheet1.DeleteRow(11 + str4.Count, 5000, true);*/
+                    /* workSheet.DeleteRow(11 + str4.Count, 5000, true);
+                     workSheet1.DeleteRow(11 + str4.Count, 5000, true);*/
 
 
                     workSheet.Cells[7, 2].Value = str4.Count;
@@ -1075,7 +1120,7 @@ namespace EM_SPT.Controllers
 
             outputMemStream.Position = 0;
             string qw = @"\Vgruzka\" + "Краснодар" + "_.zip";
-            System.IO.File.WriteAllBytes(Directory.GetCurrentDirectory() + "\\wwwroot\\Vgruzka\\" +"Краснодар" + "_.zip", outputMemStream.ToArray());
+            System.IO.File.WriteAllBytes(Directory.GetCurrentDirectory() + "\\wwwroot\\Vgruzka\\" + "Краснодар" + "_.zip", outputMemStream.ToArray());
 
 
 
@@ -1091,7 +1136,7 @@ namespace EM_SPT.Controllers
 
 
         }
-    public async Task<IActionResult> Pass_excel()
+        public async Task<IActionResult> Pass_excel()
         {
             await Task.Yield();
             ListMo listMO = new ListMo();
@@ -2613,7 +2658,7 @@ namespace EM_SPT.Controllers
 
 
         }
-    
+
         public async Task<IActionResult> Answer(CompositeModel model)
         {
             if (model == null)

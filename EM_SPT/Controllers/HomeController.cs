@@ -22,6 +22,7 @@ using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
+
 namespace EM_SPT.Controllers
 {
     public class HomeController : Controller
@@ -167,69 +168,131 @@ namespace EM_SPT.Controllers
 
 
         }
-      /*  public IActionResult Spisok_full1()
+        /*  public IActionResult Spisok_full1()
+          {
+              SpisParam par = new SpisParam();
+              par.Params = db.param.ToList();
+              List<mo_kol> listMO = new List<mo_kol>();
+              List<TestVOO> listOO = new List<TestVOO>();
+              List<TestVKlass> listKl = new List<TestVKlass>();
+
+              List<Spisok_full> listU = new List<Spisok_full>();
+              var list_oo = db.oo;
+              var list_mo = db.mo;
+              listU = (from u in db.User.Where(p => p.test == 1)
+                          join kl in db.klass on u.id_klass equals kl.id
+                          join oo in db.oo on kl.id_oo equals oo.id
+                          join mo in db.mo on oo.id_mo equals mo.id
+                          select new Spisok_full
+                          {
+                              id_user = u.id,
+                              id_mo = mo.id,
+                             // name_mo = mo.name,
+                              id_oo = oo.id,
+                              tip=oo.tip
+
+
+
+                          }).ToList();
+
+              foreach (mo mo in list_mo)
+              {
+                  mo_kol mo_Kol = new mo_kol();
+                  mo_Kol.id =mo.id ;
+                  mo_Kol.name = mo.name;
+                  mo_Kol.kol_OO = list_oo.Where(p => p.tip == 1 && p.id_mo == mo.id).Count();
+                  mo_Kol.kol_SPO = list_oo.Where(p => p.tip == 2 && p.id_mo == mo.id).Count();
+                  mo_Kol.kol_VUZ = list_oo.Where(p => p.tip == 3 && p.id_mo == mo.id).Count();
+                  mo_Kol.kol_OO_t = listU.Where(p => p.tip == 1 && p.id_mo == mo.id).Count();
+                  mo_Kol.kol_SPO_t = listU.Where(p => p.tip == 2 && p.id_mo == mo.id).Count();
+                  mo_Kol.kol_VUZ_t = listU.Where(p => p.tip == 3 && p.id_mo == mo.id).Count();
+                  mo_Kol.sum_OO = mo_Kol.kol_OO + mo_Kol.kol_SPO + mo_Kol.kol_VUZ;
+                  mo_Kol.sum_t = mo_Kol.kol_OO_t + mo_Kol.kol_SPO_t + mo_Kol.kol_VUZ_t;
+
+                  listMO.Add(mo_Kol);
+              }
+
+
+
+
+              listMO.Sort((a, b) => a.name.CompareTo(b.name));
+              par.Mos = listMO;
+              ViewData["Sum"] = list_oo.Count();
+              ViewData["Sumt"] = listU.Count();
+              ViewData["SumKolOO"] = listMO.Sum(p => p.kol_OO);
+              ViewData["SumKolSPO"] = listMO.Sum(p => p.kol_SPO);
+              ViewData["SumKolVUZ"] = listMO.Sum(p => p.kol_VUZ);
+              ViewData["SumKolOO_t"] = listMO.Sum(p => p.kol_OO_t);
+              ViewData["SumKolSPO_t"] = listMO.Sum(p => p.kol_SPO_t);
+              ViewData["SumKolVUZ_t"] = listMO.Sum(p => p.kol_VUZ_t);
+              return View("adm_stat", par);
+
+
+
+
+          }*/
+
+        public IActionResult izmDB()
         {
-            SpisParam par = new SpisParam();
-            par.Params = db.param.ToList();
-            List<mo_kol> listMO = new List<mo_kol>();
-            List<TestVOO> listOO = new List<TestVOO>();
-            List<TestVKlass> listKl = new List<TestVKlass>();
 
-            List<Spisok_full> listU = new List<Spisok_full>();
-            var list_oo = db.oo;
-            var list_mo = db.mo;
-            listU = (from u in db.User.Where(p => p.test == 1)
-                        join kl in db.klass on u.id_klass equals kl.id
-                        join oo in db.oo on kl.id_oo equals oo.id
-                        join mo in db.mo on oo.id_mo equals mo.id
-                        select new Spisok_full
-                        {
-                            id_user = u.id,
-                            id_mo = mo.id,
-                           // name_mo = mo.name,
-                            id_oo = oo.id,
-                            tip=oo.tip
+           int[] id_ans = (from u in db.answer
 
 
-                            
-                        }).ToList();
 
-            foreach (mo mo in list_mo)
+                          select 
+                         
+                               u.id_user
+
+
+
+
+
+                          ).ToArray();
+            int[] id_u = (from u in db.User.Where(x=>x.test!=0)
+
+
+
+
+                          select
+                          
+                            u.id
+                             
+
+
+                          ).ToArray();
+           List<int> id_mass=new List<int>();
+            for (int j=0;j<id_u.Count();j++)
             {
-                mo_kol mo_Kol = new mo_kol();
-                mo_Kol.id =mo.id ;
-                mo_Kol.name = mo.name;
-                mo_Kol.kol_OO = list_oo.Where(p => p.tip == 1 && p.id_mo == mo.id).Count();
-                mo_Kol.kol_SPO = list_oo.Where(p => p.tip == 2 && p.id_mo == mo.id).Count();
-                mo_Kol.kol_VUZ = list_oo.Where(p => p.tip == 3 && p.id_mo == mo.id).Count();
-                mo_Kol.kol_OO_t = listU.Where(p => p.tip == 1 && p.id_mo == mo.id).Count();
-                mo_Kol.kol_SPO_t = listU.Where(p => p.tip == 2 && p.id_mo == mo.id).Count();
-                mo_Kol.kol_VUZ_t = listU.Where(p => p.tip == 3 && p.id_mo == mo.id).Count();
-                mo_Kol.sum_OO = mo_Kol.kol_OO + mo_Kol.kol_SPO + mo_Kol.kol_VUZ;
-                mo_Kol.sum_t = mo_Kol.kol_OO_t + mo_Kol.kol_SPO_t + mo_Kol.kol_VUZ_t;
-
-                listMO.Add(mo_Kol);
+                int id = id_u[j];
+                bool net = false;
+                for (int i = 0; i < id_ans.Count(); i++)
+                    if (id == id_ans[i])
+                    {
+                        
+                        net = false;
+                        break;
+                    }
+                    else { net = true; }
+                if(net)
+                id_mass.Add(id);
             }
 
-
-
-
-            listMO.Sort((a, b) => a.name.CompareTo(b.name));
-            par.Mos = listMO;
-            ViewData["Sum"] = list_oo.Count();
-            ViewData["Sumt"] = listU.Count();
-            ViewData["SumKolOO"] = listMO.Sum(p => p.kol_OO);
-            ViewData["SumKolSPO"] = listMO.Sum(p => p.kol_SPO);
-            ViewData["SumKolVUZ"] = listMO.Sum(p => p.kol_VUZ);
-            ViewData["SumKolOO_t"] = listMO.Sum(p => p.kol_OO_t);
-            ViewData["SumKolSPO_t"] = listMO.Sum(p => p.kol_SPO_t);
-            ViewData["SumKolVUZ_t"] = listMO.Sum(p => p.kol_VUZ_t);
-            return View("adm_stat", par);
-
+            foreach (int id in id_mass)
+            {
+                // Указать, что запись изменилась
+                user us = db.User.Find(id);
+                us.test = 0;
+                db.SaveChanges();
+            }
 
            
         
-        }*/
+            return View("adm_full");
+        }
+
+
+
+
             public IActionResult Spisok_full()
         {
 
@@ -353,26 +416,26 @@ namespace EM_SPT.Controllers
             return View("adm_stat", par);
 
         }
+        private readonly NotifyService _service;
+        IHubContext<ChatHub> _chatHubContext;
+        public async Task<IActionResult> UpdateLoad( int lod)
+        {
+
+           // no da = new ChatHub();
+            await _service.SendNotificationAsync("fdsdf");
+            //   await das.Send("jhgjgh", das.OnConnectedAsync().Id);
+            // await hubContext.Clients.All.SendAsync("Notify", $"Добавлено:");
+            return Json(lod);
+        }
+       
+
+
         public async Task<IActionResult> Result_po_click_MO(int id, string name)
         {
 
 
-            var cancellationTokenSource = new CancellationTokenSource();
-            var channel = await hubConnection.StreamAsChannelAsync<int>(
-                "Counter", 10, 500, cancellationTokenSource.Token);
-
-            // Wait asynchronously for data to become available
-            while (await channel.WaitToReadAsync())
-            {
-                // Read all currently available data synchronously, before waiting for more data
-                while (channel.TryRead(out var count))
-                {
-                    Console.WriteLine($"{count}");
-                }
-            }
-
-            Console.WriteLine("Streaming completed");
-
+            
+        
             /* var ListResult = (from u in db.User.Where(p => p.test == 1)
                       join kl in db.klass on u.id_klass equals kl.id
                       join oo in db.oo on kl.id_oo equals oo.id
@@ -414,7 +477,6 @@ namespace EM_SPT.Controllers
                      kod = kl.kod,
                      ans = ans
                  }).OrderBy(p => p.oo).ToList();
-
 
 
 
@@ -470,7 +532,7 @@ namespace EM_SPT.Controllers
 
 
 
-
+            int lod=0;
 
 
 
@@ -522,6 +584,7 @@ namespace EM_SPT.Controllers
                     workSheet.Cells[3, 205].Value = para.fz_n;
                     foreach (var stroka in str1)
                     {
+                        lod++;
                         answer row = stroka.ans;
 
                         i++;
@@ -1364,7 +1427,7 @@ namespace EM_SPT.Controllers
 
         }
 
-        public IActionResult SpisokAdmKlassa(int id)
+        public  IActionResult SpisokAdmKlassa(int id)
         {
             var login = HttpContext.User.Identity.Name;
             var oo = db.User.Where(p => p.login == login).First().id_oo;
@@ -2663,9 +2726,28 @@ namespace EM_SPT.Controllers
     }
     public class ChatHub : Hub
     {
-        public async Task Send(string message)
+        public async Task SendMessage1(string user, string message)
         {
-            await this.Clients.All.SendAsync("Send", message);
+            await Clients.All.SendAsync("ReceiveMessage", user, message);
+        }
+
+        public async Task SendMessage(string user, string message)
+        {
+            await Clients.All.SendAsync("ReceiveMessage", user, message);
+        }
+    }
+    public class NotifyService
+    {
+        private readonly IHubContext<ChatHub> _hub;
+
+        public NotifyService(IHubContext<ChatHub> hub)
+        {
+            _hub = hub;
+        }
+
+        public Task SendNotificationAsync(string message)
+        {
+            return _hub.Clients.All.SendAsync("ReceiveMessage", message);
         }
     }
 }

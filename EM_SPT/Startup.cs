@@ -1,9 +1,11 @@
-﻿using EM_SPT.Models;
+﻿using EM_SPT.Controllers;
+using EM_SPT.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,18 +33,18 @@ namespace EM_SPT
             var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
                  .AddJsonFile("appsettings.json");
             var configuration = builder.Build();
-       
+          
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             services.AddDbContext<DataContext>(options => options.UseMySql(configuration["ConnectionStrings:DefaultConnection"]));
-            services.AddSignalR();
+           
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
+          
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options => //CookieAuthenticationOptions
                 {
@@ -52,7 +54,7 @@ namespace EM_SPT
             services.AddMvc()
            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddHostedService<TimedHostedService>();
-
+            services.AddSignalR();
         }
 
 
@@ -67,9 +69,11 @@ namespace EM_SPT
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseAuthentication();
+          
+
             app.UseSignalR(routes =>
             {
-                routes.MapHub<ChatHub>("/chat");
+                routes.MapHub<ChatHub>("/chatHub");
             });
             app.UseMvc(routes =>
             {

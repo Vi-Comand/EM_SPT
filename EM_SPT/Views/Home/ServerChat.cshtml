@@ -68,10 +68,6 @@
     });
     event.preventDefault();
     });
-
-      
-
-
     </script >
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <ul class="nav nav-tabs">
@@ -93,74 +89,55 @@
                 </div>
                 <button class="btn btn-outline-success " id="adklass" form="0">Сформировать</button>
                 <button class="btn btn-outline-success " id="KolvoLoad" form="0">Сформировать1</button>
-                <button class="btn btn-outline-success " id="izmDB" form="0">Проверка</button>
+
+
                 <script>
 
-                    $("#izmDB").click(function () { // задаем функцию при нажатиии на элемент <button>
+                    $("#KolvoLoad").click(function () { // задаем функцию при нажатиии на элемент <button>
 
 
 
 
                         $.ajax({
-                            url: '/Home/izmDB/',
+                            url: '/Home/UpdateLoad/',
                             type: "POST",
                             dataType: "json",
                             success: function (query) {
-                               // alert(query);
+                                alert(query);
                             }
 
 
 
                         });
                     });
-                    </script>
-                    <script>
-
-                        $("#KolvoLoad").click(function () { // задаем функцию при нажатиии на элемент <button>
 
 
 
+                    $("#adklass").click(function () { // задаем функцию при нажатиии на элемент <button>
 
-                            $.ajax({
-                                url: '/Home/UpdateLoad/',
-                                type: "POST",
-                                dataType: "json",
-                                success: function (query) {
-                                    alert(query);
+                        var id = 1;
+
+
+                        $.ajax({
+                            url: '/Home/SpisokAdmOO/',
+                            type: "POST",
+                            dataType: "json",
+                            data: { "id": id },
+                            success: function (query) {
+                                var tableArr = ['<table class="tab">'];
+                                tableArr.push('<thead ><tr><th style="width: 40%">Код ОО/ название</th><th style="width: 30%">Логин</th><th style="width: 30%">Пароль</th></tr></thead>');
+                                for (i = 0; i < query.length; i++) {
+                                    var q = query[i].tip == 1 ? 'СОШ' : query[i].tip == 2 ? 'СПО' : 'ВУЗ';
+                                    tableArr.push('<tr><td>' + query[i].id_oo + ' ' + query[i].kod + '</td><td >' + query[i].login + '</td><td>' + query[i].pass + '</td></tr>');
+                                    if (query[i].test == "1") { sum++ }
                                 }
 
-
-
-                            });
-                        });
-
-
-
-                                    $("#adklass").click(function () { // задаем функцию при нажатиии на элемент <button>
-
-                                        var id = 1;
-
-
-                                        $.ajax({
-                            url: '/Home/SpisokAdmOO/',
-                        type: "POST",
-                        dataType: "json",
-                                            data: {"id": id },
-                                            success: function (query) {
-                                                var tableArr = ['<table class="tab">'];
-                                                tableArr.push('<thead ><tr><th style="width: 40%">Код ОО/ название</th><th style="width: 30%">Логин</th><th style="width: 30%">Пароль</th></tr></thead>');
-                                                for (i = 0; i < query.length; i++) {
-                                                    var q = query[i].tip == 1 ? 'СОШ' : query[i].tip == 2 ? 'СПО' : 'ВУЗ';
-                                                    tableArr.push('<tr><td>' + query[i].id_oo + ' ' + query[i].kod + '</td><td >' + query[i].login + '</td><td>' + query[i].pass + '</td></tr>');
-                                                    if (query[i].test == "1") {sum++}
+                                tableArr.push('<tfoot class=""><tr><td>Всего </td><td>' + query.length + '</td><td></td></tr></tfoot>');
+                                tableArr.push('</table>');
+                                document.getElementById('stat2').innerHTML = tableArr.join('\n')
                             }
-
-                                                tableArr.push('<tfoot class=""><tr><td>Всего </td><td>' + query.length + '</td><td></td></tr></tfoot>');
-                                                tableArr.push('</table>');
-                        document.getElementById('stat2').innerHTML = tableArr.join('\n')
-                    }
-});
-});
+                        });
+                    });
                 </script>
             </form>
             <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="Added">

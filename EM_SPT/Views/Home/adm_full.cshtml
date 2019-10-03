@@ -16,7 +16,7 @@
 </head>
 <body class="gradient">
 
-    <script src="lib/signalr.min.js"></script>
+    @*<script src="lib/signalr.min.js"></script>*@
 
     @*  <script>
             var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
@@ -69,67 +69,65 @@
 
             @* <script>
 
-                    let hubUrl = 'http://localhost:44383/chatHub';
-                    const hubConnection = new signalR.HubConnectionBuilder()
-                        .withUrl(hubUrl)
-                        .configureLogging(signalR.LogLevel.Information)
-                        .build();
+            let hubUrl = 'http://localhost:44383/chatHub';
+            const hubConnection = new signalR.HubConnectionBuilder()
+                .withUrl(hubUrl)
+                .configureLogging(signalR.LogLevel.Information)
+                .build();
 
-                    hubConnection.on("Send", function (data) {
+            hubConnection.on("Send", function (data) {
 
-                        let elem = document.createElement("p");
-                        elem.appendChild(document.createTextNode(data));
-                        let firstElem = document.getElementById("chatroom").firstChild;
-                        document.getElementById("chatroom").insertBefore(elem, firstElem);
+                let elem = document.createElement("p");
+                elem.appendChild(document.createTextNode(data));
+                let firstElem = document.getElementById("chatroom").firstChild;
+                document.getElementById("chatroom").insertBefore(elem, firstElem);
 
-                    });
+            });
 
-                    document.getElementById("sendBtn").addEventListener("click", function (e) {
-                        let message = document.getElementById("message").value;
-                        hubConnection.invoke("Send", message);
-                    });
+            document.getElementById("sendBtn").addEventListener("click", function (e) {
+                let message = document.getElementById("message").value;
+                hubConnection.invoke("Send", message);
+            });
 
-                    hubConnection.start();
+            hubConnection.start();
 
-                </script>*@
+        </script>*@
 
             @*  <script>
-                var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
-                // alert(1);
-                //Disable send button until connection is established
-                document.getElementById("sendButton").disabled = false;
-                //connection.start()
+        var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+        // alert(1);
+        //Disable send button until connection is established
+        document.getElementById("sendButton").disabled = false;
+        //connection.start()
 
-                connection.on("ReceiveMessage", function (user, message) {
-                    var msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                    var encodedMsg = user + " says " + msg;
-                    var li = document.createElement("li");
-                    li.textContent = encodedMsg;
-                    document.getElementById("messagesList").appendChild(li);
-                    alert(2);
-                });
+        connection.on("ReceiveMessage", function (user, message) {
+            var msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            var encodedMsg = user + " says " + msg;
+            var li = document.createElement("li");
+            li.textContent = encodedMsg;
+            document.getElementById("messagesList").appendChild(li);
+            alert(2);
+        });
 
-                connection.start().then(function () {
-                    document.getElementById("sendButton").disabled = false;
-                    //    alert(4);
-                }).catch(function (err) {
-                    return console.error(err.toString());
-                });
+        connection.start().then(function () {
+            document.getElementById("sendButton").disabled = false;
+            //    alert(4);
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
 
 
-                document.getElementById("sendButton").addEventListener("click", function (event) {
-                    var user = document.getElementById("userInput").value;
-                    var message = document.getElementById("messageInput").value;
-                    connection.invoke("SendMessage", user, message).catch(function (err) {
-                        return console.error(err.toString());
-                        alert(3);
-                    });
-                    event.preventDefault();
-                });
-                    </script>*@
-            <div class="progress">
-                <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" id="prog" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">0%</div>
-            </div>
+        document.getElementById("sendButton").addEventListener("click", function (event) {
+            var user = document.getElementById("userInput").value;
+            var message = document.getElementById("messageInput").value;
+            connection.invoke("SendMessage", user, message).catch(function (err) {
+                return console.error(err.toString());
+                alert(3);
+            });
+            event.preventDefault();
+        });
+            </script>*@
+
             <button class="btn btn-outline-success " id="adklass" form="0">Сформировать</button>
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
             <script>
@@ -162,16 +160,16 @@
 
 
 
-
+        
 
 
 
             <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="SendEmail">
                 @*<div class="progress">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" id="prog" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
-                    </div>
-                    <button class="btn btn-outline-success " id="adklass" form="0">Сформировать</button>
-                    <button class="btn btn-outline-success " id="KolvoLoad" form="0">Сформировать1</button>*@
+                <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" id="prog" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+            </div>
+            <button class="btn btn-outline-success " id="adklass" form="0">Сформировать</button>
+            <button class="btn btn-outline-success " id="KolvoLoad" form="0">Сформировать1</button>*@
                 <button class="btn btn-outline-success " id="izmDB" form="0">Проверка</button>
                 <script>
 
@@ -204,11 +202,17 @@
 
 
                         // document.getElementById("notify").appendChild(elem);
-                        var q = message.toString();
-                        var pr = document.getElementById('prog');
-                        pr.innerText = q + '%';
-                        $('#prog').attr('aria-valuenow', q).css('width', q + '%').text = q;
+                        var q = message[1];
+                        var pr = document.getElementById('prog_' + message[0]);
+                        pr.innerText = q;
+                        $('#prog').attr('aria-valuenow', q).css('width', q).text = q;
                     });
+
+
+
+
+                 
+                    hubConnection.serverTimeoutInMilliseconds = 900000;
                     hubConnection.start();
                 </script>
 
@@ -238,51 +242,51 @@
 
                 <script>
 
-                                                                                                                                                                                            //$("#KolvoLoad").click(function () { // задаем функцию при нажатиии на элемент <button>
+                                                                                                                                                                                                                                //$("#KolvoLoad").click(function () { // задаем функцию при нажатиии на элемент <button>
 
 
 
 
-                                                                                                                                                                                            //    $.ajax({
-                                                                                                                                                                                            //        url: '/Home/UpdateLoad/',
-                                                                                                                                                                                            //        type: "POST",
-                                                                                                                                                                                            //        dataType: "json",
-                                                                                                                                                                                            //        success: function (query) {
-                                                                                                                                                                                            //            alert(query);
-                                                                                                                                                                                            //        }
+                                                                                                                                                                                                                                //    $.ajax({
+                                                                                                                                                                                                                                //        url: '/Home/UpdateLoad/',
+                                                                                                                                                                                                                                //        type: "POST",
+                                                                                                                                                                                                                                //        dataType: "json",
+                                                                                                                                                                                                                                //        success: function (query) {
+                                                                                                                                                                                                                                //            alert(query);
+                                                                                                                                                                                                                                //        }
 
 
 
-                                                                                                                                                                                            //    });
-                                                                                                                                                                                            //});
+                                                                                                                                                                                                                                //    });
+                                                                                                                                                                                                                                //});
 
 
 
-                                                                                                                                                                                            //$("#adklass").click(function () { // задаем функцию при нажатиии на элемент <button>
+                                                                                                                                                                                                                                //$("#adklass").click(function () { // задаем функцию при нажатиии на элемент <button>
 
-                                                                                                                                                                                            //    var id = 1;
+                                                                                                                                                                                                                                //    var id = 1;
 
 
-                                                                                                                                                                                            //    $.ajax({
-                                                                                                                                                                                            //        url: '/Home/SpisokAdmOO/',
-                                                                                                                                                                                            //        type: "POST",
-                                                                                                                                                                                            //        dataType: "json",
-                                                                                                                                                                                            //        data: { "id": id },
-                                                                                                                                                                                            //        success: function (query) {
-                                                                                                                                                                                            //            var tableArr = ['<table class="tab">'];
-                                                                                                                                                                                            //            tableArr.push('<thead ><tr><th style="width: 40%">Код ОО/ название</th><th style="width: 30%">Логин</th><th style="width: 30%">Пароль</th></tr></thead>');
-                                                                                                                                                                                            //            for (i = 0; i < query.length; i++) {
-                                                                                                                                                                                            //                var q = query[i].tip == 1 ? 'СОШ' : query[i].tip == 2 ? 'СПО' : 'ВУЗ';
-                                                                                                                                                                                            //                tableArr.push('<tr><td>' + query[i].id_oo + ' ' + query[i].kod + '</td><td >' + query[i].login + '</td><td>' + query[i].pass + '</td></tr>');
-                                                                                                                                                                                            //                if (query[i].test == "1") { sum++ }
-                                                                                                                                                                                            //            }
+                                                                                                                                                                                                                                //    $.ajax({
+                                                                                                                                                                                                                                //        url: '/Home/SpisokAdmOO/',
+                                                                                                                                                                                                                                //        type: "POST",
+                                                                                                                                                                                                                                //        dataType: "json",
+                                                                                                                                                                                                                                //        data: { "id": id },
+                                                                                                                                                                                                                                //        success: function (query) {
+                                                                                                                                                                                                                                //            var tableArr = ['<table class="tab">'];
+                                                                                                                                                                                                                                //            tableArr.push('<thead ><tr><th style="width: 40%">Код ОО/ название</th><th style="width: 30%">Логин</th><th style="width: 30%">Пароль</th></tr></thead>');
+                                                                                                                                                                                                                                //            for (i = 0; i < query.length; i++) {
+                                                                                                                                                                                                                                //                var q = query[i].tip == 1 ? 'СОШ' : query[i].tip == 2 ? 'СПО' : 'ВУЗ';
+                                                                                                                                                                                                                                //                tableArr.push('<tr><td>' + query[i].id_oo + ' ' + query[i].kod + '</td><td >' + query[i].login + '</td><td>' + query[i].pass + '</td></tr>');
+                                                                                                                                                                                                                                //                if (query[i].test == "1") { sum++ }
+                                                                                                                                                                                                                                //            }
 
-                                                                                                                                                                                            //            tableArr.push('<tfoot class=""><tr><td>Всего </td><td>' + query.length + '</td><td></td></tr></tfoot>');
-                                                                                                                                                                                            //            tableArr.push('</table>');
-                                                                                                                                                                                            //            document.getElementById('stat2').innerHTML = tableArr.join('\n')
-                                                                                                                                                                                            //        }
-                                                                                                                                                                                            //    });
-                                                                                                                                                                                            //});
+                                                                                                                                                                                                                                //            tableArr.push('<tfoot class=""><tr><td>Всего </td><td>' + query.length + '</td><td></td></tr></tfoot>');
+                                                                                                                                                                                                                                //            tableArr.push('</table>');
+                                                                                                                                                                                                                                //            document.getElementById('stat2').innerHTML = tableArr.join('\n')
+                                                                                                                                                                                                                                //        }
+                                                                                                                                                                                                                                //    });
+                                                                                                                                                                                                                                //});
                 </script>
             </form>
             <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="Added">
@@ -296,14 +300,14 @@
 
 
                     @*<div class="file">
-                            <div class="form-group">
-                                <input type="file" name="uploadedFile" id="uploadedFile" class="input-file" required>
-                                <label for="uploadedFile" class="btn btn-tertiary js-labelFile">
-                                    <i class="icon fa fa-check"></i>
-                                    <span class="js-fileName">Загрузить файл</span>
-                                </label>
-                            </div>
-                        </div>*@
+                    <div class="form-group">
+                        <input type="file" name="uploadedFile" id="uploadedFile" class="input-file" required>
+                        <label for="uploadedFile" class="btn btn-tertiary js-labelFile">
+                            <i class="icon fa fa-check"></i>
+                            <span class="js-fileName">Загрузить файл</span>
+                        </label>
+                    </div>
+                </div>*@
 
 
 
@@ -311,28 +315,28 @@
                     <input class="btn btn-outline-success" type="submit" id="inputGroupFileAddon04" value="Загрузить" />
 
                     @*<div class="input-group">
-                                    <div class="file">
-                            <div class="form-group">
-                                <input type="file" name="uploadedFile" id="uploadedFile" class="input-file" required>
-                                <label for="uploadedFile" class="btn btn-tertiary js-labelFile">
-                                    <i class="icon fa fa-check"></i>
-                                    <span class="js-fileName">Загрузить файл</span>
-                                </label>
-                            </div>
-                        </div>
+                            <div class="file">
+                    <div class="form-group">
+                        <input type="file" name="uploadedFile" id="uploadedFile" class="input-file" required>
+                        <label for="uploadedFile" class="btn btn-tertiary js-labelFile">
+                            <i class="icon fa fa-check"></i>
+                            <span class="js-fileName">Загрузить файл</span>
+                        </label>
+                    </div>
+                </div>
 
-                        <input type="submit" value="Загрузить" />
+                <input type="submit" value="Загрузить" />
 
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input" name="uploadedFile" id="uploadedFile" aria-describedby="inputGroupFileAddon04" lang="ru">
-                                <label class="custom-file-label" for="inputGroupFile04">Выберите файл</label>
-                            </div>
-                            <div class="input-group-append">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" name="uploadedFile" id="uploadedFile" aria-describedby="inputGroupFileAddon04" lang="ru">
+                        <label class="custom-file-label" for="inputGroupFile04">Выберите файл</label>
+                    </div>
+                    <div class="input-group-append">
 
-                            </div>
-                        </div>
+                    </div>
+                </div>
 
-                        <button class="btn btn-outline-success " data-toggle="modal" data-target="#addklass" form="0">Сформировать МО</button>*@
+                <button class="btn btn-outline-success " data-toggle="modal" data-target="#addklass" form="0">Сформировать МО</button>*@
 
 
 
@@ -432,6 +436,14 @@
                 <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="Result_po_click_MO">
                     <input class="btn btn-outline-success" type="submit" id="wq" value="Сформировать" />
                 </form>
+
+
+
+
+
+
+
+
                 <table class="tab">
                     <thead class="thead-light">
                         <tr>
@@ -448,12 +460,13 @@
                                 <td>@Model.Mos[i].name </td>
 
                                 <td>
-                                    <a href="Home/Result_po_click_MO?id=@Model.Mos[i].id&name=@Model.Mos[i].name">Тык</a>
-
-
+                                    <button class="select-word-link" id="Result_po_MO" value="@Model.Mos[i].id" form="0">Новый Тык</button>
                                 </td>
                                 <td>
-
+                                    <div class="progress">
+                                        <div crole="progressbar" id="prog_@Model.Mos[i].id" style="width: 0%"></div>
+                                    </div>
+                                </td>
                                 <td>
                                     <form action="~/Vgruzka/@Model.Mos[i].name.ToString()_.zip">
 
@@ -471,6 +484,34 @@
 
                     </tbody>
                 </table>
+                <script>
+                    $(".select-word-link").click(function () {
+                        var id = $(this).val();
+                       
+                        //  var pr = document.getElementById('prog');
+                        //  for (load; load < 101;) {
+                        $.ajax({
+                            url: '/Home/Result_po_click_MO/',
+                            type: "POST",
+                            dataType: "json",
+                            data: { "id": id },
+                            success: function (g_load) {
+                                //var pr = document.getElementById('prog');
+                                //pr.innerText = g_load + '%';
+                                //$('#prog').attr('aria-valuenow', g_load).css('width', g_load + '%').text = g_load;
+                                //load = g_load;
+                                //alert(g_load);
+                            }
+                        });
+
+
+                        //var pr = document.getElementById('prog');
+                        //pr.innerText = load + '%';
+                        //$('#prog').attr('aria-valuenow', load).css('width', load + '%').text = '60';
+
+
+                    });
+                </script>
 
             </div>
         </div>

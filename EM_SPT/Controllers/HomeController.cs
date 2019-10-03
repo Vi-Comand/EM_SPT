@@ -21,7 +21,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
-
+using System.Timers;
 
 namespace EM_SPT.Controllers
 {
@@ -33,7 +33,7 @@ namespace EM_SPT.Controllers
         public class TimedHostedService : IHostedService, IDisposable
         {
             private readonly ILogger _logger;
-            private Timer _timer;
+            private System.Threading.Timer _timer;
             private DataContext db = new DataContext();
             param par = new param();
 
@@ -49,7 +49,7 @@ namespace EM_SPT.Controllers
             {
                 _logger.LogInformation("Timed Background Service is starting.");
 
-                _timer = new Timer(DoWork, null, TimeSpan.Zero,
+                _timer = new System.Threading.Timer(DoWork, null, TimeSpan.Zero,
                     TimeSpan.FromSeconds(360));
                 hour = db.param.Where(p => p.id == 1).First().h_otch;
                 return Task.CompletedTask;
@@ -473,11 +473,21 @@ namespace EM_SPT.Controllers
 
 
 
-        public async Task<IActionResult> Result_po_click_MO(int id, string name)
+   
+
+        public async Task<IActionResult> Result_po_click_MO(int id)
         {
-
-
-
+            string name1 = "\\wwwroot\\file\\vrem\\s110" + DateTime.Now.ToFileTime() + ".xlsx";
+            string name2 = "\\wwwroot\\file\\vrem\\s140" + DateTime.Now.ToFileTime() + ".xlsx";
+            System.IO.File.Copy(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s110.xlsx", Directory.GetCurrentDirectory() + name1, true);
+            System.IO.File.Copy(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s110.xlsx", Directory.GetCurrentDirectory() + name2, true);
+            int lod = 0;
+            string[] mas = new string[2];
+           mas[0]=id.ToString();
+            mas[1] =1+"/"+1;
+          //   new Thread(() => hubContext.Clients.All.SendAsync("Notify", "2")).Start();*/
+            await hubContext.Clients.All.SendAsync("Notify",mas);
+           //new Thread(() => ).Start() ;
 
             /* var ListResult = (from u in db.User.Where(p => p.test == 1)
                       join kl in db.klass on u.id_klass equals kl.id
@@ -494,8 +504,7 @@ namespace EM_SPT.Controllers
                                    ans = ans
                                }).ToList();*/
 
-
-
+    
 
             if (!Directory.Exists(@"~\Vgruzka\"))
             {
@@ -523,61 +532,17 @@ namespace EM_SPT.Controllers
 
 
 
-            var str2 =
-                (from u in db.User.Where(p => p.test == 1 && p.role == 0)
-                 join kl in db.klass.Where(p => skl.Contains(p.id_oo) && p.klass_n > 9) on u.id_klass equals kl.id
-                 join oo in db.oo on kl.id_oo equals oo.id
-                 join mo in db.mo on oo.id_mo equals mo.id
-                 join ans in db.answer on u.id equals ans.id_user
-                 select new VigruzkaExcel
-                 {
-                     mo = mo.name,
-                     oo = oo.id + " " + oo.kod,
-                     klass_n = kl.klass_n.ToString() + " " + kl.kod,
-                     login = u.login,
-                     kod = kl.kod,
-                     ans = ans
-                 }).OrderBy(p => p.oo).ToList();
 
 
 
 
-            var str3 =
-                 (from u in db.User.Where(p => p.test == 1 && p.role == 0)
-                  join kl in db.klass.Where(p => spo.Contains(p.id_oo) && p.klass_n < 7) on u.id_klass equals kl.id
-                  join oo in db.oo on kl.id_oo equals oo.id
-                  join mo in db.mo on oo.id_mo equals mo.id
-                  join ans in db.answer on u.id equals ans.id_user
-                  select new VigruzkaExcel
-                  {
-                      mo = mo.name,
-                      oo = oo.id + " " + oo.kod,
-                      klass_n = kl.klass_n.ToString() + " " + kl.kod,
-                      login = u.login,
-                      kod = kl.kod,
-                      ans = ans
-                  }).OrderBy(p => p.oo).ToList();
-            var str4 =
-              (from u in db.User.Where(p => p.test == 1 && p.role == 0)
-               join kl in db.klass.Where(p => vuz.Contains(p.id_oo) && p.klass_n < 7) on u.id_klass equals kl.id
-               join oo in db.oo on kl.id_oo equals oo.id
-               join mo in db.mo on oo.id_mo equals mo.id
-               join ans in db.answer on u.id equals ans.id_user
-               select new VigruzkaExcel
-               {
-                   mo = mo.name,
-                   oo = oo.id + " " + oo.kod,
-                   klass_n = kl.klass_n.ToString() + " " + kl.kod,
-                   login = u.login,
-                   kod = kl.kod,
-                   ans = ans
-               }).OrderBy(p => p.oo).ToList();
 
 
 
-            int lod = 0;
 
-
+            int col = str1.Count;
+            mas[1] = lod + "/" + col;
+            await hubContext.Clients.All.SendAsync("Notify", mas);
 
             MemoryStream outputMemStream = new MemoryStream();
             ZipOutputStream zipStream = new ZipOutputStream(outputMemStream);
@@ -588,7 +553,8 @@ namespace EM_SPT.Controllers
             {
                 param para = new param();
                 para = db.param.Where(p => p.id == 1).First();
-                newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s110.xlsx");
+
+                newFile = new FileInfo(Directory.GetCurrentDirectory() +name1);
                 byte[] data;
                 using (var package = new ExcelPackage(newFile))
                 {
@@ -628,6 +594,9 @@ namespace EM_SPT.Controllers
                     foreach (var stroka in str1)
                     {
                         lod++;
+                        mas[1] = lod + "/" + col;
+                      await hubContext.Clients.All.SendAsync("Notify",  mas);
+                       
                         answer row = stroka.ans;
 
                         i++;
@@ -702,6 +671,7 @@ namespace EM_SPT.Controllers
                                 bolshe_70 = 1;
                             workSheet.Cells[i, 182].Value = (bolshe_70 == 1 || bolshe_20 == 1 ? 1 : 0);
                         }
+                       
                     }
 
 
@@ -732,11 +702,29 @@ namespace EM_SPT.Controllers
 
 
 
+            var str2 =
+                (from u in db.User.Where(p => p.test == 1 && p.role == 0)
+                 join kl in db.klass.Where(p => skl.Contains(p.id_oo) && p.klass_n > 9) on u.id_klass equals kl.id
+                 join oo in db.oo on kl.id_oo equals oo.id
+                 join mo in db.mo on oo.id_mo equals mo.id
+                 join ans in db.answer on u.id equals ans.id_user
+                 select new VigruzkaExcel
+                 {
+                     mo = mo.name,
+                     oo = oo.id + " " + oo.kod,
+                     klass_n = kl.klass_n.ToString() + " " + kl.kod,
+                     login = u.login,
+                     kod = kl.kod,
+                     ans = ans
+                 }).OrderBy(p => p.oo).ToList();
+            col = col + str2.Count();
+            mas[1] = lod + "/" + col;
+            await hubContext.Clients.All.SendAsync("Notify", mas);
             if (str2.Count != 0)
             {
                 param para = new param();
                 para = db.param.Where(p => p.id == 2).First();
-                newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s140.xlsx");
+                newFile = new FileInfo(Directory.GetCurrentDirectory() +name2);
                 byte[] data;
                 using (var package = new ExcelPackage(newFile))
                 {
@@ -782,6 +770,10 @@ namespace EM_SPT.Controllers
                     workSheet.Cells[3, 244].Value = para.fz_n;
                     foreach (var stroka in str2)
                     {
+                        lod++;
+                        mas[1] = lod + "/" + col;
+                        await hubContext.Clients.All.SendAsync("Notify", mas);
+
                         answer row = stroka.ans;
 
                         i++;
@@ -856,6 +848,7 @@ namespace EM_SPT.Controllers
                                 bolshe_70 = 1;
                             workSheet.Cells[i, 215].Value = (bolshe_70 == 1 || bolshe_20 == 1 ? 1 : 0);
                         }
+                      
 
                     }
 
@@ -879,11 +872,30 @@ namespace EM_SPT.Controllers
 
             }
 
+
+            var str3 =
+          (from u in db.User.Where(p => p.test == 1 && p.role == 0)
+           join kl in db.klass.Where(p => spo.Contains(p.id_oo) && p.klass_n < 7) on u.id_klass equals kl.id
+           join oo in db.oo on kl.id_oo equals oo.id
+           join mo in db.mo on oo.id_mo equals mo.id
+           join ans in db.answer on u.id equals ans.id_user
+           select new VigruzkaExcel
+           {
+               mo = mo.name,
+               oo = oo.id + " " + oo.kod,
+               klass_n = kl.klass_n.ToString() + " " + kl.kod,
+               login = u.login,
+               kod = kl.kod,
+               ans = ans
+           }).OrderBy(p => p.oo).ToList();
+            col = col + str3.Count();
+            mas[1] = lod + "/" + col;
+            await hubContext.Clients.All.SendAsync("Notify", mas);
             if (str3.Count != 0)
             {
                 param para = new param();
                 para = db.param.Where(p => p.id == 2).First();
-                newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s140.xlsx");
+                newFile = new FileInfo(Directory.GetCurrentDirectory() + name2);
                 byte[] data;
                 using (var package = new ExcelPackage(newFile))
                 {
@@ -929,6 +941,10 @@ namespace EM_SPT.Controllers
                     workSheet.Cells[3, 244].Value = para.fz_n;
                     foreach (var stroka in str3)
                     {
+                        lod++;
+                        mas[1] = lod + "/" + col;
+                        await hubContext.Clients.All.SendAsync("Notify", mas);
+
                         answer row = stroka.ans;
 
                         i++;
@@ -1003,7 +1019,7 @@ namespace EM_SPT.Controllers
                                 bolshe_70 = 1;
                             workSheet.Cells[i, 215].Value = (bolshe_70 == 1 || bolshe_20 == 1 ? 1 : 0);
                         }
-
+                     
                     }
 
                     data = package.GetAsByteArray();
@@ -1032,12 +1048,29 @@ namespace EM_SPT.Controllers
 
             }
 
-
+            var str4 =
+              (from u in db.User.Where(p => p.test == 1 && p.role == 0)
+               join kl in db.klass.Where(p => vuz.Contains(p.id_oo) && p.klass_n < 7) on u.id_klass equals kl.id
+               join oo in db.oo on kl.id_oo equals oo.id
+               join mo in db.mo on oo.id_mo equals mo.id
+               join ans in db.answer on u.id equals ans.id_user
+               select new VigruzkaExcel
+               {
+                   mo = mo.name,
+                   oo = oo.id + " " + oo.kod,
+                   klass_n = kl.klass_n.ToString() + " " + kl.kod,
+                   login = u.login,
+                   kod = kl.kod,
+                   ans = ans
+               }).OrderBy(p => p.oo).ToList();
+            col = col + str4.Count();
+            mas[1] = lod + "/" + col;
+            await hubContext.Clients.All.SendAsync("Notify", mas);
             if (str4.Count != 0)
             {
                 param para = new param();
                 para = db.param.Where(p => p.id == 2).First();
-                newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s140.xlsx");
+                newFile = new FileInfo(Directory.GetCurrentDirectory() +name2);
                 byte[] data;
                 using (var package = new ExcelPackage(newFile))
                 {
@@ -1083,6 +1116,10 @@ namespace EM_SPT.Controllers
                     workSheet.Cells[3, 244].Value = para.fz_n;
                     foreach (var stroka in str4)
                     {
+                        lod++;
+                        mas[1] = lod + "/" + col;
+                        await hubContext.Clients.All.SendAsync("Notify", mas);
+
                         answer row = stroka.ans;
 
                         i++;
@@ -1157,6 +1194,7 @@ namespace EM_SPT.Controllers
                                 bolshe_70 = 1;
                             workSheet.Cells[i, 215].Value = (bolshe_70 == 1 || bolshe_20 == 1 ? 1 : 0);
                         }
+                       
 
                     }
 
@@ -1200,14 +1238,15 @@ namespace EM_SPT.Controllers
             zipStream.Close();
 
             outputMemStream.Position = 0;
-            string qw = @"\Vgruzka\" + name + "_.zip";
-            System.IO.File.WriteAllBytes(Directory.GetCurrentDirectory() + "\\wwwroot\\Vgruzka\\" + name + "_.zip", outputMemStream.ToArray());
+            System.IO.File.Delete(Directory.GetCurrentDirectory() + name1);
+            System.IO.File.Delete(Directory.GetCurrentDirectory() + name2);
+            mas[1] = "Конец-" + lod;
+            await hubContext.Clients.All.SendAsync("Notify", mas);
+            System.IO.File.WriteAllBytes(Directory.GetCurrentDirectory() + "\\wwwroot\\Vgruzka\\" + db.oo.Find(id).kod + "_.zip", outputMemStream.ToArray());
 
 
-
-
-            return View("adm_full");
-
+           
+            return Json("ок");
 
 
 

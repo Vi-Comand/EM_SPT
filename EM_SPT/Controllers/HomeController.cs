@@ -25,6 +25,7 @@ using System.Threading.Tasks;
 
 namespace EM_SPT.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private DataContext db = new DataContext();
@@ -99,7 +100,6 @@ namespace EM_SPT.Controllers
 
 
 
-        [Authorize]
         public IActionResult Index()
         {
 

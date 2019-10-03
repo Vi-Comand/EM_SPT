@@ -16,7 +16,7 @@
 </head>
 <body class="gradient">
 
-    <script src="lib/signalr.min.js"></script>
+    @*<script src="lib/signalr.min.js"></script>*@
 
     @*  <script>
             var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
@@ -238,51 +238,51 @@
 
                 <script>
 
-                                                                                                                                                                                            //$("#KolvoLoad").click(function () { // задаем функцию при нажатиии на элемент <button>
+                                                                                                                                                                                                                //$("#KolvoLoad").click(function () { // задаем функцию при нажатиии на элемент <button>
 
 
 
 
-                                                                                                                                                                                            //    $.ajax({
-                                                                                                                                                                                            //        url: '/Home/UpdateLoad/',
-                                                                                                                                                                                            //        type: "POST",
-                                                                                                                                                                                            //        dataType: "json",
-                                                                                                                                                                                            //        success: function (query) {
-                                                                                                                                                                                            //            alert(query);
-                                                                                                                                                                                            //        }
+                                                                                                                                                                                                                //    $.ajax({
+                                                                                                                                                                                                                //        url: '/Home/UpdateLoad/',
+                                                                                                                                                                                                                //        type: "POST",
+                                                                                                                                                                                                                //        dataType: "json",
+                                                                                                                                                                                                                //        success: function (query) {
+                                                                                                                                                                                                                //            alert(query);
+                                                                                                                                                                                                                //        }
 
 
 
-                                                                                                                                                                                            //    });
-                                                                                                                                                                                            //});
+                                                                                                                                                                                                                //    });
+                                                                                                                                                                                                                //});
 
 
 
-                                                                                                                                                                                            //$("#adklass").click(function () { // задаем функцию при нажатиии на элемент <button>
+                                                                                                                                                                                                                //$("#adklass").click(function () { // задаем функцию при нажатиии на элемент <button>
 
-                                                                                                                                                                                            //    var id = 1;
+                                                                                                                                                                                                                //    var id = 1;
 
 
-                                                                                                                                                                                            //    $.ajax({
-                                                                                                                                                                                            //        url: '/Home/SpisokAdmOO/',
-                                                                                                                                                                                            //        type: "POST",
-                                                                                                                                                                                            //        dataType: "json",
-                                                                                                                                                                                            //        data: { "id": id },
-                                                                                                                                                                                            //        success: function (query) {
-                                                                                                                                                                                            //            var tableArr = ['<table class="tab">'];
-                                                                                                                                                                                            //            tableArr.push('<thead ><tr><th style="width: 40%">Код ОО/ название</th><th style="width: 30%">Логин</th><th style="width: 30%">Пароль</th></tr></thead>');
-                                                                                                                                                                                            //            for (i = 0; i < query.length; i++) {
-                                                                                                                                                                                            //                var q = query[i].tip == 1 ? 'СОШ' : query[i].tip == 2 ? 'СПО' : 'ВУЗ';
-                                                                                                                                                                                            //                tableArr.push('<tr><td>' + query[i].id_oo + ' ' + query[i].kod + '</td><td >' + query[i].login + '</td><td>' + query[i].pass + '</td></tr>');
-                                                                                                                                                                                            //                if (query[i].test == "1") { sum++ }
-                                                                                                                                                                                            //            }
+                                                                                                                                                                                                                //    $.ajax({
+                                                                                                                                                                                                                //        url: '/Home/SpisokAdmOO/',
+                                                                                                                                                                                                                //        type: "POST",
+                                                                                                                                                                                                                //        dataType: "json",
+                                                                                                                                                                                                                //        data: { "id": id },
+                                                                                                                                                                                                                //        success: function (query) {
+                                                                                                                                                                                                                //            var tableArr = ['<table class="tab">'];
+                                                                                                                                                                                                                //            tableArr.push('<thead ><tr><th style="width: 40%">Код ОО/ название</th><th style="width: 30%">Логин</th><th style="width: 30%">Пароль</th></tr></thead>');
+                                                                                                                                                                                                                //            for (i = 0; i < query.length; i++) {
+                                                                                                                                                                                                                //                var q = query[i].tip == 1 ? 'СОШ' : query[i].tip == 2 ? 'СПО' : 'ВУЗ';
+                                                                                                                                                                                                                //                tableArr.push('<tr><td>' + query[i].id_oo + ' ' + query[i].kod + '</td><td >' + query[i].login + '</td><td>' + query[i].pass + '</td></tr>');
+                                                                                                                                                                                                                //                if (query[i].test == "1") { sum++ }
+                                                                                                                                                                                                                //            }
 
-                                                                                                                                                                                            //            tableArr.push('<tfoot class=""><tr><td>Всего </td><td>' + query.length + '</td><td></td></tr></tfoot>');
-                                                                                                                                                                                            //            tableArr.push('</table>');
-                                                                                                                                                                                            //            document.getElementById('stat2').innerHTML = tableArr.join('\n')
-                                                                                                                                                                                            //        }
-                                                                                                                                                                                            //    });
-                                                                                                                                                                                            //});
+                                                                                                                                                                                                                //            tableArr.push('<tfoot class=""><tr><td>Всего </td><td>' + query.length + '</td><td></td></tr></tfoot>');
+                                                                                                                                                                                                                //            tableArr.push('</table>');
+                                                                                                                                                                                                                //            document.getElementById('stat2').innerHTML = tableArr.join('\n')
+                                                                                                                                                                                                                //        }
+                                                                                                                                                                                                                //    });
+                                                                                                                                                                                                                //});
                 </script>
             </form>
             <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="Added">

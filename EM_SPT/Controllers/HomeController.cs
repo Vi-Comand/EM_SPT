@@ -473,21 +473,21 @@ namespace EM_SPT.Controllers
 
 
 
-   
+
 
         public async Task<IActionResult> Result_po_click_MO(int id)
         {
             string name1 = "\\wwwroot\\file\\vrem\\s110" + DateTime.Now.ToFileTime() + ".xlsx";
             string name2 = "\\wwwroot\\file\\vrem\\s140" + DateTime.Now.ToFileTime() + ".xlsx";
             System.IO.File.Copy(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s110.xlsx", Directory.GetCurrentDirectory() + name1, true);
-            System.IO.File.Copy(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s110.xlsx", Directory.GetCurrentDirectory() + name2, true);
+            System.IO.File.Copy(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s140.xlsx", Directory.GetCurrentDirectory() + name2, true);
             int lod = 0;
             string[] mas = new string[2];
-           mas[0]=id.ToString();
-            mas[1] =1+"/"+1;
-          //   new Thread(() => hubContext.Clients.All.SendAsync("Notify", "2")).Start();*/
-            await hubContext.Clients.All.SendAsync("Notify",mas);
-           //new Thread(() => ).Start() ;
+            mas[0] = id.ToString();
+            mas[1] = 1 + "/" + 1;
+            //   new Thread(() => hubContext.Clients.All.SendAsync("Notify", "2")).Start();*/
+            await hubContext.Clients.All.SendAsync("Notify", mas);
+            //new Thread(() => ).Start() ;
 
             /* var ListResult = (from u in db.User.Where(p => p.test == 1)
                       join kl in db.klass on u.id_klass equals kl.id
@@ -504,7 +504,7 @@ namespace EM_SPT.Controllers
                                    ans = ans
                                }).ToList();*/
 
-    
+
 
             if (!Directory.Exists(@"~\Vgruzka\"))
             {
@@ -554,7 +554,7 @@ namespace EM_SPT.Controllers
                 param para = new param();
                 para = db.param.Where(p => p.id == 1).First();
 
-                newFile = new FileInfo(Directory.GetCurrentDirectory() +name1);
+                newFile = new FileInfo(Directory.GetCurrentDirectory() + name1);
                 byte[] data;
                 using (var package = new ExcelPackage(newFile))
                 {
@@ -595,8 +595,8 @@ namespace EM_SPT.Controllers
                     {
                         lod++;
                         mas[1] = lod + "/" + col;
-                      await hubContext.Clients.All.SendAsync("Notify",  mas);
-                       
+                        await hubContext.Clients.All.SendAsync("Notify", mas);
+
                         answer row = stroka.ans;
 
                         i++;
@@ -671,7 +671,7 @@ namespace EM_SPT.Controllers
                                 bolshe_70 = 1;
                             workSheet.Cells[i, 182].Value = (bolshe_70 == 1 || bolshe_20 == 1 ? 1 : 0);
                         }
-                       
+
                     }
 
 
@@ -723,8 +723,8 @@ namespace EM_SPT.Controllers
             if (str2.Count != 0)
             {
                 param para = new param();
-                para = db.param.Where(p => p.id == 2).First();
-                newFile = new FileInfo(Directory.GetCurrentDirectory() +name2);
+                para = db.param.Where(p => p.id == 3).First();
+                newFile = new FileInfo(Directory.GetCurrentDirectory() + name2);
                 byte[] data;
                 using (var package = new ExcelPackage(newFile))
                 {
@@ -848,7 +848,7 @@ namespace EM_SPT.Controllers
                                 bolshe_70 = 1;
                             workSheet.Cells[i, 215].Value = (bolshe_70 == 1 || bolshe_20 == 1 ? 1 : 0);
                         }
-                      
+
 
                     }
 
@@ -1019,7 +1019,7 @@ namespace EM_SPT.Controllers
                                 bolshe_70 = 1;
                             workSheet.Cells[i, 215].Value = (bolshe_70 == 1 || bolshe_20 == 1 ? 1 : 0);
                         }
-                     
+
                     }
 
                     data = package.GetAsByteArray();
@@ -1070,7 +1070,7 @@ namespace EM_SPT.Controllers
             {
                 param para = new param();
                 para = db.param.Where(p => p.id == 2).First();
-                newFile = new FileInfo(Directory.GetCurrentDirectory() +name2);
+                newFile = new FileInfo(Directory.GetCurrentDirectory() + name2);
                 byte[] data;
                 using (var package = new ExcelPackage(newFile))
                 {
@@ -1194,7 +1194,7 @@ namespace EM_SPT.Controllers
                                 bolshe_70 = 1;
                             workSheet.Cells[i, 215].Value = (bolshe_70 == 1 || bolshe_20 == 1 ? 1 : 0);
                         }
-                       
+
 
                     }
 
@@ -1242,10 +1242,10 @@ namespace EM_SPT.Controllers
             System.IO.File.Delete(Directory.GetCurrentDirectory() + name2);
             mas[1] = "Конец-" + lod;
             await hubContext.Clients.All.SendAsync("Notify", mas);
-            System.IO.File.WriteAllBytes(Directory.GetCurrentDirectory() + "\\wwwroot\\Vgruzka\\" + db.oo.Find(id).kod + "_.zip", outputMemStream.ToArray());
+            System.IO.File.WriteAllBytes(Directory.GetCurrentDirectory() + "\\wwwroot\\Vgruzka\\" + db.mo.Find(id).name + "_.zip", outputMemStream.ToArray());
 
 
-           
+
             return Json("ок");
 
 

@@ -519,7 +519,7 @@ namespace EM_SPT.Controllers
                         join kl in db.klass.Where(p => skl.Contains(p.id_oo) && p.klass_n < 10 && p.klass_n > 6) on u.id_klass equals kl.id
                         join oo in db.oo on kl.id_oo equals oo.id
                         join mo in db.mo on oo.id_mo equals mo.id
-                        join ans in db.answer on u.id equals ans.id_user
+                        join ans in db.answer.Where(p => p.pol == "м") on u.id equals ans.id_user
                         select new VigruzkaExcel
                         {
                             mo = mo.name,
@@ -529,16 +529,6 @@ namespace EM_SPT.Controllers
                             kod = kl.kod,
                             ans = ans
                         }).OrderBy(p => p.oo).ToList();
-
-
-
-
-
-
-
-
-
-
 
             int col = str1.Count;
             mas[1] = lod + "/" + col;
@@ -678,7 +668,179 @@ namespace EM_SPT.Controllers
                     data = package.GetAsByteArray();
                     string entryName;
 
-                    entryName = ZipEntry.CleanName("7-9_klass.xlsx");
+                    entryName = ZipEntry.CleanName("7-9_klass_M.xlsx");
+
+                    ZipEntry newEntry = new ZipEntry(entryName);
+                    newEntry.DateTime = package.File.LastWriteTime;
+                    newEntry.Size = data.Length;
+                    zipStream.PutNextEntry(newEntry);
+
+
+
+                    using (MemoryStream streamReader = new MemoryStream(data))
+                    {
+                        StreamUtils.Copy(streamReader, zipStream, buffer);
+
+                    }
+                    zipStream.CloseEntry();
+
+
+
+                }
+
+            }
+
+
+            var str1d = (from u in db.User.Where(p => p.test == 1 && p.role == 0)
+                         join kl in db.klass.Where(p => skl.Contains(p.id_oo) && p.klass_n < 10 && p.klass_n > 6) on u.id_klass equals kl.id
+                         join oo in db.oo on kl.id_oo equals oo.id
+                         join mo in db.mo on oo.id_mo equals mo.id
+                         join ans in db.answer.Where(p => p.pol == "ж") on u.id equals ans.id_user
+                         select new VigruzkaExcel
+                         {
+                             mo = mo.name,
+                             oo = oo.id + " " + oo.kod,
+                             klass_n = kl.klass_n.ToString() + " " + kl.kod,
+                             login = u.login,
+                             kod = kl.kod,
+                             ans = ans
+                         }).OrderBy(p => p.oo).ToList();
+
+
+
+            col = col + str1d.Count();
+            mas[1] = lod + "/" + col;
+            await hubContext.Clients.All.SendAsync("Notify", mas);
+            if (str1d.Count != 0)
+            {
+                param para = new param();
+                para = db.param.Where(p => p.id == 4).First();
+
+                newFile = new FileInfo(Directory.GetCurrentDirectory() + name1);
+                byte[] data;
+                using (var package = new ExcelPackage(newFile))
+                {
+
+                    var workSheet = package.Workbook.Worksheets[0];
+                    var workSheet1 = package.Workbook.Worksheets[1];
+                    int i = 10;
+                    workSheet.DeleteRow(11 + str1d.Count, 50000, true);
+                    workSheet1.DeleteRow(11 + str1d.Count, 50000, true);
+
+
+                    workSheet.Cells[7, 2].Value = str1d.Count;
+                    workSheet.Cells[2, 184].Value = para.po_v;
+                    workSheet.Cells[3, 184].Value = para.po_n;
+                    workSheet.Cells[2, 186].Value = para.pvg_v;
+                    workSheet.Cells[3, 186].Value = para.pvg_n;
+                    workSheet.Cells[2, 188].Value = para.pau_v;
+                    workSheet.Cells[3, 188].Value = para.pau_n;
+                    workSheet.Cells[2, 190].Value = para.sr_v;
+                    workSheet.Cells[3, 190].Value = para.sr_n;
+                    workSheet.Cells[2, 192].Value = para.i_v;
+                    workSheet.Cells[3, 192].Value = para.i_n;
+                    workSheet.Cells[2, 194].Value = para.t_v;
+                    workSheet.Cells[3, 194].Value = para.t_n;
+                    workSheet.Cells[2, 196].Value = para.pr_v;
+                    workSheet.Cells[3, 196].Value = para.pr_n;
+                    workSheet.Cells[2, 198].Value = para.poo_v;
+                    workSheet.Cells[3, 198].Value = para.poo_n;
+                    workSheet.Cells[2, 200].Value = para.sa_v;
+                    workSheet.Cells[3, 200].Value = para.sa_n;
+                    workSheet.Cells[2, 202].Value = para.sp_v;
+                    workSheet.Cells[3, 202].Value = para.sp_n;
+                    workSheet.Cells[2, 204].Value = para.fr_v;
+                    workSheet.Cells[3, 204].Value = para.fr_n;
+                    workSheet.Cells[2, 205].Value = para.fz_v;
+                    workSheet.Cells[3, 205].Value = para.fz_n;
+                    foreach (var stroka in str1d)
+                    {
+                        lod++;
+                        mas[1] = lod + "/" + col;
+                        await hubContext.Clients.All.SendAsync("Notify", mas);
+
+                        answer row = stroka.ans;
+
+                        i++;
+
+
+                        workSheet.Cells[i, 2].Value = stroka.mo;
+                        workSheet.Cells[i, 3].Value = stroka.oo;
+                        workSheet.Cells[i, 4].Value = stroka.klass_n;
+                        workSheet.Cells[i, 5].Value = stroka.login;
+                        if (row != null)
+                        {
+                            workSheet.Cells[i, 6].Value = row.pol;
+                            workSheet.Cells[i, 7].Value = row.vozr;
+                            workSheet.Cells[i, 8].Value = row.sek;
+                            row.AddMas();
+                            int a0 = 0;
+                            int a1 = 0;
+                            int a2 = 0;
+                            int a3 = 0;
+                            int ser = 0;
+                            int bolshe_20 = 0;
+                            int bolshe_70 = 0;
+                            for (int j = 9; j < 119; j++)
+                            {
+                                if (bolshe_20 != 1)
+                                {
+                                    if (row.mas[j - 9] == (j - 10 != -1 ? row.mas[j - 10] : row.mas[0]))
+                                    {
+                                        ser++;
+                                    }
+                                    else
+                                    {
+                                        if (ser > 20)
+                                            bolshe_20 = 1;
+
+                                        if (row.mas[j - 10] == 0)
+                                        {
+                                            a0 = a0 + ser;
+
+                                        }
+                                        if (row.mas[j - 10] == 1)
+                                        {
+                                            a1 = a1 + ser;
+
+
+                                        }
+                                        if (row.mas[j - 10] == 2)
+                                        {
+                                            a2 = a2 + ser;
+
+
+                                        }
+                                        if (row.mas[j - 10] == 3)
+                                        {
+                                            a3 = a3 + ser;
+
+
+                                        }
+                                        ser = 1;
+
+
+                                    }
+                                    if (j - 9 == 109)
+                                        if (ser > 20)
+                                            bolshe_20 = 1;
+
+                                }
+
+                                workSheet.Cells[i, j].Value = row.mas[j - 9];
+                            }
+                            if (a1 > 77 || a2 > 77 || a3 > 77 || a0 > 77)
+                                bolshe_70 = 1;
+                            workSheet.Cells[i, 182].Value = (bolshe_70 == 1 || bolshe_20 == 1 ? 1 : 0);
+                        }
+
+                    }
+
+
+                    data = package.GetAsByteArray();
+                    string entryName;
+
+                    entryName = ZipEntry.CleanName("7-9_klass_D.xlsx");
 
                     ZipEntry newEntry = new ZipEntry(entryName);
                     newEntry.DateTime = package.File.LastWriteTime;
@@ -702,12 +864,13 @@ namespace EM_SPT.Controllers
 
 
 
+
             var str2 =
                 (from u in db.User.Where(p => p.test == 1 && p.role == 0)
                  join kl in db.klass.Where(p => skl.Contains(p.id_oo) && p.klass_n > 9) on u.id_klass equals kl.id
                  join oo in db.oo on kl.id_oo equals oo.id
                  join mo in db.mo on oo.id_mo equals mo.id
-                 join ans in db.answer on u.id equals ans.id_user
+                 join ans in db.answer.Where(p => p.pol == "м") on u.id equals ans.id_user
                  select new VigruzkaExcel
                  {
                      mo = mo.name,
@@ -853,7 +1016,176 @@ namespace EM_SPT.Controllers
                     }
 
                     data = package.GetAsByteArray();
-                    string entryName = ZipEntry.CleanName("10-11_klass.xlsx");
+                    string entryName = ZipEntry.CleanName("10-11_klass_M.xlsx");
+                    ZipEntry newEntry = new ZipEntry(entryName);
+                    newEntry.DateTime = package.File.LastWriteTime;
+                    newEntry.Size = data.Length;
+                    zipStream.PutNextEntry(newEntry);
+
+
+
+                    using (MemoryStream streamReader = new MemoryStream(data))
+                    {
+                        StreamUtils.Copy(streamReader, zipStream, buffer);
+
+                    }
+                    zipStream.CloseEntry();
+
+                }
+
+            }
+            var str2d =
+                (from u in db.User.Where(p => p.test == 1 && p.role == 0)
+                 join kl in db.klass.Where(p => skl.Contains(p.id_oo) && p.klass_n > 9) on u.id_klass equals kl.id
+                 join oo in db.oo on kl.id_oo equals oo.id
+                 join mo in db.mo on oo.id_mo equals mo.id
+                 join ans in db.answer.Where(p => p.pol == "ж") on u.id equals ans.id_user
+                 select new VigruzkaExcel
+                 {
+                     mo = mo.name,
+                     oo = oo.id + " " + oo.kod,
+                     klass_n = kl.klass_n.ToString() + " " + kl.kod,
+                     login = u.login,
+                     kod = kl.kod,
+                     ans = ans
+                 }).OrderBy(p => p.oo).ToList();
+            col = col + str2d.Count();
+            mas[1] = lod + "/" + col;
+            await hubContext.Clients.All.SendAsync("Notify", mas);
+            if (str2d.Count != 0)
+            {
+                param para = new param();
+                para = db.param.Where(p => p.id == 6).First();
+                newFile = new FileInfo(Directory.GetCurrentDirectory() + name2);
+                byte[] data;
+                using (var package = new ExcelPackage(newFile))
+                {
+
+                    var workSheet = package.Workbook.Worksheets[0];
+                    var workSheet1 = package.Workbook.Worksheets[1];
+
+                    int i = 10;
+                    workSheet.DeleteRow(11 + str2d.Count, 50000, true);
+                    workSheet1.DeleteRow(11 + str2d.Count, 50000, true);
+
+
+                    workSheet.Cells[7, 2].Value = str2d.Count;
+                    workSheet.Cells[2, 217].Value = para.po_v;
+                    workSheet.Cells[3, 217].Value = para.po_n;
+                    workSheet.Cells[2, 219].Value = para.pvg_v;
+                    workSheet.Cells[3, 219].Value = para.pvg_n;
+                    workSheet.Cells[2, 221].Value = para.pau_v;
+                    workSheet.Cells[3, 221].Value = para.pau_n;
+                    workSheet.Cells[2, 223].Value = para.sr_v;
+                    workSheet.Cells[3, 223].Value = para.sr_n;
+                    workSheet.Cells[2, 225].Value = para.i_v;
+                    workSheet.Cells[3, 225].Value = para.i_n;
+                    workSheet.Cells[2, 227].Value = para.t_v;
+                    workSheet.Cells[3, 227].Value = para.t_n;
+                    workSheet.Cells[2, 229].Value = para.f_v;
+                    workSheet.Cells[3, 229].Value = para.f_n;
+                    workSheet.Cells[2, 231].Value = para.nso_v;
+                    workSheet.Cells[3, 231].Value = para.nso_n;
+                    workSheet.Cells[2, 233].Value = para.pr_v;
+                    workSheet.Cells[3, 233].Value = para.pr_n;
+                    workSheet.Cells[2, 235].Value = para.poo_v;
+                    workSheet.Cells[3, 235].Value = para.poo_n;
+                    workSheet.Cells[2, 237].Value = para.sa_v;
+                    workSheet.Cells[3, 237].Value = para.sa_n;
+                    workSheet.Cells[2, 239].Value = para.sp_v;
+                    workSheet.Cells[3, 239].Value = para.sp_n;
+                    workSheet.Cells[2, 241].Value = para.s_v;
+                    workSheet.Cells[3, 241].Value = para.s_n;
+                    workSheet.Cells[2, 243].Value = para.fr_v;
+                    workSheet.Cells[3, 243].Value = para.fr_n;
+                    workSheet.Cells[2, 244].Value = para.fz_v;
+                    workSheet.Cells[3, 244].Value = para.fz_n;
+                    foreach (var stroka in str2d)
+                    {
+                        lod++;
+                        mas[1] = lod + "/" + col;
+                        await hubContext.Clients.All.SendAsync("Notify", mas);
+
+                        answer row = stroka.ans;
+
+                        i++;
+
+
+                        workSheet.Cells[i, 2].Value = stroka.mo;
+                        workSheet.Cells[i, 3].Value = stroka.oo;
+                        workSheet.Cells[i, 4].Value = stroka.klass_n;
+                        workSheet.Cells[i, 5].Value = stroka.login;
+                        if (row != null)
+                        {
+                            workSheet.Cells[i, 6].Value = row.pol;
+                            workSheet.Cells[i, 7].Value = row.vozr;
+                            workSheet.Cells[i, 8].Value = row.sek;
+                            row.AddMas();
+                            int a0 = 0;
+                            int a1 = 0;
+                            int a2 = 0;
+                            int a3 = 0;
+                            int ser = 0;
+                            int bolshe_20 = 0;
+                            int bolshe_70 = 0;
+                            for (int j = 9; j < 149; j++)
+                            {
+                                if (bolshe_20 != 1)
+                                {
+                                    if (row.mas[j - 9] == (j - 10 != -1 ? row.mas[j - 10] : row.mas[0]))
+                                    {
+                                        ser++;
+                                    }
+                                    else
+                                    {
+                                        if (ser > 20)
+                                            bolshe_20 = 1;
+
+                                        if (row.mas[j - 10] == 0)
+                                        {
+                                            a0 = a0 + ser;
+
+                                        }
+                                        if (row.mas[j - 10] == 1)
+                                        {
+                                            a1 = a1 + ser;
+
+
+                                        }
+                                        if (row.mas[j - 10] == 2)
+                                        {
+                                            a2 = a2 + ser;
+
+
+                                        }
+                                        if (row.mas[j - 10] == 3)
+                                        {
+                                            a3 = a3 + ser;
+
+
+                                        }
+                                        ser = 1;
+
+
+                                    }
+                                    if (j - 9 == 139)
+                                        if (ser > 20)
+                                            bolshe_20 = 1;
+
+                                }
+
+                                workSheet.Cells[i, j].Value = row.mas[j - 9];
+                            }
+                            if (a1 > 98 || a2 > 98 || a3 > 98 || a0 > 98)
+                                bolshe_70 = 1;
+                            workSheet.Cells[i, 215].Value = (bolshe_70 == 1 || bolshe_20 == 1 ? 1 : 0);
+                        }
+
+
+                    }
+
+                    data = package.GetAsByteArray();
+                    string entryName = ZipEntry.CleanName("10-11_klass_D.xlsx");
                     ZipEntry newEntry = new ZipEntry(entryName);
                     newEntry.DateTime = package.File.LastWriteTime;
                     newEntry.Size = data.Length;
@@ -872,13 +1204,12 @@ namespace EM_SPT.Controllers
 
             }
 
-
             var str3 =
           (from u in db.User.Where(p => p.test == 1 && p.role == 0)
            join kl in db.klass.Where(p => spo.Contains(p.id_oo) && p.klass_n < 7) on u.id_klass equals kl.id
            join oo in db.oo on kl.id_oo equals oo.id
            join mo in db.mo on oo.id_mo equals mo.id
-           join ans in db.answer on u.id equals ans.id_user
+           join ans in db.answer.Where(p => p.pol == "м") on u.id equals ans.id_user
            select new VigruzkaExcel
            {
                mo = mo.name,
@@ -1023,7 +1354,7 @@ namespace EM_SPT.Controllers
                     }
 
                     data = package.GetAsByteArray();
-                    string entryName = ZipEntry.CleanName("SPO.xlsx");
+                    string entryName = ZipEntry.CleanName("SPO_M.xlsx");
                     ZipEntry newEntry = new ZipEntry(entryName);
                     newEntry.DateTime = package.File.LastWriteTime;
                     newEntry.Size = data.Length;
@@ -1039,30 +1370,192 @@ namespace EM_SPT.Controllers
                     zipStream.CloseEntry();
 
                 }
-
-
-
-
-
-
-
             }
 
+            var str3d =
+          (from u in db.User.Where(p => p.test == 1 && p.role == 0)
+           join kl in db.klass.Where(p => spo.Contains(p.id_oo) && p.klass_n < 7) on u.id_klass equals kl.id
+           join oo in db.oo on kl.id_oo equals oo.id
+           join mo in db.mo on oo.id_mo equals mo.id
+           join ans in db.answer.Where(p => p.pol == "ж") on u.id equals ans.id_user
+           select new VigruzkaExcel
+           {
+               mo = mo.name,
+               oo = oo.id + " " + oo.kod,
+               klass_n = kl.klass_n.ToString() + " " + kl.kod,
+               login = u.login,
+               kod = kl.kod,
+               ans = ans
+           }).OrderBy(p => p.oo).ToList();
+            col = col + str3d.Count();
+            mas[1] = lod + "/" + col;
+            await hubContext.Clients.All.SendAsync("Notify", mas);
+            if (str3d.Count != 0)
+            {
+                param para = new param();
+                para = db.param.Where(p => p.id == 5).First();
+                newFile = new FileInfo(Directory.GetCurrentDirectory() + name2);
+                byte[] data;
+                using (var package = new ExcelPackage(newFile))
+                {
+
+                    var workSheet = package.Workbook.Worksheets[0];
+                    var workSheet1 = package.Workbook.Worksheets[1];
+
+                    int i = 10;
+                    workSheet.DeleteRow(11 + str3d.Count, 50000, true);
+                    workSheet1.DeleteRow(11 + str3d.Count, 50000, true);
+
+
+                    workSheet.Cells[7, 2].Value = str3d.Count;
+                    workSheet.Cells[2, 217].Value = para.po_v;
+                    workSheet.Cells[3, 217].Value = para.po_n;
+                    workSheet.Cells[2, 219].Value = para.pvg_v;
+                    workSheet.Cells[3, 219].Value = para.pvg_n;
+                    workSheet.Cells[2, 221].Value = para.pau_v;
+                    workSheet.Cells[3, 221].Value = para.pau_n;
+                    workSheet.Cells[2, 223].Value = para.sr_v;
+                    workSheet.Cells[3, 223].Value = para.sr_n;
+                    workSheet.Cells[2, 225].Value = para.i_v;
+                    workSheet.Cells[3, 225].Value = para.i_n;
+                    workSheet.Cells[2, 227].Value = para.t_v;
+                    workSheet.Cells[3, 227].Value = para.t_n;
+                    workSheet.Cells[2, 229].Value = para.f_v;
+                    workSheet.Cells[3, 229].Value = para.f_n;
+                    workSheet.Cells[2, 231].Value = para.nso_v;
+                    workSheet.Cells[3, 231].Value = para.nso_n;
+                    workSheet.Cells[2, 233].Value = para.pr_v;
+                    workSheet.Cells[3, 233].Value = para.pr_n;
+                    workSheet.Cells[2, 235].Value = para.poo_v;
+                    workSheet.Cells[3, 235].Value = para.poo_n;
+                    workSheet.Cells[2, 237].Value = para.sa_v;
+                    workSheet.Cells[3, 237].Value = para.sa_n;
+                    workSheet.Cells[2, 239].Value = para.sp_v;
+                    workSheet.Cells[3, 239].Value = para.sp_n;
+                    workSheet.Cells[2, 241].Value = para.s_v;
+                    workSheet.Cells[3, 241].Value = para.s_n;
+                    workSheet.Cells[2, 243].Value = para.fr_v;
+                    workSheet.Cells[3, 243].Value = para.fr_n;
+                    workSheet.Cells[2, 244].Value = para.fz_v;
+                    workSheet.Cells[3, 244].Value = para.fz_n;
+                    foreach (var stroka in str3d)
+                    {
+                        lod++;
+                        mas[1] = lod + "/" + col;
+                        await hubContext.Clients.All.SendAsync("Notify", mas);
+
+                        answer row = stroka.ans;
+
+                        i++;
+
+
+                        workSheet.Cells[i, 2].Value = stroka.mo;
+                        workSheet.Cells[i, 3].Value = stroka.oo;
+                        workSheet.Cells[i, 4].Value = stroka.klass_n;
+                        workSheet.Cells[i, 5].Value = stroka.login;
+                        if (row != null)
+                        {
+                            workSheet.Cells[i, 6].Value = row.pol;
+                            workSheet.Cells[i, 7].Value = row.vozr;
+                            workSheet.Cells[i, 8].Value = row.sek;
+                            row.AddMas();
+                            int a0 = 0;
+                            int a1 = 0;
+                            int a2 = 0;
+                            int a3 = 0;
+                            int ser = 0;
+                            int bolshe_20 = 0;
+                            int bolshe_70 = 0;
+                            for (int j = 9; j < 149; j++)
+                            {
+                                if (bolshe_20 != 1)
+                                {
+                                    if (row.mas[j - 9] == (j - 10 != -1 ? row.mas[j - 10] : row.mas[0]))
+                                    {
+                                        ser++;
+                                    }
+                                    else
+                                    {
+                                        if (ser > 20)
+                                            bolshe_20 = 1;
+
+                                        if (row.mas[j - 10] == 0)
+                                        {
+                                            a0 = a0 + ser;
+
+                                        }
+                                        if (row.mas[j - 10] == 1)
+                                        {
+                                            a1 = a1 + ser;
+
+
+                                        }
+                                        if (row.mas[j - 10] == 2)
+                                        {
+                                            a2 = a2 + ser;
+
+
+                                        }
+                                        if (row.mas[j - 10] == 3)
+                                        {
+                                            a3 = a3 + ser;
+
+
+                                        }
+                                        ser = 1;
+
+
+                                    }
+                                    if (j - 9 == 139)
+                                        if (ser > 20)
+                                            bolshe_20 = 1;
+
+                                }
+
+                                workSheet.Cells[i, j].Value = row.mas[j - 9];
+                            }
+                            if (a1 > 98 || a2 > 98 || a3 > 98 || a0 > 98)
+                                bolshe_70 = 1;
+                            workSheet.Cells[i, 215].Value = (bolshe_70 == 1 || bolshe_20 == 1 ? 1 : 0);
+                        }
+
+                    }
+
+                    data = package.GetAsByteArray();
+                    string entryName = ZipEntry.CleanName("SPO_D.xlsx");
+                    ZipEntry newEntry = new ZipEntry(entryName);
+                    newEntry.DateTime = package.File.LastWriteTime;
+                    newEntry.Size = data.Length;
+                    zipStream.PutNextEntry(newEntry);
+
+
+
+                    using (MemoryStream streamReader = new MemoryStream(data))
+                    {
+                        StreamUtils.Copy(streamReader, zipStream, buffer);
+
+                    }
+                    zipStream.CloseEntry();
+
+                }
+            }
+
+
             var str4 =
-              (from u in db.User.Where(p => p.test == 1 && p.role == 0)
-               join kl in db.klass.Where(p => vuz.Contains(p.id_oo) && p.klass_n < 7) on u.id_klass equals kl.id
-               join oo in db.oo on kl.id_oo equals oo.id
-               join mo in db.mo on oo.id_mo equals mo.id
-               join ans in db.answer on u.id equals ans.id_user
-               select new VigruzkaExcel
-               {
-                   mo = mo.name,
-                   oo = oo.id + " " + oo.kod,
-                   klass_n = kl.klass_n.ToString() + " " + kl.kod,
-                   login = u.login,
-                   kod = kl.kod,
-                   ans = ans
-               }).OrderBy(p => p.oo).ToList();
+          (from u in db.User.Where(p => p.test == 1 && p.role == 0)
+           join kl in db.klass.Where(p => vuz.Contains(p.id_oo) && p.klass_n < 7) on u.id_klass equals kl.id
+           join oo in db.oo on kl.id_oo equals oo.id
+           join mo in db.mo on oo.id_mo equals mo.id
+           join ans in db.answer.Where(p => p.pol == "м") on u.id equals ans.id_user
+           select new VigruzkaExcel
+           {
+               mo = mo.name,
+               oo = oo.id + " " + oo.kod,
+               klass_n = kl.klass_n.ToString() + " " + kl.kod,
+               login = u.login,
+               kod = kl.kod,
+               ans = ans
+           }).OrderBy(p => p.oo).ToList();
             col = col + str4.Count();
             mas[1] = lod + "/" + col;
             await hubContext.Clients.All.SendAsync("Notify", mas);
@@ -1199,7 +1692,7 @@ namespace EM_SPT.Controllers
                     }
 
                     data = package.GetAsByteArray();
-                    string entryName = ZipEntry.CleanName("VUZ.xlsx");
+                    string entryName = ZipEntry.CleanName("VUZ_M.xlsx");
                     ZipEntry newEntry = new ZipEntry(entryName);
                     newEntry.DateTime = package.File.LastWriteTime;
                     newEntry.Size = data.Length;
@@ -1224,6 +1717,181 @@ namespace EM_SPT.Controllers
 
             }
 
+            var str4d =
+             (from u in db.User.Where(p => p.test == 1 && p.role == 0)
+              join kl in db.klass.Where(p => vuz.Contains(p.id_oo) && p.klass_n < 7) on u.id_klass equals kl.id
+              join oo in db.oo on kl.id_oo equals oo.id
+              join mo in db.mo on oo.id_mo equals mo.id
+              join ans in db.answer.Where(p => p.pol == "ж") on u.id equals ans.id_user
+              select new VigruzkaExcel
+              {
+                  mo = mo.name,
+                  oo = oo.id + " " + oo.kod,
+                  klass_n = kl.klass_n.ToString() + " " + kl.kod,
+                  login = u.login,
+                  kod = kl.kod,
+                  ans = ans
+              }).OrderBy(p => p.oo).ToList();
+            col = col + str4d.Count();
+            mas[1] = lod + "/" + col;
+            await hubContext.Clients.All.SendAsync("Notify", mas);
+            if (str4d.Count != 0)
+            {
+                param para = new param();
+                para = db.param.Where(p => p.id == 5).First();
+                newFile = new FileInfo(Directory.GetCurrentDirectory() + name2);
+                byte[] data;
+                using (var package = new ExcelPackage(newFile))
+                {
+
+                    var workSheet = package.Workbook.Worksheets[0];
+                    var workSheet1 = package.Workbook.Worksheets[1];
+
+                    int i = 10;
+                    workSheet.DeleteRow(11 + str4d.Count, 50000, true);
+                    workSheet1.DeleteRow(11 + str4d.Count, 50000, true);
+
+
+                    workSheet.Cells[7, 2].Value = str4d.Count;
+                    workSheet.Cells[2, 217].Value = para.po_v;
+                    workSheet.Cells[3, 217].Value = para.po_n;
+                    workSheet.Cells[2, 219].Value = para.pvg_v;
+                    workSheet.Cells[3, 219].Value = para.pvg_n;
+                    workSheet.Cells[2, 221].Value = para.pau_v;
+                    workSheet.Cells[3, 221].Value = para.pau_n;
+                    workSheet.Cells[2, 223].Value = para.sr_v;
+                    workSheet.Cells[3, 223].Value = para.sr_n;
+                    workSheet.Cells[2, 225].Value = para.i_v;
+                    workSheet.Cells[3, 225].Value = para.i_n;
+                    workSheet.Cells[2, 227].Value = para.t_v;
+                    workSheet.Cells[3, 227].Value = para.t_n;
+                    workSheet.Cells[2, 229].Value = para.f_v;
+                    workSheet.Cells[3, 229].Value = para.f_n;
+                    workSheet.Cells[2, 231].Value = para.nso_v;
+                    workSheet.Cells[3, 231].Value = para.nso_n;
+                    workSheet.Cells[2, 233].Value = para.pr_v;
+                    workSheet.Cells[3, 233].Value = para.pr_n;
+                    workSheet.Cells[2, 235].Value = para.poo_v;
+                    workSheet.Cells[3, 235].Value = para.poo_n;
+                    workSheet.Cells[2, 237].Value = para.sa_v;
+                    workSheet.Cells[3, 237].Value = para.sa_n;
+                    workSheet.Cells[2, 239].Value = para.sp_v;
+                    workSheet.Cells[3, 239].Value = para.sp_n;
+                    workSheet.Cells[2, 241].Value = para.s_v;
+                    workSheet.Cells[3, 241].Value = para.s_n;
+                    workSheet.Cells[2, 243].Value = para.fr_v;
+                    workSheet.Cells[3, 243].Value = para.fr_n;
+                    workSheet.Cells[2, 244].Value = para.fz_v;
+                    workSheet.Cells[3, 244].Value = para.fz_n;
+                    foreach (var stroka in str4d)
+                    {
+                        lod++;
+                        mas[1] = lod + "/" + col;
+                        await hubContext.Clients.All.SendAsync("Notify", mas);
+
+                        answer row = stroka.ans;
+
+                        i++;
+
+
+                        workSheet.Cells[i, 2].Value = stroka.mo;
+                        workSheet.Cells[i, 3].Value = stroka.oo;
+                        workSheet.Cells[i, 4].Value = stroka.klass_n;
+                        workSheet.Cells[i, 5].Value = stroka.login;
+                        if (row != null)
+                        {
+                            workSheet.Cells[i, 6].Value = row.pol;
+                            workSheet.Cells[i, 7].Value = row.vozr;
+                            workSheet.Cells[i, 8].Value = row.sek;
+                            row.AddMas();
+                            int a0 = 0;
+                            int a1 = 0;
+                            int a2 = 0;
+                            int a3 = 0;
+                            int ser = 0;
+                            int bolshe_20 = 0;
+                            int bolshe_70 = 0;
+                            for (int j = 9; j < 149; j++)
+                            {
+                                if (bolshe_20 != 1)
+                                {
+                                    if (row.mas[j - 9] == (j - 10 != -1 ? row.mas[j - 10] : row.mas[0]))
+                                    {
+                                        ser++;
+                                    }
+                                    else
+                                    {
+                                        if (ser > 20)
+                                            bolshe_20 = 1;
+
+                                        if (row.mas[j - 10] == 0)
+                                        {
+                                            a0 = a0 + ser;
+
+                                        }
+                                        if (row.mas[j - 10] == 1)
+                                        {
+                                            a1 = a1 + ser;
+
+
+                                        }
+                                        if (row.mas[j - 10] == 2)
+                                        {
+                                            a2 = a2 + ser;
+
+
+                                        }
+                                        if (row.mas[j - 10] == 3)
+                                        {
+                                            a3 = a3 + ser;
+
+
+                                        }
+                                        ser = 1;
+
+
+                                    }
+                                    if (j - 9 == 139)
+                                        if (ser > 20)
+                                            bolshe_20 = 1;
+
+                                }
+
+                                workSheet.Cells[i, j].Value = row.mas[j - 9];
+                            }
+                            if (a1 > 98 || a2 > 98 || a3 > 98 || a0 > 98)
+                                bolshe_70 = 1;
+                            workSheet.Cells[i, 215].Value = (bolshe_70 == 1 || bolshe_20 == 1 ? 1 : 0);
+                        }
+
+
+                    }
+
+                    data = package.GetAsByteArray();
+                    string entryName = ZipEntry.CleanName("VUZ_D.xlsx");
+                    ZipEntry newEntry = new ZipEntry(entryName);
+                    newEntry.DateTime = package.File.LastWriteTime;
+                    newEntry.Size = data.Length;
+                    zipStream.PutNextEntry(newEntry);
+
+
+
+                    using (MemoryStream streamReader = new MemoryStream(data))
+                    {
+                        StreamUtils.Copy(streamReader, zipStream, buffer);
+
+                    }
+                    zipStream.CloseEntry();
+
+                }
+
+
+
+
+
+
+
+            }
 
 
             //using (FileStream file = new FileStream("file.bin", FileMode.Create, System.IO.FileAccess.Write))

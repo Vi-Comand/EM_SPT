@@ -194,22 +194,22 @@ namespace EM_SPT.Controllers
         }
 
 
-        public async Task<IActionResult> load(int load)
-        {
-
-
-
-
-
-            for (int i = 1; i < 10; i++)
+        /*    public async Task<IActionResult> load(int load)
             {
-                await hubContext.Clients.All.SendAsync("Notify", i);
-                // g_load = i;
-                // a = Ch.SendMessage("asd", "sd");
-            }
-            return Json(g_load);
-            return null;
-        }
+
+
+
+
+
+                for (int i = 1; i < 10; i++)
+                {
+                    await hubContext.Clients.All.SendAsync("Notify", i);
+                    // g_load = i;
+                    // a = Ch.SendMessage("asd", "sd");
+                }
+                return Json(g_load);
+                return null;
+            }*/
 
         /*  public IActionResult Spisok_full1()
           {
@@ -479,6 +479,8 @@ namespace EM_SPT.Controllers
         {
             string name1 = "\\wwwroot\\file\\vrem\\s110" + DateTime.Now.ToFileTime() + ".xlsx";
             string name2 = "\\wwwroot\\file\\vrem\\s140" + DateTime.Now.ToFileTime() + ".xlsx";
+            string path = Directory.GetCurrentDirectory();
+            System.IO.File.Create(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s11011.xlsx");
             System.IO.File.Copy(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s110.xlsx", Directory.GetCurrentDirectory() + name1, true);
             System.IO.File.Copy(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s140.xlsx", Directory.GetCurrentDirectory() + name2, true);
             int lod = 0;

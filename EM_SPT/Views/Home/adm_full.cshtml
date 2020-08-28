@@ -128,37 +128,37 @@
                 });
                     </script>*@
 
-            <button class="btn btn-outline-success " id="adklass" form="0">Сформировать</button>
-            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-            <script>
-                $("#adklass").click(function () {
-                    var load = 0;
-                    var pr = document.getElementById('prog');
-                    //  for (load; load < 101;) {
-                    $.ajax({
-                        url: '/Home/load/',
-                        type: "POST",
-                        dataType: "json",
-                        data: { "load": load },
-                        success: function (g_load) {
-                            //var pr = document.getElementById('prog');
-                            //pr.innerText = g_load + '%';
-                            //$('#prog').attr('aria-valuenow', g_load).css('width', g_load + '%').text = g_load;
-                            //load = g_load;
-                            //alert(g_load);
-                        }
+            @*  <button class="btn btn-outline-success " id="adklass" form="0">Сформировать</button>
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+                <script>
+                    $("#adklass").click(function () {
+                        var load = 0;
+                        var pr = document.getElementById('prog');
+                        //  for (load; load < 101;) {
+                        $.ajax({
+                            url: '/Home/load/',
+                            type: "POST",
+                            dataType: "json",
+                            data: { "load": load },
+                            success: function (g_load) {
+                                //var pr = document.getElementById('prog');
+                                //pr.innerText = g_load + '%';
+                                //$('#prog').attr('aria-valuenow', g_load).css('width', g_load + '%').text = g_load;
+                                //load = g_load;
+                                //alert(g_load);
+                            }
+                        });
+
+
+                        //var pr = document.getElementById('prog');
+                        //pr.innerText = load + '%';
+                        //$('#prog').attr('aria-valuenow', load).css('width', load + '%').text = '60';
+
+
                     });
+                </script>
 
-
-                    //var pr = document.getElementById('prog');
-                    //pr.innerText = load + '%';
-                    //$('#prog').attr('aria-valuenow', load).css('width', load + '%').text = '60';
-
-
-                });
-            </script>
-
-
+            *@
 
 
 
@@ -170,7 +170,7 @@
                     </div>
                     <button class="btn btn-outline-success " id="adklass" form="0">Сформировать</button>
                     <button class="btn btn-outline-success " id="KolvoLoad" form="0">Сформировать1</button>*@
-                <button class="btn btn-outline-success " id="izmDB" form="0">Проверка</button>
+                <button class="btn btn-outline-success " id="izmDB" form="0">Проверка на непройденые тесты у юзеров</button>
                 <script>
 
                     $("#izmDB").click(function () { // задаем функцию при нажатиии на элемент <button>
@@ -289,60 +289,30 @@
                     //});
                 </script>
             </form>
-            <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="Added">
-                <div class="form-row shadow p-3 mb-5 bg-white rounded">
+            @*<form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="Added">
+                    <div class="form-row shadow p-3 mb-5 bg-white rounded">
 
-                    <div class="alert alert-success col-md-12" role="alert">Формирование учетных записей</div>
+                        <div class="alert alert-success col-md-12" role="alert">Формирование учетных записей</div>
 
-                    <p>Скачайте файл шаблон для заполнения, заполните все поля и загрузите, чтобы сформировать логины и пароли для всех МО <a href="~/file/Formir_MO.xlsx">Шаблон для заполнения</a></p>
-                    <p class="alert-danger">Внимание!!! при формировании логинов удаляются все старые логины и пароли кроме пароля администратора!!!</p>
-
-
-
-                    @*<div class="file">
-                            <div class="form-group">
-                                <input type="file" name="uploadedFile" id="uploadedFile" class="input-file" required>
-                                <label for="uploadedFile" class="btn btn-tertiary js-labelFile">
-                                    <i class="icon fa fa-check"></i>
-                                    <span class="js-fileName">Загрузить файл</span>
-                                </label>
-                            </div>
-                        </div>*@
-
-
-
-                    <input type="file" name="uploadedFile" /><br>
-                    <input class="btn btn-outline-success" type="submit" id="inputGroupFileAddon04" value="Загрузить" />
-
-                    @*<div class="input-group">
-                                    <div class="file">
-                            <div class="form-group">
-                                <input type="file" name="uploadedFile" id="uploadedFile" class="input-file" required>
-                                <label for="uploadedFile" class="btn btn-tertiary js-labelFile">
-                                    <i class="icon fa fa-check"></i>
-                                    <span class="js-fileName">Загрузить файл</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <input type="submit" value="Загрузить" />
-
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input" name="uploadedFile" id="uploadedFile" aria-describedby="inputGroupFileAddon04" lang="ru">
-                                <label class="custom-file-label" for="inputGroupFile04">Выберите файл</label>
-                            </div>
-                            <div class="input-group-append">
-
-                            </div>
-                        </div>
-
-                        <button class="btn btn-outline-success " data-toggle="modal" data-target="#addklass" form="0">Сформировать МО</button>*@
+                        <p>Скачайте файл шаблон для заполнения, заполните все поля и загрузите, чтобы сформировать логины и пароли для всех МО <a href="~/file/Formir_MO.xlsx">Шаблон для заполнения</a></p>
+                        <p class="alert-danger">Внимание!!! при формировании логинов удаляются все старые логины и пароли кроме пароля администратора!!!</p>
 
 
 
 
-                </div>
-            </form>
+
+
+
+                        <input type="file" name="uploadedFile" /><br>
+                        <input class="btn btn-outline-success" type="submit" id="inputGroupFileAddon04" value="Загрузить" />
+
+
+
+
+
+
+                    </div>
+                </form>*@
             <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="AddedUserRaion">
                 <div class="form-row shadow p-3 mb-5 bg-white rounded">
 

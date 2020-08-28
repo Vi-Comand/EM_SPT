@@ -13,7 +13,7 @@ namespace EM_SPT.Models
         private DataContext db = new DataContext();
         private Random rnd;
         const string valid = "1234567890";
-        private async void  FormirListAndCreatOO(IFormFile uploadedFile)
+        private async void FormirListAndCreatOO(IFormFile uploadedFile)
         {
             using (var package = new ExcelPackage(uploadedFile.OpenReadStream()))
             {
@@ -27,7 +27,7 @@ namespace EM_SPT.Models
                     mo mo;
                     mo = db.mo.Where(p => p.name == workSheet.Cells[1, 3].Value.ToString()).FirstOrDefault();
 
-                    if (mo==null)
+                    if (mo == null)
                     {
                         mo = new mo();
                         mo.name = workSheet.Cells[1, 3].Value.ToString();
@@ -38,7 +38,7 @@ namespace EM_SPT.Models
                         int Length = 8;
                         user admin = new user();
                         admin.id_mo = mo.id;
-                        admin.login = "AM" + mo.id;
+                        admin.login = "АМ" + mo.id;
                         admin.role = 3;
                         const string valid = "1234567890";
                         StringBuilder res = new StringBuilder();
@@ -59,8 +59,8 @@ namespace EM_SPT.Models
                         if (workSheet.Cells[i, 2].Value != null)
                         {
 
-                          
-                            oo = db.oo.Where(p => p.kod == workSheet.Cells[i, 2].Value.ToString()&& p.id_mo== mo.id && p.tip == Convert.ToInt32(workSheet.Cells[i, 1].Value)).FirstOrDefault();
+
+                            oo = db.oo.Where(p => p.kod == workSheet.Cells[i, 2].Value.ToString() && p.id_mo == mo.id && p.tip == Convert.ToInt32(workSheet.Cells[i, 1].Value)).FirstOrDefault();
                             if (oo == null)
                             {
                                 oo = new oo();
@@ -74,7 +74,7 @@ namespace EM_SPT.Models
                                 int Length = 8;
                                 user admin = new user();
                                 admin.id_oo = oo.id;
-                                admin.login = "AO" + oo.id;
+                                admin.login = "АО" + oo.id;
                                 admin.role = 2;
                                 const string valid = "1234567890";
                                 StringBuilder res = new StringBuilder();
@@ -112,7 +112,7 @@ namespace EM_SPT.Models
                                         int Length = 8;
                                         user admin = new user();
                                         admin.id_klass = gruppa.id;
-                                        admin.login = "AK" + gruppa.id;
+                                        admin.login = "АК" + gruppa.id;
                                         admin.role = 1;
                                         const string valid = "1234567890";
                                         StringBuilder res = new StringBuilder();
@@ -130,12 +130,12 @@ namespace EM_SPT.Models
                                     {
                                         kolvoklass = db.User.Where(p => p.id_klass == gruppa.id && p.role != 1).Count();
                                     }
-                                    for (int k = kolvoklass; k < kolvoklass + Convert.ToInt32(workSheet.Cells[i, j + 2].Value) ; k++)
+                                    for (int k = kolvoklass; k < kolvoklass + Convert.ToInt32(workSheet.Cells[i, j + 2].Value); k++)
                                     {
                                         int Length = 8;
                                         user = new user();
                                         user.id_klass = gruppa.id;
-                                        user.login = "K" + gruppa.id + "T" + k;
+                                        user.login = "К" + gruppa.id + "У" + k;
 
 
 
@@ -161,13 +161,13 @@ namespace EM_SPT.Models
                     }
                 }
             }
-          
+
         }
         public void Added(IFormFile file)
         {
 
             FormirListAndCreatOO(file);
-            
+
         }
     }
 }

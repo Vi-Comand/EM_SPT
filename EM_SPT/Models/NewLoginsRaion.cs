@@ -60,6 +60,8 @@ namespace EM_SPT.Models
                         {
 
 
+
+
                             oo = db.oo.Where(p => p.kod == workSheet.Cells[i, 2].Value.ToString() && p.id_mo == mo.id && p.tip == Convert.ToInt32(workSheet.Cells[i, 1].Value)).FirstOrDefault();
                             if (oo == null)
                             {
@@ -89,79 +91,81 @@ namespace EM_SPT.Models
                                 await db.SaveChangesAsync();
 
                             }
+                            //если школа 1 раз
 
-                            for (int j = 3; workSheet.Cells[i, j].Value != null; j += 3)
+
+                            //если школа 2й раз
+
+                            if (workSheet.Cells[i, 5].Value != null)
                             {
-                                if (workSheet.Cells[i, j + 2].Value != null)
+                                if (workSheet.Cells[i, 4].Value != null)
+                                    gruppa = db.klass.Where(p => p.kod == workSheet.Cells[i, 4].Value.ToString() && p.klass_n == Convert.ToInt32(workSheet.Cells[i, 3].Value) && p.id_oo == oo.id).FirstOrDefault();
+                                else
+                                    gruppa = null;
+                                int kolvoklass = 0;
+                                if (gruppa == null)
                                 {
-                                    if (workSheet.Cells[i, j + 1].Value != null)
-                                        gruppa = db.klass.Where(p => p.kod == workSheet.Cells[i, j + 1].Value.ToString() && p.klass_n == Convert.ToInt32(workSheet.Cells[i, j].Value) && p.id_oo == oo.id).FirstOrDefault();
-                                    else
-                                        gruppa = null;
-                                    int kolvoklass = 0;
-                                    if (gruppa == null)
+                                    gruppa = new klass();
+                                    gruppa.id_oo = oo.id;
+                                    gruppa.klass_n = Convert.ToInt32(workSheet.Cells[i, 3].Value);
+                                    gruppa.kod = (workSheet.Cells[i, 4].Value != null ? workSheet.Cells[i, 4].Value.ToString() : String.Empty);
+
+
+                                    await db.AddAsync(gruppa);
+                                    await db.SaveChangesAsync();
+                                    int Length = 8;
+                                    user admin = new user();
+                                    admin.id_klass = gruppa.id;
+                                    admin.login = "АК" + gruppa.id;
+                                    admin.role = 1;
+                                    const string valid = "1234567890";
+                                    StringBuilder res = new StringBuilder();
+                                    Random rnd = new Random();
+
+                                    while (0 < Length--)
                                     {
-                                        gruppa = new klass();
-                                        gruppa.id_oo = oo.id;
-                                        gruppa.klass_n = Convert.ToInt32(workSheet.Cells[i, j].Value);
-                                        gruppa.kod = (workSheet.Cells[i, j + 1].Value != null ? workSheet.Cells[i, j + 1].Value.ToString() : String.Empty);
-
-
-                                        await db.AddAsync(gruppa);
-                                        await db.SaveChangesAsync();
-                                        int Length = 8;
-                                        user admin = new user();
-                                        admin.id_klass = gruppa.id;
-                                        admin.login = "АК" + gruppa.id;
-                                        admin.role = 1;
-                                        const string valid = "1234567890";
-                                        StringBuilder res = new StringBuilder();
-                                        Random rnd = new Random();
-
-                                        while (0 < Length--)
-                                        {
-                                            res.Append(valid[rnd.Next(valid.Length)]);
-                                        }
-                                        admin.pass = res.ToString();
-                                        await db.AddAsync(admin);
-                                        await db.SaveChangesAsync();
+                                        res.Append(valid[rnd.Next(valid.Length)]);
                                     }
-                                    else
-                                    {
-                                        kolvoklass = db.User.Where(p => p.id_klass == gruppa.id && p.role != 1).Count();
-                                    }
-                                    for (int k = kolvoklass; k < kolvoklass + Convert.ToInt32(workSheet.Cells[i, j + 2].Value); k++)
-                                    {
-                                        int Length = 8;
-                                        user = new user();
-                                        user.id_klass = gruppa.id;
-                                        user.login = "К" + gruppa.id + "У" + k;
-
-
-
-                                        var res = new StringBuilder();
-                                        rnd = new Random();
-
-                                        while (0 < Length--)
-                                        {
-                                            res.Append(valid[rnd.Next(valid.Length)]);
-                                        }
-                                        user.pass = res.ToString();
-
-
-                                        await db.AddAsync(user);
-                                        await db.SaveChangesAsync();
-                                    }
-
-
-
+                                    admin.pass = res.ToString();
+                                    await db.AddAsync(admin);
+                                    await db.SaveChangesAsync();
                                 }
+                                else
+                                {
+                                    kolvoklass = db.User.Where(p => p.id_klass == gruppa.id && p.role != 1).Count();
+                                }
+                                for (int k = kolvoklass; k < kolvoklass + Convert.ToInt32(workSheet.Cells[i, 5].Value); k++)
+                                {
+                                    int Length = 8;
+                                    user = new user();
+                                    user.id_klass = gruppa.id;
+                                    user.login = "К" + gruppa.id + "У" + k;
+
+
+
+                                    var res = new StringBuilder();
+                                    rnd = new Random();
+
+                                    while (0 < Length--)
+                                    {
+                                        res.Append(valid[rnd.Next(valid.Length)]);
+                                    }
+                                    user.pass = res.ToString();
+
+
+                                    await db.AddAsync(user);
+                                    await db.SaveChangesAsync();
+                                }
+
+
+
+
                             }
+
                         }
                     }
                 }
             }
-
         }
         public void Added(IFormFile file)
         {

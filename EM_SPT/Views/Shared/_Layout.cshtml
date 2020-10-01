@@ -13,8 +13,8 @@
 
         </environment>*@
 </head>
-<body>
-    <nav class="navbar navbar-light navbar-expand-lg gradient-nav" style="margin-bottom: 45px;">
+<body class="fon2">
+    <nav class="navbar navbar-light navbar-expand-lg fon3" style="margin-bottom: 105px;">
         <div class="container">
 
             <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarNav"><span class="sr-only sr-only-focusable">@*<img class="rounded-circle" src="~/assets/img/logo.png" width="60">*@</span><span class="navbar-toggler-icon navbar-light"></span></button>
@@ -23,7 +23,7 @@
 
                 <form method="post" class="navbar w-100" style="margin:initial; ">
                     <h2 class="success">
-                        ЕМ СПТ
+                        Мониторинг по питанию
                     </h2>
 
                     @*<button type="submit" class="btn btn-outline-success" style="margin:5px; margin-left:0px;" asp-controller="Home" asp-action="Index">Главная</button>
@@ -48,7 +48,7 @@
                             <br />*@
                     @if (User.Identity.IsAuthenticated == false)
                     {
-                        <button type="submit" class="btn btn-warning" style="margin:5px; margin-left:auto;" asp-controller="Account" asp-action="login">Войти</button>
+                        <button type="submit" class="btn btn-primary" style="margin:5px; margin-left:auto;" asp-controller="Account" asp-action="login">Войти</button>
                         <br />
                     }
                     else
@@ -60,17 +60,19 @@
 
         </div>
     </nav>
-
-
-
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>2019 ГБОУ Институт развития образования Краснодарского края </p>
-            <p style="font-size: small;">Телефон поддержки  8(861)232-39-71</p>
-        </footer>
+    <div class="container">
+        <partial name="_CookieConsentPartial" />
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
     </div>
+    <footer class="border-top footer ">
+        <div class="container">
+            <p>2020 ГБОУ Институт развития образования Краснодарского края </p>
+            @*<p style="font-size: small;">Телефон поддержки  8(861)232-39-71</p>*@
+        </div>
+    </footer>
+    
     <script src="~/lib/jquery/dist/jquery.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
 

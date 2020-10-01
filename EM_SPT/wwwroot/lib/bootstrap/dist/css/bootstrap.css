@@ -2109,10 +2109,23 @@ pre {
     color: black;
 }
 
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    /* Set the fixed height of the footer here */
+    /*height: 60px;*/
+    line-height: 60px; /* Vertically center the text there */
+}
+
+
+
 .form-control:optional {
-    border-color: #28a745;
+    border-color: #007bff;
     outline: 0;
-    box-shadow: 0 0 0 0.2rem #b2e4be;
+    box-shadow: 0 0 0 0.2rem rgba(225, 231, 236, 0.25);
 }
 
 .form-control::-webkit-input-placeholder {
@@ -4319,8 +4332,18 @@ input[type="button"].btn-block {
         cursor: default;
     }
 
+
+html, body {
+    width: auto;
+    height: auto;
+
+    padding: 0;
+    margin: 0;
+}
+
 .nav-tabs {
     border-bottom: 1px solid #dee2e6;
+    background-color:
 }
 
     .nav-tabs .nav-item {
@@ -10900,7 +10923,15 @@ a.text-dark:hover, a.text-dark:focus {
 }
 /*# sourceMappingURL=bootstrap.css.map */
 .fon {
-    background-image: url('/file/fon4.jpg');
+    /* background-image: url('/file/fon4.jpg');*/
+    background: linear-gradient(to right, #e2ffe4 0%,#fcfcfc 15%,#fcfcfc 15%,#fcfcfc 85%,#e2ffe4 100%);
+}
+.fon3 {
+    background-color: rgba(251, 255, 255, 0.43);
+}
+    .fon2 {
+    background-image: url(/file/nav1.jpg), linear-gradient(to bottom, #399bca 0%,#399bca 85%,rgba(0, 123, 255, 0.25) 100%);
+    background-repeat-y: no-repeat;
 }
 
 .gradient {
@@ -10915,6 +10946,7 @@ a.text-dark:hover, a.text-dark:focus {
 .gradient-nav {
     background: #00a45f; /* Old browsers */
     color: white;
+    background-image: url('/file/nav.jpg');
     /*background: -moz-linear-gradient(top, #ceffd1 0%, #e8f9e8 20%, #e8f9e8 80%, #ceffd1 99%); /* FF3.6-15 */
     /* background: -webkit-linear-gradient(top, #ceffd1 0%,#e8f9e8 20%,#e8f9e8 80%,#ceffd1 99%); /* Chrome10-25,Safari5.1-6 */
     /*background: linear-gradient(to bottom, #ceffd1 0%,#e8f9e8 20%,#e8f9e8 80%,#ceffd1 99%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */

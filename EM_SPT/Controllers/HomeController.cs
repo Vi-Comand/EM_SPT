@@ -178,7 +178,10 @@ namespace EM_SPT.Controllers
                 par.Mos = listMO;
                 return View("adm_stat", par);
             }
-            else { return RedirectToAction("start", "Home"); }
+            else
+            {
+                return RedirectToAction("start", "Home");
+            }
 
 
 
@@ -315,7 +318,10 @@ namespace EM_SPT.Controllers
                         net = false;
                         break;
                     }
-                    else { net = true; }
+                    else
+                    {
+                        net = true;
+                    }
                 if (net)
                     id_mass.Add(id);
             }
@@ -480,7 +486,6 @@ namespace EM_SPT.Controllers
             string name1 = "\\wwwroot\\file\\vrem\\s110" + DateTime.Now.ToFileTime() + ".xlsx";
             string name2 = "\\wwwroot\\file\\vrem\\s140" + DateTime.Now.ToFileTime() + ".xlsx";
             string path = Directory.GetCurrentDirectory();
-            System.IO.File.Create(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s11011.xlsx");
             System.IO.File.Copy(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s110.xlsx", Directory.GetCurrentDirectory() + name1, true);
             System.IO.File.Copy(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\s140.xlsx", Directory.GetCurrentDirectory() + name2, true);
             int lod = 0;
@@ -1926,11 +1931,11 @@ namespace EM_SPT.Controllers
 
 
         }
-        public async Task<IActionResult> Pass_excel()
+        public async Task<IActionResult> Pass_excel(int idMo)
         {
             await Task.Yield();
             ListMo listMO = new ListMo();
-            listMO.Mos = db.mo.Where(p => p.id == 15).ToList();
+            listMO.Mos = db.mo.Where(p => p.id == idMo).ToList();
             ListOos listOO = new ListOos();
             ListKlass listKl = new ListKlass();
             listKl.klasses = db.klass.ToList();
@@ -1947,7 +1952,7 @@ namespace EM_SPT.Controllers
                 ZipConstants.DefaultCodePage = 866;// формирование названия Zip на русском
 
                 byte[] buffer = new byte[4096];
-                listOO.oos = db.oo.Where(p => p.id_mo == iMO.id).ToList();
+                listOO.oos = db.oo.Where(p => p.id_mo == iMO.id && p.tip == 2).ToList();
 
                 foreach (var iOO in listOO.oos)
                 {
@@ -3462,13 +3467,17 @@ namespace EM_SPT.Controllers
                 model.Ans = new answer();
             model.Ans.date = DateTime.Now;
             model.Ans.id_user = db.User.Where(p => p.login == login).First().id;
+            model.Ans.ip = Request.HttpContext.Connection.RemoteIpAddress.ToString();
+            if (us.test != 1)
+            {
 
-            db.answer.Add(model.Ans);
 
-            us.test = 1;
-            db.User.Update(us);
-            await db.SaveChangesAsync();
+                db.answer.Add(model.Ans);
 
+                us.test = 1;
+                db.User.Update(us);
+                await db.SaveChangesAsync();
+            }
             return RedirectToAction("end");
         }
 

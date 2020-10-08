@@ -400,12 +400,13 @@
         <div class="tab-pane fade " id="otch">
 
             <div class="form-row shadow p-3 mb-5 bg-white rounded">
-                <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="Pass_excel">
-                    <input class="btn btn-outline-success" type="submit" id="wq" value="Сформировать" />
-                </form>
-                <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="Result_po_click_MO">
-                    <input class="btn btn-outline-success" type="submit" id="wq" value="Сформировать" />
-                </form>
+                @*  <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="Pass_excel">
+                         <input class="btn btn-outline-success" type="submit" id="wq" value="Сформировать пароли" />
+                         <input type="text" id="idMo" />
+                     </form>
+                    <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="Result_po_click_MO">
+                             <input class="btn btn-outline-success" type="submit" id="wq" value="Сформировать" />
+                         </form>*@
 
 
 
@@ -418,8 +419,8 @@
                     <thead class="thead-light">
                         <tr>
                             <th width="20%">MO</th>
-                            <th width="10%">Отчет по тестированию</th>
-                            <th width="10%">Отчет по паролям</th>
+                            <th width="50%" colspan="3">Отчет по тестированию</th>
+                            <th width="30%" colspan="2">Отчет по паролям</th>
 
                         </tr>
                     </thead>
@@ -430,11 +431,12 @@
                                 <td>@Model.Mos[i].name </td>
 
                                 <td>
-                                    <button class="select-word-link" id="Result_po_MO" value="@Model.Mos[i].id" form="0">Новый Тык</button>
+                                    <button class="select-word-link" id="Result_po_MO" value="@Model.Mos[i].id" form="0">Go отчет</button>
                                 </td>
-                                <td>
+
+                                <td width="30px">
                                     <div class="progress">
-                                        <div crole="progressbar" id="prog_@Model.Mos[i].id" style="width: 0%"></div>
+                                        <div crole="progressbar" id="prog_@Model.Mos[i].id" style="min-width: 100px"></div>
                                     </div>
                                 </td>
                                 <td>
@@ -444,9 +446,12 @@
                                     </form>
                                 </td>
                                 <td>
+                                    <a href="Home/Pass_excel?idMo=@Model.Mos[i].id" class="select" value="@Model.Mos[i].id">Go pass</a>
+                                </td>
+                                <td>
                                     <form action="~/Vgruzka/@Model.Mos[i].name.ToString()_pass.zip">
 
-                                        <button type="submit" class="btn btn-outline-success" style="background: url(/icon/excel.png) no-repeat 215.5px 10.5px rgba(7, 255, 126, 0.2); background-size: 10%; height: 50px; width:250px">Загрузить отчет</button>
+                                        <button type="submit" class="btn btn-outline-success" style="background: url(/icon/excel.png) no-repeat 215.5px 10.5px rgba(7, 255, 126, 0.2); background-size: 10%; height: 50px; width:250px">Загрузить pass</button>
                                     </form>
                                 </td>
                             </tr>

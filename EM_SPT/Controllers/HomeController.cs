@@ -1952,7 +1952,7 @@ namespace EM_SPT.Controllers
                 ZipConstants.DefaultCodePage = 866;// формирование названия Zip на русском
 
                 byte[] buffer = new byte[4096];
-                listOO.oos = db.oo.Where(p => p.id_mo == iMO.id && p.tip == 2).ToList();
+                listOO.oos = db.oo.Where(p => p.id_mo == iMO.id && p.tip == 2 && p.id >= 1300).ToList();
 
                 foreach (var iOO in listOO.oos)
                 {

@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<TestSettings name="Локальные" id="ed6af165-87ed-4b1b-bf80-555353819eb1" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Description>Это - параметры по умолчанию для локального тестового запуска.</Description>
+  <Deployment enabled="false" />
+  <Execution hostProcessPlatform="MSIL">
+    <TestTypeSpecific />
+    <AgentRule name="Execution Agents">
+    </AgentRule>
+  </Execution>
+  <Properties>
+    <Property name="TestSettingsUIType" value="LoadTest" />
+  </Properties>
+</TestSettings>

@@ -1,0 +1,43 @@
+﻿@model EM_SPT.Models.LoginModel
+
+@{
+    ViewData["Title"] = "Войти";
+}
+<body class="gradient">
+    <main class="page hire-me-page">
+        <section class="portfolio-block hire-me">
+            <div class="container">
+                <br />
+
+                <form asp-action="Login" asp-controller="Account" asp-anti-forgery="true" class="text-center" style="width: 397px; margin-left: auto; margin-right: auto;" method="post">
+
+
+                    <div class="validation center" asp-validation-summary="ModelOnly" />
+                    <div class="form-row  rounded">
+                        <div class="alert col-md-12">
+                            <p class="font-weight-light" style="font-size: small;">Вводите логин на русской раскладке.Пример логина(К123У2)/ Пример пароля (12345678)</p>
+                            <label asp-for="Login">Введите логин <b style="color:transparent">__</b> </label>
+                            <input class=" form-control text-center" type="text" asp-for="Login" data-toggle="tooltip" data-placement="top" title="Вводите логин на русской раскладке. Логин состоит из из номера класса 'К(0-99999)' и номера ученика 'У(0-9999)'" />
+                            <span asp-validation-for="Login" />
+                        </div>
+                        <div class="alert col-md-12">
+                            <label asp-for="Password">Введите пароль</label>
+                            <input class="form-control text-center" type="password" asp-for="Password" data-toggle="tooltip" data-placement="top" title="Пароль состоит только из цифр" />
+                            <span asp-validation-for="Password" />
+                        </div>
+                        <div class="col-md-12">
+                            <input type="submit" value="Войти" class="btn btn-outline-success" />
+                        </div>
+
+                    </div>
+
+
+                    @*<div class="form-group text-center"><label class="d-xl-flex justify-content-xl-start" for="email">Email</label><input asp-for="Email" class="form-control" type="email" name="email" required="" placeholder="ivanov@mail.ru" autofocus="" inputmode="email" id="email"></div>
+                        <div class="form-group"><label class="d-xl-flex justify-content-xl-start" for="message">Пароль</label><input asp-for="Password" class="form-control" type="password" name="pass" required="" id="pass"><a href="#">Забыли пароль</a></div>
+                        <div class="form-group d-xl-flex justify-content-xl-center align-items-xl-center"><button asp-controller="Account"  asp-action="Login" class=" text-center d-xl-flex justify-content-xl-center align-items-xl-center" type="submit">Войти</button></div>*@
+                </form>
+
+            </div>
+        </section>
+    </main>
+</body>

@@ -1,0 +1,165 @@
+﻿@using System.Linq
+@model EM_SPT.Models.ListOos
+@{
+    ViewData["Title"] = "Администратор МО";
+}
+<!DOCTYPE html>
+
+
+<html>
+<head>
+
+    <meta name="viewport" content="width=device-width" />
+    <noscript><meta http-equiv="refresh" content="0; URL=/badbrowser.html"></noscript>
+    <title>Администратор МО</title>
+</head>
+<body class="gradient">
+
+    <ul class="nav nav-tabs">
+        <li>
+            <a href="#klass" style="float: left;" class="nav-link active" data-toggle="tab">Управление ОО</a>
+        </li>
+        @*<li>
+            <a href="#otch" style="float: left;" class="nav-link" data-toggle="tab">Формирование отчетов</a>
+        </li>*@
+
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane active " id="klass">
+            <form>
+                <div class="form-row shadow p-3 mb-5 bg-white rounded">
+
+                    <div class="form-group col-md-12">
+                        <select id="idOo" class="form-control">
+                            <option value="0" selected>Выберите ОО</option>
+                            @foreach (oo row in Model.oos)
+                            {
+                                <option value="@row.id">
+                                    ОО: @row.id @row.kod Тип oo: @if (row.tip == 1)
+                                    {@Html.Raw("СОШ");
+                                }
+                                else if (row.tip == 2)
+                                { @Html.Raw("СПО");
+                            }
+                            else
+                            { @Html.Raw("ВУЗ");
+                        }
+                                </option>
+                            }
+                        </select>
+
+
+                        <br />
+                        <table id="stat" class="tab"></table>
+                        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+                        <script>
+                            $("#idOo").change(function () { // задаем функцию при нажатиии на элемент <button>
+                                var n = document.getElementById("idOo").options.selectedIndex;
+                                var id = document.getElementById("idOo").options[n].value;
+
+
+                                $.ajax({
+                                    url: '/Home/SpisokOO/',
+                                    type: "POST",
+                                    dataType: "json",
+                                    data: { "id": id },
+                                    success: function (query) {
+                                        var tableArr = ['<table >'];
+                                        var sumo = 0;
+                                        if (query[0].id_klass != null) {
+                                            tableArr.push('<thead class=""><tr><th style="width: 15%">Код класса (группы)/ Номер класса (группы)</th><th style="width: 25%">Тест пройден</th></tr></thead>');
+                                            for (i = 0; i < query.length; i++) {
+                                                tableArr.push('<tr><td>' + query[i].id_klass + ' ' + query[i].kod_kl + '</td><td>' + query[i].kol + '</td></tr>');
+                                                sumo = sumo + query[i].kol;
+                                            }
+                                        }
+                                        else {
+                                            tableArr.push('<thead class=""><tr><th style="width: 15%">Код ОО/ Название</th><th style="width: 25%">Тест пройден</th></tr></thead>');
+                                            for (i = 0; i < query.length; i++) {
+                                                tableArr.push('<tr><td>' + query[i].oo + ' ' + query[i].kod_oo + '</td><td>' + query[i].kol + '</td></tr>');
+                                                sumo = sumo + query[i].kol;
+                                            }
+                                        }
+                                        tableArr.push('<tfoot class=""><tr><td>Всего </td><td>' + sumo + '</td></tr></tfoot>');
+                                        tableArr.push('</table>');
+                                        document.getElementById('stat').innerHTML = tableArr.join('\n')
+                                    }
+                                });
+                            });
+                        </script>
+
+
+
+
+                        <div class="alert alert-success col-md-12" role="alert">Список администраторов</div>
+
+
+                        <button class="btn btn-outline-success " id="adklass" form="0">Сформировать</button>
+                        <br />
+                        <br />
+                        <table id="stat2" class="tab"></table>
+                        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+                        <script>
+                            $("#adklass").click(function () { // задаем функцию при нажатиии на элемент <button>
+
+                                var id = 1;
+
+
+                                $.ajax({
+                                    url: '/Home/SpisokAdmOO/',
+                                    type: "POST",
+                                    dataType: "json",
+                                    data: { "id": id },
+                                    success: function (query) {
+                                        var tableArr = ['<table class="tab">'];
+                                        tableArr.push('<thead ><tr><th style="width: 40%">Код ОО/ название</th><th style="width: 30%">Логин</th><th style="width: 30%">Пароль</th></tr></thead>');
+                                        for (i = 0; i < query.length; i++) {
+                                            var q = query[i].tip == 1 ? 'СОШ' : query[i].tip == 2 ? 'СПО' : 'ВУЗ';
+                                            tableArr.push('<tr><td>' + query[i].id_oo + ' ' + query[i].kod + '</td><td >' + query[i].login + '</td><td>' + query[i].pass + '</td></tr>');
+                                            if (query[i].test == "1") { sum++ }
+                                        }
+
+                                        tableArr.push('<tfoot class=""><tr><td>Всего </td><td>' + query.length + '</td><td></td></tr></tfoot>');
+                                        tableArr.push('</table>');
+                                        document.getElementById('stat2').innerHTML = tableArr.join('\n')
+                                    }
+                                });
+                            });
+                        </script>
+
+
+
+                    </div>
+                    @*<button class="btn btn-outline-success " data-toggle="modal" data-target="#addoo" form="0">Добавить ОО</button>*@
+
+                </div>
+            </form>
+        </div>
+        <div class="tab-pane fade " id="otch">
+            <div class="form-row shadow p-3 mb-5 bg-white rounded">
+                <div class="form-group col-md-12">
+                    <p>Сформированные отчеты недействительны!!! Результаты случайные.</p>
+                    @*<div class="form-group col-md-4">
+                        <select id="inputState" class="form-control" required>
+                            <option value="" selected>Выберите код OO</option>
+
+                        </select>*@
+                    @*</div>*@
+                    @*<button class="btn btn-outline-success form-group col-md-4">Загрузить отчет по ОО</button>*@
+                </div>
+                @*<form action="~/Vgruzka/@Model.mo_name.ToString()_.zip">
+
+                    <button type="submit" class="btn btn-outline-success" style="background: url(/icon/excel.png) no-repeat 280.5px 7.5px rgba(7, 255, 126, 0.2); background-size: 10%; height: 50px; width:320px">Загрузить отчет по МО</button>
+                </form>*@
+
+                <div class="form-group col-md-12">
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>

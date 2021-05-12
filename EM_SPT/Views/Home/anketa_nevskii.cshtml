@@ -1,0 +1,252 @@
+﻿@using System.Linq
+@model EM_SPT.Models.CompositeModel
+
+@{
+    ViewData["Title"] = "Тестирование";
+}
+
+
+<style>
+    .elem {
+        width: 300px;
+        height: 320px;
+        margin: 10px auto;
+        text-align: center;
+        line-height: 300px;
+    }
+
+    .area {
+        /* width: 600px;*/
+        height: 450px;
+        /*border: 10px solid plum;*/
+        margin: 30px auto;
+        padding: 10px;
+    }
+</style>
+
+<body class="fon">
+
+    <form method="post" asp-controller="Home" asp-action="Answer">
+
+        <p><input type="hidden" asp-for="Ans.sek" id="idClock"></p>
+        <script language="JavaScript" type="text/javascript">
+            var i = 0;
+            function SimpleClock() {
+
+                i++;
+
+                //отрисовываем время на странице
+                //document.getElementById('idClock').innerHTML = i;
+
+
+                input = document.getElementById('idClock'); // целевой тег <input>
+
+                idClock.value = i;
+                //выполняем все это каждую секунду
+                timer = setTimeout("SimpleClock()", 1000);
+
+
+            }
+
+            //для первого запуска
+            SimpleClock();
+
+        </script>
+
+
+
+
+        <input type="hidden" asp-for="Ans.vozr" />
+        <input type="hidden" asp-for="Ans.pol" />
+        <div class="row shadow p-3 mb-5 bg-white rounded">
+            <div class="alert alert-success col-12" role="alert">1.	Укажи, кто изображен на картине художника Павла Дмитриевича Корина?</div>
+            <div class="col-sm-12 col-md-6">
+                <div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q1a1' asp-for='Ans.a1' value='1' class='custom-control-input' required><label class='custom-control-label' for='q1a1'>Александр Пушкин</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q1a2' asp-for='Ans.a1' value='2' class='custom-control-input vern'><label class='vern custom-control-label' for='q1a2'>Александр Невский</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q1a3' asp-for='Ans.a1' value='3' class='custom-control-input'><label class='custom-control-label' for='q1a3'>Александр Градский</label></div></div>
+
+
+            </div>
+            <div class="col-sm-12 col-md-6">
+                <img src="~/file/img/nevs1.png" width="300" class="float-right" />
+            </div>
+        </div>
+        <div class="shadow p-3 mb-5 bg-white rounded"><div class="alert alert-success" role="alert">2. Эта картина была написана художником в 1942-1943 годах. Какое событие изображено на картине?</div><div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q2a1' asp-for='Ans.a2' value='1' class='custom-control-input' required><label class='custom-control-label' for='q2a1'>встреча с другом</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q2a2' asp-for='Ans.a2' value='2' class='custom-control-input vern'><label class='vern custom-control-label' for='q2a2'>ожидание битвы с врагом</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q2a3' asp-for='Ans.a2' value='3' class='custom-control-input'><label class='custom-control-label' for='q2a3'>Великая Отечественная война</label></div></div></div>
+        <div class="shadow p-3 mb-5 bg-white rounded">
+            <div class="alert alert-success" role="alert">3.	На картине Александр Невский стоит, широко расставив ноги. Укажи, какое оружие он сжимает в руках?</div><div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q3a1' asp-for='Ans.a3' value='1' class='custom-control-input vern' required><label class=' vern  custom-control-label' for='q3a1'>меч</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q3a2' asp-for='Ans.a3' value='2' class='custom-control-input'><label class='custom-control-label' for='q3a2'>саблю</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q3a3' asp-for='Ans.a3' value='3' class='custom-control-input'><label class='custom-control-label' for='q3a3'>дубину</label></div></div>
+            @*<div class="d-none alert alert-primary">
+                    <h5>Коментарий</h5>
+                    <p>Там же изображено три картины (триптих)</p>
+                </div>*@
+        </div>
+        <div class="shadow p-3 mb-5 bg-white rounded"><div class="alert alert-success" role="alert">4. 	Укажи, какие чувства хотел передать художник?</div><div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q4a1' asp-for='Ans.a4' value='1' class='custom-control-input vern' required><label class='custom-control-label vern' for='q4a1'>решимость одержать победу</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q4a2' asp-for='Ans.a4' value='2' class='custom-control-input'><label class='custom-control-label' for='q4a2'>страх перед опасностью</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q4a3' asp-for='Ans.a4' value='3' class='custom-control-input'><label class='custom-control-label' for='q4a3'>радость победы</label></div></div></div>
+        <div class="shadow p-3 mb-5 bg-white rounded"><div class="alert alert-success" role="alert">5.	Укажи, в каком городе родился Александр Невский?</div><div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q5a1' asp-for='Ans.a5' value='1' class='custom-control-input' required><label class='custom-control-label' for='q5a1'>Краснодар</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q5a2' asp-for='Ans.a5' value='2' class='custom-control-input vern'><label class='custom-control-label vern' for='q5a2'>Переславль (сейчас называется Переславль-Залесский)</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q5a3' asp-for='Ans.a5' value='3' class='custom-control-input'><label class='custom-control-label' for='q5a3'>Москва</label></div></div></div>
+        <div class="shadow p-3 mb-5 bg-white rounded"><div class="alert alert-success" role="alert">6.	Какое отчество было у Александра Невского?</div><div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q6a1' asp-for='Ans.a6' value='1' class='custom-control-input' required><label class='custom-control-label' for='q6a1'>Всеволодович</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q6a2' asp-for='Ans.a6' value='2' class='custom-control-input vern'><label class='custom-control-label vern' for='q6a2'>Ярославович</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q6a3' asp-for='Ans.a6' value='3' class='custom-control-input'><label class='custom-control-label' for='q6a3'>Владимирович</label></div></div></div>
+        <div class="shadow p-3 mb-5 bg-white rounded"><div class="alert alert-success" role="alert">7.	В 1225 году князь Ярослав Всеволодович, отец юного князя Александра, «учинил сыновьям княжеский постриг». Что означал этот обряд?</div><div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q7a1' asp-for='Ans.a7' value='1' class='custom-control-input' required><label class='custom-control-label' for='q7a1'>возведение в княжеский титул</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q7a2' asp-for='Ans.a7' value='2' class='custom-control-input'><label class='custom-control-label' for='q7a2'>соревнования в боевых искусствах</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q7a3' asp-for='Ans.a7' value='3' class='custom-control-input vern'><label class='custom-control-label vern' for='q7a3'>посвящение в воины</label></div></div></div>
+        <div class="shadow p-3 mb-5 bg-white rounded"><div class="alert alert-success" role="alert">8.	Во сколько лет был проведён обряд посвящения Александра Невского в воины?</div><div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q8a1' asp-for='Ans.a8' value='1' class='custom-control-input' required><label class='custom-control-label' for='q8a1'>в 25 лет</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q8a2' asp-for='Ans.a8' value='2' class='custom-control-input'><label class='custom-control-label' for='q8a2'>в 18 лет</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q8a3' asp-for='Ans.a8' value='3' class='custom-control-input vern'><label class='custom-control-label vern' for='q8a3'>в 4 года</label></div></div></div>
+        <div class="shadow p-3 mb-5 bg-white rounded"><div class="alert alert-success" role="alert">9.	На какой реке в 1240 году произошла Невская битва?</div><div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q9a1' asp-for='Ans.a9' value='1' class='custom-control-input' required><label class='custom-control-label' for='q9a1'>на реке Кубань</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q9a2' asp-for='Ans.a9' value='2' class='custom-control-input'><label class='custom-control-label' for='q9a2'>на реке Днепр</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q9a3' asp-for='Ans.a9' value='3' class='custom-control-input vern'><label class='custom-control-label vern' for='q9a3'>на реке Нева</label></div></div></div>
+        <div class="row shadow p-3 mb-5 bg-white rounded">
+            <div class="alert alert-success col-12" role="alert">10.	На каком озере произошло Ледовое побоище?</div>
+            <div class="col-sm-12 col-md-6">
+                <div class='custom-control custom-radio form-check-inline'><input type='radio' id='q10a1' asp-for='Ans.a10' value='1' class='custom-control-input' required><label class='custom-control-label' for='q10a1'>на Ачигварском озере</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q10a2' asp-for='Ans.a10' value='2' class='custom-control-input vern'><label class='vern custom-control-label' for='q10a2'>на Чудском озере</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q10a3' asp-for='Ans.a10' value='3' class='custom-control-input'><label class='custom-control-label' for='q10a3'>на озере Абрау</label></div>
+            </div>
+            <div class="col-sm-12 col-md-6">
+                <img src="~/file/img/nevs10.jpg" width="300" class="float-right" />
+            </div>
+        </div>
+        <div class="shadow p-3 mb-5 bg-white rounded"><div class="alert alert-success" role="alert">11. За что новгородский князь Александр Ярославович получил прозвище Невский?</div><div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q11a1' asp-for='Ans.a11' value='1' class='custom-control-input' required><label class='custom-control-label' for='q11a1'>жил на берегу реки Невы</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q11a2' asp-for='Ans.a11' value='2' class='custom-control-input vern'><label class='custom-control-label vern' for='q11a2'>за победу на реке Неве над шведским войском</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q11a3' asp-for='Ans.a11' value='3' class='custom-control-input'><label class='custom-control-label' for='q11a3'>построил мост через реку Неву</label></div></div></div>
+        <div class="shadow p-3 mb-5 bg-white rounded"><div class="alert alert-success" role="alert">12.  Сколько сражений за свою жизнь князь Александр проиграл?</div><div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q12a1' asp-for='Ans.a12' value='1' class='custom-control-input' required><label class='custom-control-label' for='q12a1'>два</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q12a2' asp-for='Ans.a12' value='2' class='custom-control-input'><label class='custom-control-label' for='q12a2'>все</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q12a3' asp-for='Ans.a12' value='3' class='custom-control-input vern'><label class='custom-control-label vern' for='q12a3'>ни одного</label></div></div></div>
+        <div class="row shadow p-3 mb-5 bg-white rounded">
+            <div class="alert alert-success" role="alert">13.	Посмотри на рисунок. Как называется доспех, который защищал голову воина от повреждений?</div>
+            <div class="col-sm-12 col-md-6">
+                <div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q13a1' asp-for='Ans.a13' value='1' class='custom-control-input' required><label class='custom-control-label' for='q13a1'>каска</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q13a2' asp-for='Ans.a13' value='2' class='custom-control-input '><label class='custom-control-label' for='q13a2'>шапка</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q13a3' asp-for='Ans.a13' value='3' class='custom-control-input vern'><label class='custom-control-label vern' for='q13a3'>шлем</label></div></div>
+            </div>
+            <div class="col-sm-12 col-md-6">
+                <img src="~/file/img/nevs13.jpg" width="300" class="float-right" />
+            </div>
+        </div>
+        <div class="shadow p-3 mb-5 bg-white rounded"><div class="alert alert-success" role="alert">14.  Укажи ситуации, когда в современной жизни для сохранения безопасности необходимо пользоваться шлемом </div><div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q14a1' asp-for='Ans.a14' value='1' class='custom-control-input vern' required><label class='custom-control-label vern' for='q14a1'>во время езды на велосипеде, моноколесе, гироскутере, роликах, самокате</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q14a2' asp-for='Ans.a14' value='2' class='custom-control-input'><label class='custom-control-label' for='q14a2'>во время поездки на автобусе, троллейбусе, трамвае</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q14a3' asp-for='Ans.a14' value='3' class='custom-control-input'><label class='custom-control-label' for='q14a3'>при ходьбе по улице</label></div></div></div>
+        <div class="shadow p-3 mb-5 bg-white rounded">
+            <div class="alert alert-success" role="alert">
+                15.  Укажи элементы защитной экипировки, которыми пользуются современные дети во время катания на роликах:
+            </div><div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q15a1' asp-for='Ans.a15' value='1' class='custom-control-input vern' required><label class='custom-control-label vern' for='q15a1'>наколенники, налокотники, шлем</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q15a2' asp-for='Ans.a15' value='2' class='custom-control-input'><label class='custom-control-label' for='q15a2'>щитки, бутсы</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q15a3' asp-for='Ans.a15' value='3' class='custom-control-input'><label class='custom-control-label' for='q15a3'>спортивная одежда</label></div></div>
+        </div>
+        <div class="row shadow p-3 mb-5 bg-white rounded">
+            <div class="col-12 alert alert-success" role="alert">16. Как называется «бронежилет» времён Александра Невского?</div>
+            <div class=" col-sm-12 col-md-6">
+                <div class='custom-control custom-radio form-check-inline'><input type='radio' id='q16a1' asp-for='Ans.a16' value='1' class='custom-control-input' required><label class='custom-control-label' for='q16a1'>рубаха</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q16a2' asp-for='Ans.a16' value='2' class='custom-control-input'><label class='custom-control-label' for='q16a2'>дубленка</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q16a3' asp-for='Ans.a16' value='3' class='custom-control-input vern'><label class='custom-control-label vern' for='q16a3'>кольчуга</label></div>
+            </div>
+            <div class=" col-sm-12 col-md-6">
+                <img src="~/file/img/nevs16.png" width="300" class="float-right" />
+            </div>
+        </div>
+        <div class="shadow p-3 mb-5 bg-white rounded">
+            <div class="alert alert-success" role="alert">17.  За что Александра Невского был называют благоверным князем?</div>
+            <div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q17a1' asp-for='Ans.a17' value='1' class='custom-control-input vern' required><label class='custom-control-label vern' for='q17a1'>за милосердие и человеколюбие, верность православию</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q17a2' asp-for='Ans.a17' value='2' class='custom-control-input'><label class='custom-control-label' for='q17a2'>за любовь к Родине</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q17a3' asp-for='Ans.a17' value='3' class='custom-control-input'><label class='custom-control-label' for='q17a3'>за непобедимость в битвах </label></div></div>
+        </div>
+        <div class="shadow p-3 mb-5 bg-white rounded"><div class="alert alert-success" role="alert">18.  Какие слова произнес Александр Невский перед битвой с ливонскими рыцарями, чтобы вдохновить свою дружину на победу?</div><div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q18a1' asp-for='Ans.a18' value='1' class='custom-control-input' required><label class='custom-control-label' for='q18a1'>«Пришел, увидел, победил»</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q18a2' asp-for='Ans.a18' value='2' class='custom-control-input'><label class='custom-control-label' for='q18a2'>«Воевать надо не числом, а умением»</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q18a3' asp-for='Ans.a18' value='3' class='custom-control-input vern'><label class='custom-control-label vern' for='q18a3'>«Не в силе Бог, но в правде»</label></div></div></div>
+        <div class="shadow p-3 mb-5 bg-white rounded">
+            <div class="alert alert-success" role="alert">19.  Орден Александра Невского — одна из высших наград Российской Федерации. Укажи его изображение.</div><div>
+                <div class='custom-control custom-radio form-check-inline'>
+                    <input type='radio' id='q19a1' asp-for='Ans.a19' value='1' class='custom-control-input' required><label class='custom-control-label' for='q19a1'>
+                        <img src="~/file/img/nevs191.jpg" height="250" width="250" />
+                    </label>
+                </div><div class='custom-control custom-radio form-check-inline'>
+                    <input type='radio' id='q19a2' asp-for='Ans.a19' value='2' class='custom-control-input vern'><label class='custom-control-label vern' for='q19a2'>
+                        <img src="~/file/img/nevs192.jpg" height="250" width="250" />
+                    </label>
+                </div><div class='custom-control custom-radio form-check-inline'>
+                    <input type='radio' id='q19a3' asp-for='Ans.a19' value='3' class='custom-control-input'><label class='custom-control-label' for='q19a3'>
+                        <img src="~/file/img/nevs193.png" height="250" width="250" />
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="shadow p-3 mb-5 bg-white rounded">
+            <div class="alert alert-success" role="alert">20.  Соотнеси название памятника, названной в честь Александра Невского, и его местонахождение.</div>
+            <div class="row">
+                <div class="col-6 area shadow-lg border text-center" style="height:1410px" id="arstart">
+                    <div class="elem shadow" id="el1" draggable="true">
+                        <img src="~/file/img/nevs203.jpg" height="320" width="300" />
+                    </div>
+                    <div class="elem shadow" id="el2" draggable="true">
+                        <img src="~/file/img/nevs201.jpg" height="320" width="300" />
+                    </div>
+                    <div class="elem shadow" id="el3" draggable="true">
+                        <img src="~/file/img/nevs202.jpg" height="320" width="300" />
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="area col-12 shadow-lg border text-center" id="ar1">Войсковой собор святого благоверного князя Александра Невского города Краснодара</div>
+                    <div class="area col-12 shadow-lg border text-center"  id="ar2">Памятник дружине Александра Невского в городе Пскове</div>
+                    <div class="area col-12 shadow-lg border text-center" id="ar3">Александр Невский. Фрагмент росписи Грановитой палаты Московского Кремля</div>
+                </div>
+            </div>
+        </div>
+        <div class="shadow p-3 mb-5 bg-white rounded"><div class="alert alert-success" role="alert">21. Главная причина, по которой был канонизирован великий князь Александр Невский.</div><div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q21a1' asp-for='Ans.a21' value='1' class='custom-control-input' required><label class='custom-control-label ' for='q21a1'>Он талантливый полководец</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q21a2' asp-for='Ans.a21' value='2' class='custom-control-input'><label class='custom-control-label' for='q21a2'>Он принял монашество</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q21a3' asp-for='Ans.a21' value='3' class='custom-control-input vern'><label class='custom-control-label vern' for='q21a3'>Он ратовал за Православие </label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q21a4' asp-for='Ans.a21' value='4' class='custom-control-input'><label class='custom-control-label' for='q21a4'>Он был благочестивым человеком</label></div></div></div>
+        <div class="shadow p-3 mb-5 bg-white rounded"><div class="alert alert-success" role="alert">22.  Что означает «канонизирован»?  </div><div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q22a1' asp-for='Ans.a22' value='1' class='custom-control-input vern' required><label class='custom-control-label vern' for='q22a1'>причислен к лику святых</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q22a2' asp-for='Ans.a22' value='2' class='custom-control-input'><label class='custom-control-label' for='q22a2'>возведен в священнический сан</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q22a3' asp-for='Ans.a22' value='3' class='custom-control-input'><label class='custom-control-label' for='q22a3'>присвоено воинское звание</label></div></div></div>
+        <a class="btn-lg btn-block btn-warning text-center" style="font-size:xx-large" id="subm" onclick="prov()">Отправить</a>
+
+        <a href="/" class="btn-lg btn-block btn-danger text-center d-none" style="font-size:xx-large" id="return">Пройти тестирование заново</a>
+
+        @*<button type="submit" class="btn-lg btn-block btn-warning " style="font-size:xx-large">Отправить</button>*@
+    </form>
+
+
+</body>
+<script>
+    let elem1 = document.querySelector("#el1");
+    let elem2 = document.querySelector("#el2");
+    let elem3 = document.querySelector("#el3");
+    let area1 = document.querySelector("#ar1");
+    let area2 = document.querySelector("#ar2");
+    let area3 = document.querySelector("#ar3");
+    let areaSt = document.querySelector("#arstart");
+    var q;
+    elem1.addEventListener('dragstart', function () {
+        console.log('Start');
+        q = elem1;
+    });
+    elem2.addEventListener('dragstart', function () {
+        console.log('Start');
+        q = elem2;
+    });
+    elem3.addEventListener('dragstart', function () {
+        console.log('Start');
+        q = elem3;
+    });
+
+    area1.addEventListener("dragover", function () {
+        event.preventDefault();
+        clickId = $(this).attr('id');
+    });
+    area2.addEventListener("dragover", function () {
+        event.preventDefault();
+        console.log("Over2");
+    });
+    area3.addEventListener("dragover", function () {
+        event.preventDefault();
+        console.log("Over3");
+    });
+
+    areaSt.addEventListener("dragover", function () {
+        event.preventDefault();
+        console.log("OverSt");
+    });
+    area1.addEventListener("drop", function (event) {
+        console.log("Drop");
+        this.appendChild(q);
+    });
+    area2.addEventListener("drop", function (event) {
+        console.log("Drop");
+        /*area2.innerHTML = ''*/
+
+        this.appendChild(q);
+    });
+    area3.addEventListener("drop", function (event) {
+        console.log("Drop");
+        this.appendChild(q);
+    });
+
+    areaSt.addEventListener("drop", function (event) {
+        console.log("Drop");
+        this.appendChild(q);
+    });
+    function prov() {
+        var d_n = document.getElementsByClassName('d-none');
+        var vern = document.getElementsByClassName('vern');
+        var ball = 0;
+        var subm = document.getElementById('subm');
+        var retur = document.getElementById('return');
+
+        for (var i = 0; i < d_n.length; i = i) {
+            d_n[i].classList.remove("d-none");
+
+        }
+        for (var i = 0; i < vern.length; i++) {
+            vern[i].classList.add("table-success");
+            if (vern[i].checked == true) { ball = ball + 1; }
+        }
+        alert(ball);
+        subm.classList.add("d-none");
+        retur.classList.remove("d-none");
+    }
+</script>

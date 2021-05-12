@@ -1,0 +1,113 @@
+﻿@using System.Linq
+@model EM_SPT.Models.LKAdmKlass
+
+@{
+    ViewData["Title"] = "Администратор класса";
+}
+<!DOCTYPE html>
+
+
+<html>
+<head>
+
+    <meta name="viewport" content="width=device-width" />
+    <noscript><meta http-equiv="refresh" content="0; URL=/badbrowser.html"></noscript>
+    <title>Администратор класса</title>
+</head>
+<body class="gradient">
+
+    <form>
+        <div class="form-row shadow p-3 mb-5 bg-white rounded">
+            <input type="hidden" asp-for="klass.id" />
+
+            @*@if (Model.klass.klass_n == "")
+                {
+                    <div class="alert alert-success col-md-12" role="alert">Установите номер класса или курс(если это СПО или ВУЗ)</div>
+                    <div class="form-group col-md-4">
+                        <label for="inputState">№ класса</label>
+                        <select id="inputState" asp-for="klass.klass_n" class="form-control" required>
+                            <option value="" selected>Выберите № класса</option>
+
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                            <option value="1 курс">1 курс</option>
+                            <option value="2 курс">2 курс</option>
+                            <option value="3 курс">3 курс</option>
+                            <option value="4 курс">4 курс</option>
+                            <option value="5 курс">5 курс</option>
+                        </select>
+
+                    </div>
+                    <button type="submit" class="btn btn-outline-success" style="margin:5px;" asp-controller="Home" asp-action="nom_klass">Сохранить</button>
+
+                }
+                else
+                {
+                    <div class="col-md-3">
+                        <label>
+                            Текущий класс  <select id="inputState" asp-for="klass.klass_n" class="form-control" required>
+                                <option value="" selected>Выберите № класса</option>
+
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                                <option value="1 курс">1 курс</option>
+                                <option value="2 курс">2 курс</option>
+                                <option value="3 курс">3 курс</option>
+                                <option value="4 курс">4 курс</option>
+                                <option value="5 курс">5 курс</option>
+                            </select>
+                            <button type="submit" class="btn btn-outline-success" style="margin-right:5px;" asp-controller="Home" asp-action="nom_klass">Изменить номер класса</button>
+                        </label>
+                    </div>*@
+            @*<div class="col-md-3">
+                    <label>
+                        Введите количество
+                        <input type="text" class="btn btn-outline-success" />
+                        <button type="submit" class="btn btn-outline-success" style="margin:5px;" asp-controller="Home" asp-action="add_user">Добавить учеников</button>
+                    </label>
+                </div>*@
+
+            <div class="col-md-12">
+                <h2>Статус прохождения теста</h2>
+                <table class="tab">
+                    <thead class="thead-light">
+                        <tr>
+                            <th width="20%">Код учащегося</th>
+                            <th width="40%">Логин</th>
+                            <th width="40%">Тест пройден</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @for (int i = 0; i < Model.LKuser.Count; i++)
+                        {
+                            <tr>
+                                <td>@Model.LKuser[i].id </td>
+                                <td>@Model.LKuser[i].login</td>
+                                <td>@Model.LKuser[i].test</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot class=" ">
+                        <tr>
+                            <td>Всего </td>
+                            <td>@Model.LKuser.Count</td>
+                            <td>@ViewBag.SumTest</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+
+        </div>
+    </form>
+</body>
+</html>

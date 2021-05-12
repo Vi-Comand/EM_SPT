@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+
+
+    @*  <environment exclude="Development">
+
+        </environment>*@
+</head>
+<body>
+    <nav class="navbar navbar-light navbar-expand-lg gradient-nav" style="margin-bottom: 45px;">
+        <div class="container">
+
+            <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarNav"><span class="sr-only sr-only-focusable">@*<img class="rounded-circle" src="~/assets/img/logo.png" width="60">*@</span><span class="navbar-toggler-icon navbar-light"></span></button>
+
+            <div class="collapse navbar-collapse text-left " id="navbarNav">
+
+                <form method="post" class="navbar w-100" style="margin:initial; ">
+                    <h2 class="success">
+                        ЕМ СПТ
+                    </h2>
+
+                    @*<button type="submit" class="btn btn-outline-success" style="margin:5px; margin-left:0px;" asp-controller="Home" asp-action="Index">Главная</button>
+                            <br />
+                        @if (ViewBag.rl == 0)
+                        {
+                            <button type="submit" class="btn btn-outline-success" style="margin:5px; margin-left:0px;" asp-controller="Home" asp-action="Anketa_a">Анкетирование</button>
+                            <br />
+                        }
+                        @if (ViewBag.rl == 1)
+                        {
+                            <button type="submit" class="btn btn-outline-success" style="margin:5px; margin-left:0px;" asp-controller="Home" asp-action="adm_klass">Администрирование</button>
+                            <br />
+                        }
+                        @if (ViewBag.rl == 2)
+                        {
+                            <button type="submit" class="btn btn-outline-success" style="margin:5px; margin-left:0px;" asp-controller="Home" asp-action="adm_oo">Администрирование</button>
+                            <br />
+                        }
+
+                        @*<button type="submit" class="btn btn-outline-success" style="margin:5px; margin-left:0px;" asp-controller="Home" asp-action="Info">Инструкция</button>
+                            <br />*@
+                    @if (User.Identity.IsAuthenticated == false)
+                    {
+                        <button type="submit" class="btn btn-warning" style="margin:5px; margin-left:auto;" asp-controller="Account" asp-action="login">Войти</button>
+                        <br />
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn btn-danger" style="margin:5px; margin-left:auto; " asp-controller="Account" asp-action="Logout"> Выйти</button>
+                    }
+                </form>
+            </div>
+
+        </div>
+    </nav>
+
+
+
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>2020 ГБОУ Институт развития образования Краснодарского края </p>
+            <p style="font-size: small;">Телефон поддержки  8(861)232-39-71</p>
+        </footer>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+
+    <environment exclude="Development">
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery"
+                crossorigin="anonymous"
+                integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT">
+        </script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
+                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+                crossorigin="anonymous"
+                integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd">
+        </script>
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+    </environment>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

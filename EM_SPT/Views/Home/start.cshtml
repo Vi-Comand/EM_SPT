@@ -1,0 +1,83 @@
+﻿@using System.Linq
+@model EM_SPT.Models.CompositeModel
+@{
+    ViewData["Title"] = "Главная";
+}
+<!DOCTYPE html>
+
+
+<html>
+<head>
+
+    <meta name="viewport" content="width=device-width" />
+    <noscript><meta http-equiv="refresh" content="0; URL=/badbrowser.html"></noscript>
+    <title>Главная</title>
+</head>
+<body class="gradient">
+
+    <form>
+        <div class="form-row shadow p-3 mb-5 bg-white rounded">
+            <div class="alert alert-success col-md-12" role="alert">Анкета участника</div>
+            <div class="form-group col-md-4">
+                <label for="inputState">Возраст</label>
+                <select id="inputState" asp-for="Ans.vozr" required class="form-control">
+                    <option value="" selected>Выберите возраст</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    @*<option value="15">15</option>
+        <option value="16">16</option>
+        <option value="17">17</option>
+        <option value="18">18</option>
+        <option value="19">19</option>
+        <option value="20">20</option>
+        <option value="21">21</option>
+        <option value="22">22</option>
+        <option value="23">23</option>
+        <option value="24">24</option>
+        <option value="25">25</option>
+        <option value="26">26</option>
+        <option value="27">27</option>
+        <option value="28">28</option>
+        <option value="29">29</option>
+        <option value="30">30</option>
+        <option value="31">31</option>
+        <option value="32">32</option>
+        <option value="33">33</option>
+        <option value="34">34</option>
+        <option value="35 и более">35 и более</option>*@
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                Выберите пол
+                <div>
+                    <div class='custom-control custom-radio form-check-inline'>
+                        <input type='radio' id='p1' value="М" asp-for="Ans.pol" required class='custom-control-input'>
+                        <label class='custom-control-label' for='p1'>Мужской</label>
+                    </div>
+                    <div class='custom-control custom-radio form-check-inline'>
+                        <input type='radio' id='p2' value="Ж" asp-for="Ans.pol" class='custom-control-input'>
+                        <label class='custom-control-label' for='p2'>Женский</label>
+                    </div>
+
+                </div>
+            </div>
+            <div class="form-group col-md-12">
+                @*<p>
+                    Инструкция по заполнению.
+                    Вам будет предъявлена серия утверждений. Оценивая каждое из них не тратьте слишком много времени на раздумья. Наиболее естественна первая непосредственная реакция. Здесь нет правильных или неправильных ответов. Старайтесь отвечать искренно, иначе Ваши ответы будут распознаны как недостоверные.
+                    Внимательно вчитывайтесь в текст, дочитывая до конца каждое утверждение и оценивая его как верное или неверное по отношению к Вам. Для каждого утверждения можно выбрать только один вариант ответа.
+                </p>*@
+                <p>Инструкция по заполнению. Выберите верное утверждение</p>
+            </div>
+            <button type="submit" class="btn btn-outline-success" style="margin:5px;" asp-controller="Home" asp-action="anketa">Приступить к опросу</button>
+        </div>
+    </form>
+</body>
+</html>

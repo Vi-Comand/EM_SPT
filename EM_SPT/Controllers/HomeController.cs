@@ -99,102 +99,128 @@ namespace EM_SPT.Controllers
         }
 
 
+        //public IActionResult adm_full()
+        //{
+        //    SpisParam par = new SpisParam();
+        //    par.Params = db.param.ToList();
+        //    List<mo> mo = db.mo.ToList();
+        //    List<mo_kol> listMO = new List<mo_kol>();
+        //    foreach (mo row in mo)
+        //    {
+        //        mo_kol mo_Kol = new mo_kol();
+        //        mo_Kol.id = row.id;
+        //        mo_Kol.name = row.name;
+        //        listMO.Add(mo_Kol);
+        //    }
+        //    listMO.Sort((a, b) => a.name.CompareTo(b.name));
+
+        //    par.Mos = listMO;
+        //    return View("adm_full", par);
+        //}
+        [Route("{controller=Home}/{action=adm_full}/{Messege?}")]
+        public IActionResult adm_full(string Messege)
+        {
+            SpisParam par = new SpisParam();
+            par.Params = db.param.ToList();
+            List<mo> mo = db.mo.ToList();
+            List<mo_kol> listMO = new List<mo_kol>();
+            foreach (mo row in mo)
+            {
+                mo_kol mo_Kol = new mo_kol();
+                mo_Kol.id = row.id;
+                mo_Kol.name = row.name;
+                listMO.Add(mo_Kol);
+            }
+            listMO.Sort((a, b) => a.name.CompareTo(b.name));
+           ViewBag.Messege = Messege;
+            par.Mos = listMO;
+            return View("adm_full", par);
+        }
+
+
 
         public IActionResult Index()
+    {
+
+        var login = HttpContext.User.Identity.Name;
+        user user = db.User.Where(p => p.login == login).First();
+        ViewBag.rl = user.role;
+        if (user.role == 0)
+
         {
-
-            var login = HttpContext.User.Identity.Name;
-            user user = db.User.Where(p => p.login == login).First();
-            ViewBag.rl = user.role;
-            if (user.role == 0)
-
-            {
-                if (user.test != 1)
-                {
-                    return RedirectToAction("start", "Home");
-                }
-                else
-                {
-                    return RedirectToAction("end");
-                }
-            }
-            if (user.role == 1)
-            {
-
-                ViewBag.klad_Id = user.id_klass;
-                return RedirectToAction("adm_klass", "Home");
-            }
-            if (user.role == 2)
-            {
-
-                ListKlass klasses = new ListKlass();
-                klasses.klasses = db.klass.Where(p => p.id_oo == user.id_oo).ToList();
-
-
-
-                return View("adm_oo", klasses);
-            }
-            if (user.role == 3)
-
-            {
-                ListOos ooes = new ListOos();
-                ooes.mo_name = db.mo.Where(p => p.id == user.id_mo).First().name;
-                ooes.oos = db.oo.Where(p => p.id_mo == user.id_mo).ToList();
-                return View("adm_mo", ooes);
-            }
-            if (user.role == 4)
-            {
-                SpisParam par = new SpisParam();
-                par.Params = db.param.ToList();
-                List<mo> mo = db.mo.ToList();
-                List<mo_kol> listMO = new List<mo_kol>();
-                foreach (mo row in mo)
-                {
-                    mo_kol mo_Kol = new mo_kol();
-                    mo_Kol.id = row.id;
-                    mo_Kol.name = row.name;
-                    listMO.Add(mo_Kol);
-                }
-                listMO.Sort((a, b) => a.name.CompareTo(b.name));
-
-                par.Mos = listMO;
-                return View("adm_full", par);
-            }
-            if (user.role == 5)
-            {
-                SpisParam par = new SpisParam();
-                par.Params = db.param.ToList();
-                List<mo> mo = db.mo.ToList();
-                List<mo_kol> listMO = new List<mo_kol>();
-                foreach (mo row in mo)
-                {
-                    mo_kol mo_Kol = new mo_kol();
-                    mo_Kol.id = row.id;
-                    mo_Kol.name = row.name;
-                    listMO.Add(mo_Kol);
-                }
-                listMO.Sort((a, b) => a.name.CompareTo(b.name));
-
-                par.Mos = listMO;
-                return View("adm_stat", par);
-            }
-            else
+            if (user.test != 1)
             {
                 return RedirectToAction("start", "Home");
             }
-
-
-
+            else
+            {
+                return RedirectToAction("end");
+            }
         }
-        int g_load = 0;
-        ChatHub Ch = new ChatHub();
-
-        IHubContext<ChatHub> hubContext;
-
-        public HomeController(IHubContext<ChatHub> hubContext)
+        if (user.role == 1)
         {
-            this.hubContext = hubContext;
+
+            ViewBag.klad_Id = user.id_klass;
+            return RedirectToAction("adm_klass", "Home");
         }
+        if (user.role == 2)
+        {
+
+            ListKlass klasses = new ListKlass();
+            klasses.klasses = db.klass.Where(p => p.id_oo == user.id_oo).ToList();
+
+
+
+            return View("adm_oo", klasses);
+        }
+        if (user.role == 3)
+
+        {
+            ListOos ooes = new ListOos();
+            ooes.mo_name = db.mo.Where(p => p.id == user.id_mo).First().name;
+            ooes.oos = db.oo.Where(p => p.id_mo == user.id_mo).ToList();
+            return View("adm_mo", ooes);
+        }
+        if (user.role == 4)
+        {
+            return RedirectToAction("adm_full");
+
+        }
+        if (user.role == 5)
+        {
+            SpisParam par = new SpisParam();
+            par.Params = db.param.ToList();
+            List<mo> mo = db.mo.ToList();
+            List<mo_kol> listMO = new List<mo_kol>();
+            foreach (mo row in mo)
+            {
+                mo_kol mo_Kol = new mo_kol();
+                mo_Kol.id = row.id;
+                mo_Kol.name = row.name;
+                listMO.Add(mo_Kol);
+            }
+            listMO.Sort((a, b) => a.name.CompareTo(b.name));
+
+            par.Mos = listMO;
+            return View("adm_stat", par);
+        }
+        else
+        {
+            return RedirectToAction("start", "Home");
+        }
+
+
+
+    }
+    int g_load = 0;
+    ChatHub Ch = new ChatHub();
+
+    IHubContext<ChatHub> hubContext;
+
+    public HomeController(IHubContext<ChatHub> hubContext)
+    {
+        this.hubContext = hubContext;
+    }
 
 
         /*    public async Task<IActionResult> load(int load)
@@ -2304,7 +2330,7 @@ namespace EM_SPT.Controllers
         public async Task<IActionResult> AddedUserRaion(IList<IFormFile> uploadedFile)
         {
 
-
+            string Messege=string.Empty;
 
             if (uploadedFile != null)
             {
@@ -2312,10 +2338,11 @@ namespace EM_SPT.Controllers
                 {
                     NewLoginsRaion lo = new NewLoginsRaion();
                     lo.Added(file);
+                    Messege = lo.Messege;
                 }
             }
-
-            return RedirectToAction("Index");
+           
+            return RedirectToAction("adm_full", new { Messege });
         }
         [HttpPost]
         public async Task<IActionResult> Added(IFormFile uploadedFile)
@@ -2412,11 +2439,7 @@ namespace EM_SPT.Controllers
         {
             return View();
         }
-        public IActionResult Adm_full()
-        {
-            return View();
-        }
-
+       
         public IActionResult Info()
         {
             return View();

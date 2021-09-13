@@ -117,7 +117,7 @@ namespace EM_SPT.Controllers
         //    par.Mos = listMO;
         //    return View("adm_full", par);
         //}
-        [Route("{controller=Home}/{action=adm_full}/{Messege?}")]
+     //   [Route("{controller=Home}/{action=adm_full}/{Messege?}")]
         public IActionResult adm_full(string Messege)
         {
             SpisParam par = new SpisParam();
@@ -138,7 +138,7 @@ namespace EM_SPT.Controllers
         }
 
 
-
+       // [Route("{controller=Home}/{action=Index}")]
         public IActionResult Index()
     {
 
@@ -1978,7 +1978,7 @@ namespace EM_SPT.Controllers
                 ZipConstants.DefaultCodePage = 866;// формирование названия Zip на русском
 
                 byte[] buffer = new byte[4096];
-                listOO.oos = db.oo.Where(p => p.id_mo == iMO.id && p.tip == 2 && p.id >= 1300).ToList();
+                listOO.oos = db.oo.Where(p => p.id_mo == iMO.id).ToList();
 
                 foreach (var iOO in listOO.oos)
                 {

@@ -1959,106 +1959,155 @@ namespace EM_SPT.Controllers
         }
         public async Task<IActionResult> Pass_excel(int idMo)
         {
-            await Task.Yield();
-            ListMo listMO = new ListMo();
-            listMO.Mos = db.mo.Where(p => p.id == idMo).ToList();
-            ListOos listOO = new ListOos();
-            ListKlass listKl = new ListKlass();
-            listKl.klasses = db.klass.ToList();
-            ListUser listU = new ListUser();
-            listU.Users = db.User.ToList();
+            //await Task.Yield();
 
-            // int[] masMO = (from k in db.mo select k.id).ToArray();
+            var Mos = db.mo.First(p => p.id == idMo);
 
-            foreach (var iMO in listMO.Mos)
+            var list = from organization in db.oo.Where(x => x.id_mo == Mos.id)
+                       join klass in db.klass on organization.id equals klass.id_oo
+                       join users in db.User on klass.id equals users.id_klass
+                       select new
+                       {
+                           id = users.id,
+                           id_OO = organization.id,
+                           name_OO = organization.kod,
+                           klass = klass.klass_n + klass.kod,
+                           login = users.login,
+                           password = users.pass
+
+                       };
+            var listAO = (from organization in db.oo.Where(x => x.id_mo == Mos.id)
+                          join users in db.User on organization.id equals users.id_oo
+                          select new
+                          {
+
+                              id_OO = organization.id,
+                              name = users.login,
+                              password = users.pass
+
+                          }).ToList();
+
+            var listGroup = list.GroupBy(x => x.id_OO).Select(x => new { ID_OO = x.Key, Name = x.First().name_OO, AO = listAO.First(y => y.id_OO == x.Key).name, passAO = listAO.First(y => y.id_OO == x.Key).password, Users = x.Select(us => new { id = us.id, klass = us.klass, login = us.login, password = us.password }) });
+
+
+
+
+            MemoryStream outputMemStream = new MemoryStream();
+            ZipOutputStream zipStream = new ZipOutputStream(outputMemStream);
+            zipStream.SetLevel(3); // уровень сжатия от 0 до 9
+            ZipConstants.DefaultCodePage = 866;// формирование названия Zip на русском
+
+            byte[] buffer = new byte[4096];
+
+            
+
+            foreach (var org in listGroup)
             {
-                MemoryStream outputMemStream = new MemoryStream();
-                ZipOutputStream zipStream = new ZipOutputStream(outputMemStream);
-                zipStream.SetLevel(3); // уровень сжатия от 0 до 9
-                ZipConstants.DefaultCodePage = 866;// формирование названия Zip на русском
+                FileInfo newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\pass.xlsx");
+                byte[] data;
 
-                byte[] buffer = new byte[4096];
-                listOO.oos = db.oo.Where(p => p.id_mo == iMO.id).ToList();
-
-                foreach (var iOO in listOO.oos)
+                using (var package = new ExcelPackage(newFile))
                 {
-                    FileInfo newFile = new FileInfo(Directory.GetCurrentDirectory() + "\\wwwroot\\file\\pass.xlsx");
-                    byte[] data;
-                    using (var package = new ExcelPackage(newFile))
+                    int str = 6;
+
+                    var workSheet = package.Workbook.Worksheets[0];
+
+
+
+
+                    workSheet.Cells[1, 2].Value = Mos.name;
+                    workSheet.Cells[2, 2].Value = org.ID_OO;
+                    workSheet.Cells[2, 3].Value = org.Name;
+                    workSheet.Cells[3, 3].Value = org.AO;
+                    workSheet.Cells[3, 4].Value = org.passAO;
+                    var Users = org.Users.OrderBy(x => x.login).OrderBy(x => x.klass).ToList();
+                    foreach (var user in Users)
                     {
-                        int str = 6;
-
-                        var workSheet = package.Workbook.Worksheets[0];
-                        var oo_f = listU.Users.Where(p => p.role == 2 && p.id_oo == iOO.id).First();
-                        workSheet.Cells[1, 2].Value = iMO.name;
-                        workSheet.Cells[2, 2].Value = iOO.id;
-                        workSheet.Cells[2, 3].Value = iOO.kod;
-                        workSheet.Cells[3, 3].Value = oo_f.login;
-                        workSheet.Cells[3, 4].Value = oo_f.pass;
-
-                        int[] masKlass = (from k in db.klass.Where(p => p.id_oo == iOO.id) select k.id).ToArray();
-                        ListUser listUKl = new ListUser();
-                        listUKl.Users = listU.Users.Where(p => masKlass.Distinct().Contains(p.id_klass) && p.role == 1).ToList();
-
-                        foreach (var ListUKl in listUKl.Users)
-                        {
-                            var qww = listKl.klasses.Where(p => p.id == ListUKl.id_klass).First();
-                            string klass = ListUKl.id_klass + "_" + qww.klass_n + qww.kod;
-                            ListUser listUT = new ListUser();
-                            listUT.Users = listU.Users.Where(p => masKlass.Distinct().Contains(p.id_klass) && p.role == 0 && p.id_klass == ListUKl.id_klass).ToList();
-                            workSheet.Cells[str, 1].Value = ListUKl.id;
-                            workSheet.Cells[str, 2].Value = klass;
-                            workSheet.Cells[str, 3].Value = ListUKl.login;
-                            workSheet.Cells[str, 4].Value = ListUKl.pass;
-                            str++;
-                            foreach (var listUTR in listUT.Users)
-                            {
-                                workSheet.Cells[str, 1].Value = listUTR.id;
-                                workSheet.Cells[str, 2].Value = klass;
-                                workSheet.Cells[str, 3].Value = listUTR.login;
-                                workSheet.Cells[str, 4].Value = listUTR.pass;
-                                workSheet.Cells[str, 5].Value = listUTR.test;
-                                str++;
-                            }
-                        }
-                        data = package.GetAsByteArray();
-                        string entryName;
-                        //ZipEntry.CleanName
-                        entryName = (iOO.id + " " + iOO.kod + "_pass.xlsx");
 
 
-                        ZipEntry newEntry = new ZipEntry(entryName);
-
-                        newEntry.DateTime = package.File.LastWriteTime;
-                        newEntry.Size = data.Length;
-                        zipStream.PutNextEntry(newEntry);
+                        workSheet.Cells[str, 1].Value = user.id;
+                        workSheet.Cells[str, 2].Value = user.klass;
+                        workSheet.Cells[str, 3].Value = user.login;
+                        workSheet.Cells[str, 4].Value = user.password;
+                        str++;
                     }
 
+                    data = package.GetAsByteArray();
+                    string entryName;
+                    //ZipEntry.CleanName
+                    entryName = (org.ID_OO + " " + org.Name + "_pass.xlsx");
 
 
+                    ZipEntry newEntry = new ZipEntry(entryName);
 
-                    using (MemoryStream streamReader = new MemoryStream(data))
-                    {
-                        StreamUtils.Copy(streamReader, zipStream, buffer);
-
-                    }
-                    zipStream.CloseEntry();
-
-
-                    /*    zipStream.IsStreamOwner = false;
-                        zipStream.Close();
-
-                        outputMemStream.Position = 0;
-                        string qw = @"\Vgruzka\" + mun.name + "_.zip";*/
-
+                    newEntry.DateTime = package.File.LastWriteTime;
+                    newEntry.Size = data.Length;
+                    zipStream.PutNextEntry(newEntry);
                 }
+                // int[] masMO = (from k in db.mo select k.id).ToArray();
+
+
+
+
+                //foreach (var iOO in listOO.oos)
+                //{
+
+                //        var oo_f = listU.Users.Where(p => p.role == 2 && p.id_oo == iOO.id).First();
+
+
+                //        int[] masKlass = (from k in db.klass.Where(p => p.id_oo == iOO.id) select k.id).ToArray();
+                //        ListUser listUKl = new ListUser();
+                //        listUKl.Users = listU.Users.Where(p => masKlass.Distinct().Contains(p.id_klass) && p.role == 1).ToList();
+
+                //        foreach (var ListUKl in listUKl.Users)
+                //        {
+                //            var qww = listKl.klasses.Where(p => p.id == ListUKl.id_klass).First();
+                //            string klass = ListUKl.id_klass + "_" + qww.klass_n + qww.kod;
+                //            ListUser listUT = new ListUser();
+                //            listUT.Users = listU.Users.Where(p => masKlass.Distinct().Contains(p.id_klass) && p.role == 0 && p.id_klass == ListUKl.id_klass).ToList();
+                //            workSheet.Cells[str, 1].Value = ListUKl.id;
+                //            workSheet.Cells[str, 2].Value = klass;
+                //            workSheet.Cells[str, 3].Value = ListUKl.login;
+                //            workSheet.Cells[str, 4].Value = ListUKl.pass;
+                //            str++;
+                //            foreach (var listUTR in listUT.Users)
+                //            {
+                //                workSheet.Cells[str, 1].Value = listUTR.id;
+                //                workSheet.Cells[str, 2].Value = klass;
+                //                workSheet.Cells[str, 3].Value = listUTR.login;
+                //                workSheet.Cells[str, 4].Value = listUTR.pass;
+                //                workSheet.Cells[str, 5].Value = listUTR.test;
+                //                str++;
+                //            }
+                //        }
+
+                //    }
+
+            
+
+
+            using (MemoryStream streamReader = new MemoryStream(data))
+            {
+                StreamUtils.Copy(streamReader, zipStream, buffer);
+
+            }
+            zipStream.CloseEntry();
+
+
+            /*    zipStream.IsStreamOwner = false;
+                zipStream.Close();
+
+                outputMemStream.Position = 0;
+                string qw = @"\Vgruzka\" + mun.name + "_.zip";*/
+        }
+                
                 zipStream.IsStreamOwner = false;
                 zipStream.Close();
 
                 outputMemStream.Position = 0;
-                string qw = @"\Vgruzka\" + iMO.name + "_pass.zip";
-                System.IO.File.WriteAllBytes(Directory.GetCurrentDirectory() + "\\wwwroot\\Vgruzka\\" + iMO.name + "_pass.zip", outputMemStream.ToArray());
-            }
+                string qw = @"\Vgruzka\" + Mos.name + "_pass.zip";
+                System.IO.File.WriteAllBytes(Directory.GetCurrentDirectory() + "\\wwwroot\\Vgruzka\\" + Mos.name + "_pass.zip", outputMemStream.ToArray());
+            
 
             return RedirectToAction("Index", "Home");
         }

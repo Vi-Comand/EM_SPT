@@ -37,17 +37,22 @@ namespace EM_SPT.Models
                 var workSheet = package.Workbook.Worksheets[0];
                
                 var endRow = workSheet.Cells.Where(c => c.Start.Column == 1 && !c.Value.ToString().Equals("")).Last().End.Row;
-                var List = workSheet.Cells[4, 1, endRow, 5].ToArray();
+
+
+              
+
+
+                  //  workSheet.Cells[4, 1, endRow, 5].ToArray();
                 List<User> Users = new List<User>();
                 int number=0;
-                for(int i=0; i< List.Count();i=i+5)
+                for(int i=4; i< endRow; i++)
                 {
                    
                     try
                     {
                         
 
-                        Users.Add(new User { Number=number,Tip = int.Parse(List[i].Value.ToString()), OO = List[i + 1].Value.ToString(), Klass = int.Parse(List[i + 2].Value.ToString()), Bukva = List[i + 3].Value.ToString(), Kol = int.Parse(List[i + 4].Value.ToString()) });
+                        Users.Add(new User { Number=number,Tip = int.Parse(workSheet.Cells[i,1].Value.ToString()), OO = workSheet.Cells[i, 2].Value.ToString(), Klass = int.Parse(workSheet.Cells[i, 3].Value.ToString()), Bukva =  workSheet.Cells[i, 4].Value?.ToString(), Kol = int.Parse(workSheet.Cells[i, 5].Value.ToString()) });
                         number++;
                     }
                     catch(Exception ex)

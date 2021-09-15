@@ -189,9 +189,18 @@
         <div class="shadow p-3 mb-5 bg-white rounded"><div class="alert alert-success" role="alert">139.  Прежде чем начать какое-либо дело, я стараюсь собрать о нем как можно более полную информацию.</div><div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q139a1' asp-for='Ans.a139' value='1' class='custom-control-input' required><label class='custom-control-label' for='q139a1'>НЕТ</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q139a2' asp-for='Ans.a139' value='2' class='custom-control-input'><label class='custom-control-label' for='q139a2'>Скорее НЕТ, чем ДА</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q139a3' asp-for='Ans.a139' value='3' class='custom-control-input'><label class='custom-control-label' for='q139a3'>Скорее ДА, чем НЕТ</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q139a4' asp-for='Ans.a139' value='4' class='custom-control-input'><label class='custom-control-label' for='q139a4'>ДА</label></div></div></div>
         <div class="shadow p-3 mb-5 bg-white rounded"><div class="alert alert-success" role="alert">140.  Я обычно способен(на) держать ситуацию под контролем.</div><div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q140a1' asp-for='Ans.a140' value='1' class='custom-control-input' required><label class='custom-control-label' for='q140a1'>НЕТ</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q140a2' asp-for='Ans.a140' value='2' class='custom-control-input'><label class='custom-control-label' for='q140a2'>Скорее НЕТ, чем ДА</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q140a3' asp-for='Ans.a140' value='3' class='custom-control-input'><label class='custom-control-label' for='q140a3'>Скорее ДА, чем НЕТ</label></div><div class='custom-control custom-radio form-check-inline'><input type='radio' id='q140a4' asp-for='Ans.a140' value='4' class='custom-control-input'><label class='custom-control-label' for='q140a4'>ДА</label></div></div></div>
 
-        <button type="submit" class="btn-lg btn-block btn-warning " style="font-size:xx-large">Отправить</button>
+        <button type="submit" class="btn-lg btn-block btn-warning " id="subm" style="font-size:xx-large" onclick="click();">Отправить</button>
+        <div class="btn-lg btn-block btn-warning d-none" id="retur" style="font-size:xx-large">Идет отправка результатов</div>
     </form>
 
+    <script>
+        function click() {
+            var subm = document.getElementById('subm');
+            var retur = document.getElementById('retur');
+            subm.classList.add("d-none");
+            retur.classList.remove("d-none");
+        }
+    </script>
 
 </body>
 </html>

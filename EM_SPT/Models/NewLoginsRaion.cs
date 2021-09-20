@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using EM_SPT.Controllers.Classes.ExcelToBD;
+using System.Text.RegularExpressions;
 
 namespace EM_SPT.Models
 {
@@ -36,30 +37,36 @@ namespace EM_SPT.Models
                 
                 var workSheet = package.Workbook.Worksheets[0];
                
-                var endRow = workSheet.Cells.Where(c => c.Start.Column == 1 && !c.Value.ToString().Equals("")).Last().End.Row;
+                var endRow = workSheet.Cells.Where(c =>  c.Start.Column == 1 && c.Value!=null &&!c.Value.ToString().Equals("")).Last().End.Row;
 
 
+
+
+                Regex regex = new Regex(@"[0-9]{1,}");
               
-
-
-                  //  workSheet.Cells[4, 1, endRow, 5].ToArray();
                 List<User> Users = new List<User>();
                 int number=0;
-                for(int i=4; i< endRow; i++)
+                for(int i=4; i<= endRow; i++)
                 {
                    
                     try
                     {
-                        
+                     
+                        int Tip = int.Parse(regex.Match(workSheet.Cells[i, 1].Value.ToString()).ToString());
+                        string OO = workSheet.Cells[i, 2].Value.ToString();
+                        int Klass = int.Parse(regex.Match(workSheet.Cells[i, 3].Value.ToString()).ToString());
+                        string Bukva = workSheet.Cells[i, 4].Value?.ToString();
+                        int Kol = int.Parse(regex.Match(workSheet.Cells[i, 5].Value.ToString()).ToString());
 
-                        Users.Add(new User { Number=number,Tip = int.Parse(workSheet.Cells[i,1].Value.ToString()), OO = workSheet.Cells[i, 2].Value.ToString(), Klass = int.Parse(workSheet.Cells[i, 3].Value.ToString()), Bukva =  workSheet.Cells[i, 4].Value?.ToString(), Kol = int.Parse(workSheet.Cells[i, 5].Value.ToString()) });
+                        Users.Add(new User { Number=number, Tip=Tip, OO = OO, Klass= Klass, Bukva= Bukva, Kol= Kol });
                         number++;
                     }
                     catch(Exception ex)
                     {
-                        Messege = "Строка " + (Users.Count + 4) + " Exception: " + ex.Message;
+                        
+                        Messege = "Строка " + i + " Exception: " + ex.Message;
 
-                    }
+                   }
                     
                 }
 
@@ -97,7 +104,7 @@ namespace EM_SPT.Models
                     listU.Where(x => x.OO == oo.kod).ToList().ForEach(x => x.id_OO = oo.id);
                 }
 
-                Group newGroup = new Group();
+                Controllers.Classes.ExcelToBD.Group newGroup = new Controllers.Classes.ExcelToBD.Group();
                 var newKlass = listU.Where(x => x.id_Klass == 0).ToList();
                 var oldKlass = listU.Where(x => x.id_Klass != 0).ToList();
                 var gropus = newKlass.Select(x => new klass { id_oo = x.id_OO, klass_n = x.Klass,kod=x.Bukva }).ToList();

@@ -2135,11 +2135,11 @@ namespace EM_SPT.Controllers
             user us = db.User.Where(p => p.login == login).First();
             if (us.test != 1)
             {
-                string klass = db.klass.Where(p => p.id == us.id_klass).First().klass_n.ToString();
-
-                if (klass == "7" || klass == "8" || klass == "9")
+                int klass = db.klass.Where(p => p.id == us.id_klass).First().klass_n;
+                int tip = db.oo.Where(x => x.id == db.klass.Where(y => y.id == us.id_klass).First().id_oo).First().tip;
+                if (tip == 1 && (klass == 5 || klass == 6 || klass == 7 || klass == 8 || klass == 9))
                     return View("anketa_a", model);
-                else if (klass == "10" || klass == "11")
+                else if (tip == 1 && (klass == 10 || klass == 11 || klass == 12))
                     return View("anketa_b", model);
                 else
                     return View("anketa_c", model);

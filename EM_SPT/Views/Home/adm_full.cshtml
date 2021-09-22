@@ -342,13 +342,18 @@
                                     <tr>
                                         <th width="20%">MO</th>
                                         <th width="10%">Количество СОШ</th>
+                                        <th width="10%">Загружено в СОШ</th>
                                         <th width="10%">Тест пройден в СОШ</th>
                                         <th width="10%">Количество СПО</th>
+                                        <th width="10%">Загружено в СПО</th>
                                         <th width="10%">Тест пройден в СПО</th>
                                         <th width="10%">Количество ВУЗ</th>
+                                        <th width="10%">Загружено в ВУЗ</th>
                                         <th width="10%">Тест пройден в ВУЗ</th>
                                         <th width="10%">Количество ОО</th>
-                                        <th width="10%">Тест пройден в ОО</th>
+                                        <th width="10%">Загруженно</th>
+                                        <th width="10%">Тест пройден </th>
+                                        <th width="10%">Процент</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -358,13 +363,18 @@
                                         <tr>
                                             <td>@Model.Mos[i].name </td>
                                             <td>@Model.Mos[i].kol_OO</td>
+                                            <td>@Model.Mos[i].sum_us_OO</td>
                                             <td>@Model.Mos[i].kol_OO_t</td>
                                             <td>@Model.Mos[i].kol_SPO</td>
+                                            <td>@Model.Mos[i].sum_us_SPO</td>
                                             <td>@Model.Mos[i].kol_SPO_t</td>
                                             <td>@Model.Mos[i].kol_VUZ</td>
+                                            <td>@Model.Mos[i].sum_us_VUZ</td>
                                             <td>@Model.Mos[i].kol_VUZ_t</td>
                                             <td class="tab-itog">@Model.Mos[i].sum_OO</td>
+                                            <td class="tab-itog">@Model.Mos[i].sum_us</td>
                                             <td class="tab-itog">@Model.Mos[i].sum_t</td>
+                                            <td class="tab-itog">@Model.Mos[i].procet</td>
                                         </tr>
                                     }
                                 </tbody>
@@ -372,13 +382,18 @@
                                     <tr>
                                         <td>Всего </td>
                                         <td>@ViewData["SumKolOO"]</td>
+                                        <td>@ViewData["SumKolOOU"]</td>
                                         <td>@ViewData["SumKolOO_t"]</td>
                                         <td>@ViewData["SumKolSPO"]</td>
+                                        <td>@ViewData["SumKolSPOU"]</td>
                                         <td>@ViewData["SumKolSPO_t"]</td>
                                         <td>@ViewData["SumKolVUZ"]</td>
+                                        <td>@ViewData["SumKolVUZU"]</td>
                                         <td>@ViewData["SumKolVUZ_t"]</td>
                                         <td>@ViewData["Sum"]</td>
+                                        <td>@ViewData["Sumus"]</td>
                                         <td>@ViewData["Sumt"]</td>
+                                        <td></td>
                                     </tr>
                                 </tfoot>
                             </table>

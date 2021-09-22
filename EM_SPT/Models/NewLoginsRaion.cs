@@ -9,7 +9,7 @@ using EM_SPT.Controllers.Classes.ExcelToBD;
 
 namespace EM_SPT.Models
 {
-   public class User
+    public class User
     {
         public int Number { get; set; } = 0;
         public int Tip { get; set; }
@@ -30,69 +30,68 @@ namespace EM_SPT.Models
         public string Messege = string.Empty;
         private async Task<string> FormirListAndCreatOO(IFormFile uploadedFile)
         {
-           
+
             using (var package = new ExcelPackage(uploadedFile.OpenReadStream()))
             {
-                
+
                 var workSheet = package.Workbook.Worksheets[0];
-               
-                var endRow = workSheet.Cells.Where(c => c.Start.Column == 1 && !c.Value.ToString().Equals("")).Last().End.Row;
+
+                var endRow = workSheet.Cells.Where(c => c.Start.Column == 1 && c.Value != null && !c.Value.ToString().Equals("")).Last().End.Row;
 
 
-              
 
 
-                  //  workSheet.Cells[4, 1, endRow, 5].ToArray();
+                //  workSheet.Cells[4, 1, endRow, 5].ToArray();
                 List<User> Users = new List<User>();
-                int number=0;
-                for(int i=4; i< endRow; i++)
+                int number = 0;
+                for (int i = 4; i <= endRow; i++)
                 {
-                   
+
                     try
                     {
-                        
 
-                        Users.Add(new User { Number=number,Tip = int.Parse(workSheet.Cells[i,1].Value.ToString()), OO = workSheet.Cells[i, 2].Value.ToString(), Klass = int.Parse(workSheet.Cells[i, 3].Value.ToString()), Bukva =  workSheet.Cells[i, 4].Value?.ToString(), Kol = int.Parse(workSheet.Cells[i, 5].Value.ToString()) });
+
+                        Users.Add(new User { Number = number, Tip = int.Parse(workSheet.Cells[i, 1].Value.ToString()), OO = workSheet.Cells[i, 2].Value.ToString(), Klass = int.Parse(workSheet.Cells[i, 3].Value.ToString()), Bukva = workSheet.Cells[i, 4].Value?.ToString(), Kol = int.Parse(workSheet.Cells[i, 5].Value.ToString()) });
                         number++;
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Messege = "Строка " + (Users.Count + 4) + " Exception: " + ex.Message;
 
                     }
-                    
+
                 }
 
                 Municipal mun = new Municipal();
                 var DB = db.User.Where(x => x.role == 0).ToList();
-                int idMO= mun.Get(workSheet.Cells[1, 3].Value.ToString()).id;
-             var  listU = (from u in Users
-                      join oo in db.oo.Where(x=>x.id_mo== idMO) on u.OO equals oo.kod into o
-                      from oo in o.DefaultIfEmpty()
-                      join kl in db.klass on (oo != null ? oo.id : 0) + ";"+u.Klass+ u.Bukva  equals kl.id_oo +";"+ kl.klass_n+kl.kod into k
-                      from kl in k.DefaultIfEmpty()
-                 
-                      select new User
-                         {
-                          Number=u.Number,
-                          Tip = u.Tip,
-                          id_OO = oo != null ? oo.id : 0,
-                             OO= u != null ? u.OO : "",
-                            id_Klass = kl!=null?kl.id:0,
-                            Klass = kl != null ? kl.klass_n : u.Klass,
-                            Bukva= kl != null ? kl.kod : u.Bukva,
-                            KolDB= DB.Where(x=>x.id_klass ==(kl != null ? kl.id : 0)).Count(),
-                            Kol=u.Kol
-                      }).ToList();
+                int idMO = mun.Get(workSheet.Cells[1, 3].Value.ToString()).id;
+                var listU = (from u in Users
+                             join oo in db.oo.Where(x => x.id_mo == idMO) on u.OO equals oo.kod into o
+                             from oo in o.DefaultIfEmpty()
+                             join kl in db.klass on (oo != null ? oo.id : 0) + ";" + u.Klass + u.Bukva equals kl.id_oo + ";" + kl.klass_n + kl.kod into k
+                             from kl in k.DefaultIfEmpty()
+
+                             select new User
+                             {
+                                 Number = u.Number,
+                                 Tip = u.Tip,
+                                 id_OO = oo != null ? oo.id : 0,
+                                 OO = u != null ? u.OO : "",
+                                 id_Klass = kl != null ? kl.id : 0,
+                                 Klass = kl != null ? kl.klass_n : u.Klass,
+                                 Bukva = kl != null ? kl.kod : u.Bukva,
+                                 KolDB = DB.Where(x => x.id_klass == (kl != null ? kl.id : 0)).Count(),
+                                 Kol = u.Kol
+                             }).ToList();
 
 
 
 
                 OO newOO = new OO();
-                var a = listU.Where(x => x.id_OO == 0).Select(x=> new {OO= x.OO,Tip= x.Tip}).ToList().Distinct() ;
-                List<oo> o1 = newOO.AddRange(a.Select(x => new oo { kod = x.OO, tip = x.Tip,id_mo= idMO}).ToList());
+                var a = listU.Where(x => x.id_OO == 0).Select(x => new { OO = x.OO, Tip = x.Tip }).ToList().Distinct();
+                List<oo> o1 = newOO.AddRange(a.Select(x => new oo { kod = x.OO, tip = x.Tip, id_mo = idMO }).ToList());
 
-                foreach(var oo in o1)
+                foreach (var oo in o1)
                 {
                     listU.Where(x => x.OO == oo.kod).ToList().ForEach(x => x.id_OO = oo.id);
                 }
@@ -100,11 +99,11 @@ namespace EM_SPT.Models
                 Group newGroup = new Group();
                 var newKlass = listU.Where(x => x.id_Klass == 0).ToList();
                 var oldKlass = listU.Where(x => x.id_Klass != 0).ToList();
-                var gropus = newKlass.Select(x => new klass { id_oo = x.id_OO, klass_n = x.Klass,kod=x.Bukva }).ToList();
+                var gropus = newKlass.Select(x => new klass { id_oo = x.id_OO, klass_n = x.Klass, kod = x.Bukva }).ToList();
                 List<klass> klass1 = newGroup.AddRange(gropus);
 
 
-                for (int i=0; i< klass1.Count;i++)
+                for (int i = 0; i < klass1.Count; i++)
                 {
                     newKlass[i].id_Klass = klass1[i].id;
                 }
@@ -280,13 +279,13 @@ namespace EM_SPT.Models
 
                 #endregion
             }
-            if (Messege==string.Empty)
+            if (Messege == string.Empty)
             {
                 Messege = "Все хорошо влад не дурак!";
             }
             return Messege;
         }
-     
+
 
 
 

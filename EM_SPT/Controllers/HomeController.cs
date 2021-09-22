@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MySql.Data.MySqlClient;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,7 @@ using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using System.Timers;
+
 
 namespace EM_SPT.Controllers
 {
@@ -117,7 +119,7 @@ namespace EM_SPT.Controllers
         //    par.Mos = listMO;
         //    return View("adm_full", par);
         //}
-     //   [Route("{controller=Home}/{action=adm_full}/{Messege?}")]
+        //   [Route("{controller=Home}/{action=adm_full}/{Messege?}")]
         public IActionResult adm_full(string Messege)
         {
             SpisParam par = new SpisParam();
@@ -132,95 +134,95 @@ namespace EM_SPT.Controllers
                 listMO.Add(mo_Kol);
             }
             listMO.Sort((a, b) => a.name.CompareTo(b.name));
-           ViewBag.Messege = Messege;
+            ViewBag.Messege = Messege;
             par.Mos = listMO;
             return View("adm_full", par);
         }
 
 
-       // [Route("{controller=Home}/{action=Index}")]
+        // [Route("{controller=Home}/{action=Index}")]
         public IActionResult Index()
-    {
-
-        var login = HttpContext.User.Identity.Name;
-        user user = db.User.Where(p => p.login == login).First();
-        ViewBag.rl = user.role;
-        if (user.role == 0)
-
         {
-            if (user.test != 1)
+
+            var login = HttpContext.User.Identity.Name;
+            user user = db.User.Where(p => p.login == login).First();
+            ViewBag.rl = user.role;
+            if (user.role == 0)
+
             {
-                return RedirectToAction("start", "Home");
+                if (user.test != 1)
+                {
+                    return RedirectToAction("start", "Home");
+                }
+                else
+                {
+                    return RedirectToAction("end");
+                }
+            }
+            if (user.role == 1)
+            {
+
+                ViewBag.klad_Id = user.id_klass;
+                return RedirectToAction("adm_klass", "Home");
+            }
+            if (user.role == 2)
+            {
+
+                ListKlass klasses = new ListKlass();
+                klasses.klasses = db.klass.Where(p => p.id_oo == user.id_oo).ToList();
+
+
+
+                return View("adm_oo", klasses);
+            }
+            if (user.role == 3)
+
+            {
+                ListOos ooes = new ListOos();
+                ooes.mo_name = db.mo.Where(p => p.id == user.id_mo).First().name;
+                ooes.oos = db.oo.Where(p => p.id_mo == user.id_mo).ToList();
+                return View("adm_mo", ooes);
+            }
+            if (user.role == 4)
+            {
+                return RedirectToAction("adm_full");
+
+            }
+            if (user.role == 5)
+            {
+                SpisParam par = new SpisParam();
+                par.Params = db.param.ToList();
+                List<mo> mo = db.mo.ToList();
+                List<mo_kol> listMO = new List<mo_kol>();
+                foreach (mo row in mo)
+                {
+                    mo_kol mo_Kol = new mo_kol();
+                    mo_Kol.id = row.id;
+                    mo_Kol.name = row.name;
+                    listMO.Add(mo_Kol);
+                }
+                listMO.Sort((a, b) => a.name.CompareTo(b.name));
+
+                par.Mos = listMO;
+                return View("adm_stat", par);
             }
             else
             {
-                return RedirectToAction("end");
+                return RedirectToAction("start", "Home");
             }
+
+
+
         }
-        if (user.role == 1)
+        int g_load = 0;
+        ChatHub Ch = new ChatHub();
+
+        IHubContext<ChatHub> hubContext;
+
+        public HomeController(IHubContext<ChatHub> hubContext)
         {
-
-            ViewBag.klad_Id = user.id_klass;
-            return RedirectToAction("adm_klass", "Home");
+            this.hubContext = hubContext;
         }
-        if (user.role == 2)
-        {
-
-            ListKlass klasses = new ListKlass();
-            klasses.klasses = db.klass.Where(p => p.id_oo == user.id_oo).ToList();
-
-
-
-            return View("adm_oo", klasses);
-        }
-        if (user.role == 3)
-
-        {
-            ListOos ooes = new ListOos();
-            ooes.mo_name = db.mo.Where(p => p.id == user.id_mo).First().name;
-            ooes.oos = db.oo.Where(p => p.id_mo == user.id_mo).ToList();
-            return View("adm_mo", ooes);
-        }
-        if (user.role == 4)
-        {
-            return RedirectToAction("adm_full");
-
-        }
-        if (user.role == 5)
-        {
-            SpisParam par = new SpisParam();
-            par.Params = db.param.ToList();
-            List<mo> mo = db.mo.ToList();
-            List<mo_kol> listMO = new List<mo_kol>();
-            foreach (mo row in mo)
-            {
-                mo_kol mo_Kol = new mo_kol();
-                mo_Kol.id = row.id;
-                mo_Kol.name = row.name;
-                listMO.Add(mo_Kol);
-            }
-            listMO.Sort((a, b) => a.name.CompareTo(b.name));
-
-            par.Mos = listMO;
-            return View("adm_stat", par);
-        }
-        else
-        {
-            return RedirectToAction("start", "Home");
-        }
-
-
-
-    }
-    int g_load = 0;
-    ChatHub Ch = new ChatHub();
-
-    IHubContext<ChatHub> hubContext;
-
-    public HomeController(IHubContext<ChatHub> hubContext)
-    {
-        this.hubContext = hubContext;
-    }
 
 
         /*    public async Task<IActionResult> load(int load)
@@ -380,7 +382,7 @@ namespace EM_SPT.Controllers
             List<Spisok_full> listU = new List<Spisok_full>();
             var list_oo = db.oo;
             var list_mo = db.mo;
-            listU = (from u in db.User.Where(p => p.test == 1)
+            listU = (from u in db.User.Where(p => p.role == 0)
                      join kl in db.klass on u.id_klass equals kl.id
                      join oo in db.oo on kl.id_oo equals oo.id
                      join mo in db.mo on oo.id_mo equals mo.id
@@ -388,7 +390,7 @@ namespace EM_SPT.Controllers
                      {
                          id_user = u.id,
                          id_mo = mo.id,
-                         // name_mo = mo.name,
+                         test = u.test,
                          id_oo = oo.id,
                          tip = oo.tip
 
@@ -404,12 +406,16 @@ namespace EM_SPT.Controllers
                 mo_Kol.kol_OO = list_oo.Where(p => p.tip == 1 && p.id_mo == mo.id).Count();
                 mo_Kol.kol_SPO = list_oo.Where(p => p.tip == 2 && p.id_mo == mo.id).Count();
                 mo_Kol.kol_VUZ = list_oo.Where(p => p.tip == 3 && p.id_mo == mo.id).Count();
-                mo_Kol.kol_OO_t = listU.Where(p => p.tip == 1 && p.id_mo == mo.id).Count();
-                mo_Kol.kol_SPO_t = listU.Where(p => p.tip == 2 && p.id_mo == mo.id).Count();
-                mo_Kol.kol_VUZ_t = listU.Where(p => p.tip == 3 && p.id_mo == mo.id).Count();
+                mo_Kol.kol_OO_t = listU.Where(p => p.tip == 1 && p.id_mo == mo.id && p.test == 1).Count();
+                mo_Kol.kol_SPO_t = listU.Where(p => p.tip == 2 && p.id_mo == mo.id && p.test == 1).Count();
+                mo_Kol.kol_VUZ_t = listU.Where(p => p.tip == 3 && p.id_mo == mo.id && p.test == 1).Count();
                 mo_Kol.sum_OO = mo_Kol.kol_OO + mo_Kol.kol_SPO + mo_Kol.kol_VUZ;
                 mo_Kol.sum_t = mo_Kol.kol_OO_t + mo_Kol.kol_SPO_t + mo_Kol.kol_VUZ_t;
-
+                mo_Kol.sum_us_OO = listU.Where(p => p.tip == 1 && p.id_mo == mo.id).Count();
+                mo_Kol.sum_us_SPO = listU.Where(p => p.tip == 2 && p.id_mo == mo.id).Count();
+                mo_Kol.sum_us_VUZ = listU.Where(p => p.tip == 3 && p.id_mo == mo.id).Count();
+                mo_Kol.sum_us = mo_Kol.sum_us_OO + mo_Kol.sum_us_SPO + mo_Kol.sum_us_VUZ;
+                mo_Kol.procet = Math.Round(((Double)mo_Kol.sum_t / (Double)mo_Kol.sum_us * 100), 2);
                 listMO.Add(mo_Kol);
             }
 
@@ -419,13 +425,17 @@ namespace EM_SPT.Controllers
             listMO.Sort((a, b) => a.name.CompareTo(b.name));
             par.Mos = listMO;
             ViewData["Sum"] = list_oo.Count();
-            ViewData["Sumt"] = listU.Count();
+            ViewData["Sumt"] = listU.Where(p => p.test == 1).Count();
             ViewData["SumKolOO"] = listMO.Sum(p => p.kol_OO);
+            ViewData["SumKolOOU"] = listMO.Sum(p => p.sum_us_OO);
             ViewData["SumKolSPO"] = listMO.Sum(p => p.kol_SPO);
+            ViewData["SumKolSPOU"] = listMO.Sum(p => p.sum_us_SPO);
             ViewData["SumKolVUZ"] = listMO.Sum(p => p.kol_VUZ);
+            ViewData["SumKolVUZU"] = listMO.Sum(p => p.sum_us_VUZ);
             ViewData["SumKolOO_t"] = listMO.Sum(p => p.kol_OO_t);
             ViewData["SumKolSPO_t"] = listMO.Sum(p => p.kol_SPO_t);
             ViewData["SumKolVUZ_t"] = listMO.Sum(p => p.kol_VUZ_t);
+            ViewData["Sumus"] = listMO.Sum(p => p.sum_us);
 
 
             return View("adm_full", par);
@@ -1999,7 +2009,7 @@ namespace EM_SPT.Controllers
 
             byte[] buffer = new byte[4096];
 
-            
+
 
             foreach (var org in listGroup)
             {
@@ -2083,31 +2093,31 @@ namespace EM_SPT.Controllers
 
                 //    }
 
-            
 
 
-            using (MemoryStream streamReader = new MemoryStream(data))
-            {
-                StreamUtils.Copy(streamReader, zipStream, buffer);
 
+                using (MemoryStream streamReader = new MemoryStream(data))
+                {
+                    StreamUtils.Copy(streamReader, zipStream, buffer);
+
+                }
+                zipStream.CloseEntry();
+
+
+                /*    zipStream.IsStreamOwner = false;
+                    zipStream.Close();
+
+                    outputMemStream.Position = 0;
+                    string qw = @"\Vgruzka\" + mun.name + "_.zip";*/
             }
-            zipStream.CloseEntry();
 
+            zipStream.IsStreamOwner = false;
+            zipStream.Close();
 
-            /*    zipStream.IsStreamOwner = false;
-                zipStream.Close();
+            outputMemStream.Position = 0;
+            string qw = @"\Vgruzka\" + Mos.name + "_pass.zip";
+            System.IO.File.WriteAllBytes(Directory.GetCurrentDirectory() + "\\wwwroot\\Vgruzka\\" + Mos.name + "_pass.zip", outputMemStream.ToArray());
 
-                outputMemStream.Position = 0;
-                string qw = @"\Vgruzka\" + mun.name + "_.zip";*/
-        }
-                
-                zipStream.IsStreamOwner = false;
-                zipStream.Close();
-
-                outputMemStream.Position = 0;
-                string qw = @"\Vgruzka\" + Mos.name + "_pass.zip";
-                System.IO.File.WriteAllBytes(Directory.GetCurrentDirectory() + "\\wwwroot\\Vgruzka\\" + Mos.name + "_pass.zip", outputMemStream.ToArray());
-            
 
             return RedirectToAction("Index", "Home");
         }
@@ -2376,10 +2386,42 @@ namespace EM_SPT.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
+
+        public IActionResult BackupDB()
+        {
+            // string dbname = db.Database.em.Database;
+            string sqlCommand = @"BACKUP DATABASE [{0}] TO  DISK = N'{1}' WITH NOFORMAT, NOINIT,  NAME = N'MyAir-Full Database Backup', SKIP, NOREWIND, NOUNLOAD,  STATS = 10";
+            db.Database.ExecuteSqlCommand(sqlCommand);
+            return RedirectToAction("Index");
+        }
+
+        private void Backup()
+        {
+            string constring = "server=localhost;user=root;pwd=qwerty;database=test;";
+
+            // Important Additional Connection Options
+            constring += "charset=utf8;convertzerodatetime=true;";
+
+            string file = "C:\\backup.sql";
+            /*  using (MySqlConnection conn = new MySqlConnection(constring))
+              {
+                  using (MySqlCommand cmd = new MySqlCommand())
+                  {
+                      using (MySqlBackup mb = new MySqlBackup(cmd))
+                      {
+                          cmd.Connection = conn;
+                          conn.Open();
+                          mb.ExportToFile(file);
+                          conn.Close();
+                      }
+                  }
+              }*/
+        }
+
         public async Task<IActionResult> AddedUserRaion(IList<IFormFile> uploadedFile)
         {
 
-            string Messege=string.Empty;
+            string Messege = string.Empty;
 
             if (uploadedFile != null)
             {
@@ -2390,7 +2432,7 @@ namespace EM_SPT.Controllers
                     Messege = lo.Messege;
                 }
             }
-           
+
             return RedirectToAction("adm_full", new { Messege });
         }
         [HttpPost]
@@ -2488,7 +2530,7 @@ namespace EM_SPT.Controllers
         {
             return View();
         }
-       
+
         public IActionResult Info()
         {
             return View();

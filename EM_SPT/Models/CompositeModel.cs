@@ -38,15 +38,15 @@ namespace EM_SPT.Models
 
     public class Spisok_full
     {
-       public int id_user { get; set; }
+        public int id_user { get; set; }
         public int id_mo { get; set; }
         public int tip { get; set; }
         public string name_mo { get; set; }
-        //public int klass { get; set; }
+        public int test { get; set; }
         public int id_oo { get; set; }
 
     }
-        public class TestVKlass
+    public class TestVKlass
     {
 
         //public List<user> LUsers { get; set; }
@@ -482,6 +482,11 @@ namespace EM_SPT.Models
         public int kol_SPO_t { get; set; }
         public int kol_VUZ_t { get; set; }
         public int sum_OO { get; set; }
+        public int sum_us { get; set; }
+        public int sum_us_OO { get; set; }
+        public int sum_us_SPO { get; set; }
+        public int sum_us_VUZ { get; set; }
+        public double procet { get; set; }
         public int sum_t { get; set; }
     }
     public class param

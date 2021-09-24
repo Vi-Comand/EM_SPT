@@ -1967,13 +1967,11 @@ namespace EM_SPT.Controllers
 
 
         }
-        public async Task<IActionResult> Pass_excel(int idMo)
+
+        public List<Group> Pass_excel_Type(int type)
         {
-            //await Task.Yield();
 
-            var Mos = db.mo.First(p => p.id == idMo);
-
-            var list = from organization in db.oo.Where(x => x.id_mo == Mos.id)
+            var list = from organization in db.oo.Where(x => x.tip == type)
                        join klass in db.klass on organization.id equals klass.id_oo
                        join users in db.User on klass.id equals users.id_klass
                        select new
@@ -1986,7 +1984,7 @@ namespace EM_SPT.Controllers
                            password = users.pass
 
                        };
-            var listAO = (from organization in db.oo.Where(x => x.id_mo == Mos.id)
+            var listAO = (from organization in db.oo.Where(x => x.tip == type)
                           join users in db.User on organization.id equals users.id_oo
                           select new
                           {
@@ -1997,11 +1995,84 @@ namespace EM_SPT.Controllers
 
                           }).ToList();
 
-            var listGroup = list.GroupBy(x => x.id_OO).Select(x => new { ID_OO = x.Key, Name = x.First().name_OO, AO = listAO.First(y => y.id_OO == x.Key).name, passAO = listAO.First(y => y.id_OO == x.Key).password, Users = x.Select(us => new { id = us.id, klass = us.klass, login = us.login, password = us.password }) });
+            var listGroup = list.GroupBy(x => x.id_OO).Select(x => new Group { ID_OO = x.Key, Name = x.First().name_OO, AO = listAO.First(y => y.id_OO == x.Key).name, passAO = listAO.First(y => y.id_OO == x.Key).password, Users = x.Select(us => new RowProfil { id = us.id, klass = us.klass, login = us.login, password = us.password }).ToList() });
+
+            return listGroup.ToList();
+
+        }
+        public List<Group> Pass_excel_MO(int idMo)
+        {
+
+           
+
+            var list = from organization in db.oo.Where(x => x.id_mo == idMo)
+                       join klass in db.klass on organization.id equals klass.id_oo
+                       join users in db.User on klass.id equals users.id_klass
+                       select new
+                       {
+                           id = users.id,
+                           id_OO = organization.id,
+                           name_OO = organization.kod,
+                           klass = klass.klass_n + klass.kod,
+                           login = users.login,
+                           password = users.pass
+
+                       };
+
+            var listAO = (from organization in db.oo.Where(x => x.id_mo == idMo)
+                          join users in db.User on organization.id equals users.id_oo
+                          select new
+                          {
+
+                              id_OO = organization.id,
+                              name = users.login,
+                              password = users.pass
+
+                          }).ToList();
+
+            var listGroup = list.GroupBy(x => x.id_OO).Select(x => new Group { ID_OO = x.Key, Name = x.First().name_OO, AO = listAO.First(y => y.id_OO == x.Key).name, passAO = listAO.First(y => y.id_OO == x.Key).password, Users = x.Select(us => new RowProfil { id = us.id, klass = us.klass, login = us.login, password = us.password }).ToList() });
+
+            return listGroup.ToList();
+
+
+        }
 
 
 
 
+
+        public async Task<IActionResult> Pass_excel(int idMo)
+        {
+            //await Task.Yield();
+
+            mo Mos=new mo();
+            List<Group> listGroup=new List<Group>();
+            if (idMo == -1)
+            {
+                Mos.name = "ВУЗы";
+
+                listGroup= Pass_excel_Type(3);
+        
+
+            }
+            if (idMo == -2)
+            {
+                Mos.name = "СПО";
+
+                listGroup = Pass_excel_Type(2);
+
+
+            }
+            if(idMo>0)
+            {
+
+
+                 Mos = db.mo.First(p => p.id == idMo);
+                Pass_excel_MO(idMo);
+                 listGroup = Pass_excel_MO(idMo);
+
+             
+            }
             MemoryStream outputMemStream = new MemoryStream();
             ZipOutputStream zipStream = new ZipOutputStream(outputMemStream);
             zipStream.SetLevel(3); // уровень сжатия от 0 до 9
@@ -2054,48 +2125,6 @@ namespace EM_SPT.Controllers
                     newEntry.Size = data.Length;
                     zipStream.PutNextEntry(newEntry);
                 }
-                // int[] masMO = (from k in db.mo select k.id).ToArray();
-
-
-
-
-                //foreach (var iOO in listOO.oos)
-                //{
-
-                //        var oo_f = listU.Users.Where(p => p.role == 2 && p.id_oo == iOO.id).First();
-
-
-                //        int[] masKlass = (from k in db.klass.Where(p => p.id_oo == iOO.id) select k.id).ToArray();
-                //        ListUser listUKl = new ListUser();
-                //        listUKl.Users = listU.Users.Where(p => masKlass.Distinct().Contains(p.id_klass) && p.role == 1).ToList();
-
-                //        foreach (var ListUKl in listUKl.Users)
-                //        {
-                //            var qww = listKl.klasses.Where(p => p.id == ListUKl.id_klass).First();
-                //            string klass = ListUKl.id_klass + "_" + qww.klass_n + qww.kod;
-                //            ListUser listUT = new ListUser();
-                //            listUT.Users = listU.Users.Where(p => masKlass.Distinct().Contains(p.id_klass) && p.role == 0 && p.id_klass == ListUKl.id_klass).ToList();
-                //            workSheet.Cells[str, 1].Value = ListUKl.id;
-                //            workSheet.Cells[str, 2].Value = klass;
-                //            workSheet.Cells[str, 3].Value = ListUKl.login;
-                //            workSheet.Cells[str, 4].Value = ListUKl.pass;
-                //            str++;
-                //            foreach (var listUTR in listUT.Users)
-                //            {
-                //                workSheet.Cells[str, 1].Value = listUTR.id;
-                //                workSheet.Cells[str, 2].Value = klass;
-                //                workSheet.Cells[str, 3].Value = listUTR.login;
-                //                workSheet.Cells[str, 4].Value = listUTR.pass;
-                //                workSheet.Cells[str, 5].Value = listUTR.test;
-                //                str++;
-                //            }
-                //        }
-
-                //    }
-
-
-
-
                 using (MemoryStream streamReader = new MemoryStream(data))
                 {
                     StreamUtils.Copy(streamReader, zipStream, buffer);
@@ -2117,7 +2146,6 @@ namespace EM_SPT.Controllers
             outputMemStream.Position = 0;
             string qw = @"\Vgruzka\" + Mos.name + "_pass.zip";
             System.IO.File.WriteAllBytes(Directory.GetCurrentDirectory() + "\\wwwroot\\Vgruzka\\" + Mos.name + "_pass.zip", outputMemStream.ToArray());
-
 
             return RedirectToAction("Index", "Home");
         }

@@ -441,6 +441,65 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <tr>
+                                <td>ВУЗы </td>
+
+                                <td>
+                                 @*   <button class="select-word-link" id="Result_po_MO" value="@Model.Mos[i].id" form="0">Go отчет</button>*@
+                                </td>
+
+                                <td width="30px">
+                                  @*  <div class="progress">
+                                        <div crole="progressbar" id="prog_@Model.Mos[i].id" style="min-width: 100px"></div>
+                                    </div>*@
+                                </td>
+                                <td>
+                                    @*<form action="~/Vgruzka/@Model.Mos[i].name.ToString()_.zip">
+
+                                        <button type="submit" class="btn btn-outline-success" style="background: url(/icon/excel.png) no-repeat 215.5px 10.5px rgba(7, 255, 126, 0.2); background-size: 10%; height: 50px; width:250px">Загрузить отчет</button>
+                                    </form>*@
+                                </td>
+                                <td>
+                                    <a href="/Home/Pass_excel?idMo=-1" class="select">Go pass</a>
+                                </td>
+                                <td>
+                                    <form action="~/Vgruzka/ВУЗы_pass.zip">
+
+                                        <button type="submit" class="btn btn-outline-success" style="background: url(/icon/excel.png) no-repeat 215.5px 10.5px rgba(7, 255, 126, 0.2); background-size: 10%; height: 50px; width:250px">Загрузить pass</button>
+                                    </form>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>СПО </td>
+
+                                <td>
+                                 @*   <button class="select-word-link" id="Result_po_MO" value="@Model.Mos[i].id" form="0">Go отчет</button>*@
+                                </td>
+
+                                <td width="30px">
+                                  @*  <div class="progress">
+                                        <div crole="progressbar" id="prog_@Model.Mos[i].id" style="min-width: 100px"></div>
+                                    </div>*@
+                                </td>
+                                <td>
+                                    @*<form action="~/Vgruzka/@Model.Mos[i].name.ToString()_.zip">
+
+                                        <button type="submit" class="btn btn-outline-success" style="background: url(/icon/excel.png) no-repeat 215.5px 10.5px rgba(7, 255, 126, 0.2); background-size: 10%; height: 50px; width:250px">Загрузить отчет</button>
+                                    </form>*@
+                                </td>
+                                <td>
+                                    <a href="/Home/Pass_excel?idMo=-2" class="select">Go pass</a>
+                                </td>
+                                <td>
+                                    <form action="~/Vgruzka/СПО_pass.zip">
+
+                                        <button type="submit" class="btn btn-outline-success" style="background: url(/icon/excel.png) no-repeat 215.5px 10.5px rgba(7, 255, 126, 0.2); background-size: 10%; height: 50px; width:250px">Загрузить pass</button>
+                                    </form>
+                                </td>
+                            </tr>
+
+
                         @for (int i = 0; i < Model.Mos.Count; i++)
                         {
                             <tr>

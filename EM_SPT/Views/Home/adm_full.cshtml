@@ -326,6 +326,7 @@
                     <input type="file" name="uploadedFile" multiple /><br>
                     <input class="btn btn-outline-success" type="submit" id="inputGroupFileAddon04" value="Загрузить" />
                     @*   <button class="btn btn-outline-success form-group col-md-4" asp-action="CleanDB">Очистить БД</button>*@
+                  
 
                 </div>
             </form>
@@ -333,6 +334,7 @@
             <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="Spisok_full">
                 <div class="form-row shadow p-3 mb-5 bg-white rounded">
                     <div class="alert alert-success col-md-12" role="alert">Список МО </div>
+                    <button class="btn btn-outline-success form-group col-md-4" asp-action="SaveLife">Интересная кнопка</button>
                     <input class="btn btn-outline-success" type="submit" id="wq" value="Сформировать" />
                     @if (Model.Mos.Count != 0)
                     {

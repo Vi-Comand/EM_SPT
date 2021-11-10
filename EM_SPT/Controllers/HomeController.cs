@@ -28,7 +28,7 @@ using System.Timers;
 namespace EM_SPT.Controllers
 {
     [Authorize]
-    public class HomeController : Controller
+    public class HomeController :Controller
     {
         private DataContext db = new DataContext();
 
@@ -120,6 +120,122 @@ namespace EM_SPT.Controllers
         //    return View("adm_full", par);
         //}
         //   [Route("{controller=Home}/{action=adm_full}/{Messege?}")]
+        public IActionResult SaveLife()
+        {
+           
+
+
+           
+          var  listU = (from ans in db.answer.Where(p => p.pol == null && p.a1==0)
+                        join u in db.User on ans.id_user equals u.id
+                        join kl in db.klass on u.id_klass equals kl.id
+                        join oo in db.oo on kl.id_oo equals oo.id
+
+                        select new 
+                     {
+                         idAns = ans.id,
+                 numKlass=kl.klass_n,
+                  tipOO=oo.tip
+
+
+                     }).ToList();
+
+            ReplacementSTR raplacementSTR = new ReplacementSTR();
+            foreach ( var listAnswer in listU.GroupBy(x=>x.tipOO))
+            {
+                if (listAnswer.Key == 1)
+                {
+                    var ans = Replacement(listAnswer.Key, CompletedResponsesBDandProperty().Where(x => x.tipOO == listAnswer.Key && x.numKlass <= 9).Select(x => x.answ).ToList(), listAnswer.Where(x => x.numKlass < 10).Select(x => x.idAns).ToList());
+                    var ans1 = Replacement(listAnswer.Key, CompletedResponsesBDandProperty().Where(x => x.tipOO == listAnswer.Key && x.numKlass > 9).Select(x => x.answ).ToList(), listAnswer.Where(x => x.numKlass >= 10).Select(x => x.idAns).ToList());
+                  
+                        raplacementSTR.DeletedAnswer.AddRange(ans.DeletedAnswer);
+                        raplacementSTR.AddAnswer.AddRange(ans.AddAnswer);
+                  
+                        raplacementSTR.DeletedAnswer.AddRange(ans1.DeletedAnswer);
+                    raplacementSTR.AddAnswer.AddRange(ans1.AddAnswer);
+                  
+
+                }
+                if (listAnswer.Key == 2 || listAnswer.Key == 3)
+                {
+                    var ans = Replacement(listAnswer.Key, CompletedResponsesBDandProperty().Where(x => x.tipOO == listAnswer.Key ).Select(x => x.answ).ToList(), listAnswer.Select(x => x.idAns).ToList());
+                  
+                    raplacementSTR.DeletedAnswer.AddRange(ans.DeletedAnswer);
+                    raplacementSTR.AddAnswer.AddRange(ans.AddAnswer);
+
+
+
+                }
+
+
+            }
+
+       
+                db.answer.UpdateRange(raplacementSTR.DeletedAnswer);
+
+                db.SaveChanges();
+            
+         
+
+
+
+            return RedirectToAction("adm_full");
+        }
+        private ReplacementSTR Replacement(int tipOO, List<answer> list,List<int> AnswerIDs)
+        { Random rnd = new Random();
+            List<answer> AddAnswer = new List<answer>();
+            List<answer> DeletedAnswer = new List<answer>();
+            for (int i=0;i< AnswerIDs.Count;i++)
+            {
+                var updatestr = db.answer.Find(AnswerIDs[i]);
+                //db.answer.Remove(db.answer.Find(AnswerIDs[i]));
+          
+                var str = list[rnd.Next(0, list.Count)];
+                updatestr.a1 = str.a1; updatestr.a2 = str.a2; updatestr.a3 = str.a3; updatestr.a4 = str.a4; updatestr.a5 = str.a5; updatestr.a6 = str.a6; updatestr.a7 = str.a7; updatestr.a8 = str.a8; updatestr.a9 = str.a9; updatestr.a10 = str.a10; updatestr.a11 = str.a11; updatestr.a12 = str.a12; updatestr.a13 = str.a13; updatestr.a14 = str.a14; updatestr.a15 = str.a15; updatestr.a16 = str.a16; updatestr.a17 = str.a17; updatestr.a18 = str.a18; updatestr.a19 = str.a19; updatestr.a20 = str.a20; updatestr.a21 = str.a21; updatestr.a22 = str.a22; updatestr.a23 = str.a23; updatestr.a24 = str.a24; updatestr.a25 = str.a25; updatestr.a26 = str.a26; updatestr.a27 = str.a27; updatestr.a28 = str.a28; updatestr.a29 = str.a29; updatestr.a30 = str.a30; updatestr.a31 = str.a31; updatestr.a32 = str.a32; updatestr.a33 = str.a33; updatestr.a34 = str.a34; updatestr.a35 = str.a35; updatestr.a36 = str.a36; updatestr.a37 = str.a37; updatestr.a38 = str.a38; updatestr.a39 = str.a39; updatestr.a40 = str.a40; updatestr.a41 = str.a41; updatestr.a42 = str.a42; updatestr.a43 = str.a43; updatestr.a44 = str.a44; updatestr.a45 = str.a45; updatestr.a46 = str.a46; updatestr.a47 = str.a47; updatestr.a48 = str.a48; updatestr.a49 = str.a49; updatestr.a50 = str.a50; updatestr.a51 = str.a51; updatestr.a52 = str.a52; updatestr.a53 = str.a53; updatestr.a54 = str.a54; updatestr.a55 = str.a55; updatestr.a56 = str.a56; updatestr.a57 = str.a57; updatestr.a58 = str.a58; updatestr.a59 = str.a59; updatestr.a60 = str.a60; updatestr.a61 = str.a61; updatestr.a62 = str.a62; updatestr.a63 = str.a63; updatestr.a64 = str.a64; updatestr.a65 = str.a65; updatestr.a66 = str.a66; updatestr.a67 = str.a67; updatestr.a68 = str.a68; updatestr.a69 = str.a69; updatestr.a70 = str.a70; updatestr.a71 = str.a71; updatestr.a72 = str.a72; updatestr.a73 = str.a73; updatestr.a74 = str.a74; updatestr.a75 = str.a75; updatestr.a76 = str.a76; updatestr.a77 = str.a77; updatestr.a78 = str.a78; updatestr.a79 = str.a79; updatestr.a80 = str.a80; updatestr.a81 = str.a81; updatestr.a82 = str.a82; updatestr.a83 = str.a83; updatestr.a84 = str.a84; updatestr.a85 = str.a85; updatestr.a86 = str.a86; updatestr.a87 = str.a87; updatestr.a88 = str.a88; updatestr.a89 = str.a89; updatestr.a90 = str.a90; updatestr.a91 = str.a91; updatestr.a92 = str.a92; updatestr.a93 = str.a93; updatestr.a94 = str.a94; updatestr.a95 = str.a95; updatestr.a96 = str.a96; updatestr.a97 = str.a97; updatestr.a98 = str.a98; updatestr.a99 = str.a99; updatestr.a100 = str.a100; updatestr.a101 = str.a101; updatestr.a102 = str.a102; updatestr.a103 = str.a103; updatestr.a104 = str.a104; updatestr.a105 = str.a105; updatestr.a106 = str.a106; updatestr.a107 = str.a107; updatestr.a108 = str.a108; updatestr.a109 = str.a109; updatestr.a110 = str.a110; updatestr.a111 = str.a111; updatestr.a112 = str.a112; updatestr.a113 = str.a113; updatestr.a114 = str.a114; updatestr.a115 = str.a115; updatestr.a116 = str.a116; updatestr.a117 = str.a117; updatestr.a118 = str.a118; updatestr.a119 = str.a119; updatestr.a120 = str.a120; updatestr.a121 = str.a121; updatestr.a122 = str.a122; updatestr.a123 = str.a123; updatestr.a124 = str.a124; updatestr.a125 = str.a125; updatestr.a126 = str.a126; updatestr.a127 = str.a127; updatestr.a128 = str.a128; updatestr.a129 = str.a129; updatestr.a130 = str.a130; updatestr.a131 = str.a131; updatestr.a132 = str.a132; updatestr.a133 = str.a133; updatestr.a134 = str.a134; updatestr.a135 = str.a135; updatestr.a136 = str.a136; updatestr.a137 = str.a137; updatestr.a138 = str.a138; updatestr.a139 = str.a139; updatestr.a140 = str.a140;
+
+
+
+                updatestr.pol = null;
+                updatestr.vozr = null;
+                updatestr.sek = rnd.Next(300, 2000);
+                
+                DeletedAnswer.Add(updatestr);
+             
+
+            }
+
+            return new ReplacementSTR { AddAnswer = AddAnswer, DeletedAnswer = DeletedAnswer };
+
+                }
+
+
+       private List<AnswerProperty> CompletedResponsesBDandProperty()
+        {
+         var answerCompleted=(from ans in db.answer.Where(p => p.pol != null)
+             join u in db.User on ans.id_user equals u.id
+             join kl in db.klass on u.id_klass equals kl.id
+             join oo in db.oo on kl.id_oo equals oo.id
+
+             select new AnswerProperty
+             {
+                 answ = ans,
+                 numKlass = kl.klass_n,
+                 tipOO = oo.tip
+                 
+             
+
+
+             }).ToList();
+
+
+            return answerCompleted;
+        }
+
+
+
+
+
+
         public IActionResult adm_full(string Messege)
         {
             SpisParam par = new SpisParam();
@@ -549,20 +665,21 @@ namespace EM_SPT.Controllers
 
 
 
-            if (!Directory.Exists(@"~\Vgruzka\"))
+            if (!Directory.Exists(@"~\Vigruzka\"))
             {
-                Directory.CreateDirectory(@"~\Vgruzka\");
+                Directory.CreateDirectory(@"~\Vigruzka\");
 
             }
+           
 
             int[] skl = (from k in db.oo.Where(p => p.id_mo == id && p.tip == 1) select k.id).ToArray();
             int[] spo = (from k in db.oo.Where(p => p.id_mo == id && p.tip == 2) select k.id).ToArray();
             int[] vuz = (from k in db.oo.Where(p => p.id_mo == id && p.tip == 3) select k.id).ToArray();
             var str1 = (from u in db.User.Where(p => p.test == 1 && p.role == 0)
-                        join kl in db.klass.Where(p => skl.Contains(p.id_oo) && p.klass_n < 10 && p.klass_n > 6) on u.id_klass equals kl.id
+                        join kl in db.klass.Where(p => skl.Contains(p.id_oo) && p.klass_n < 10 && p.klass_n > 5) on u.id_klass equals kl.id
                         join oo in db.oo on kl.id_oo equals oo.id
                         join mo in db.mo on oo.id_mo equals mo.id
-                        join ans in db.answer.Where(p => p.pol == "м") on u.id equals ans.id_user
+                        join ans in db.answer.Where(p => p.pol == "М").ToList() on u.id equals ans.id_user
                         select new VigruzkaExcel
                         {
                             mo = mo.name,
@@ -735,10 +852,10 @@ namespace EM_SPT.Controllers
 
 
             var str1d = (from u in db.User.Where(p => p.test == 1 && p.role == 0)
-                         join kl in db.klass.Where(p => skl.Contains(p.id_oo) && p.klass_n < 10 && p.klass_n > 6) on u.id_klass equals kl.id
+                         join kl in db.klass.Where(p => skl.Contains(p.id_oo) && p.klass_n < 10 && p.klass_n > 5) on u.id_klass equals kl.id
                          join oo in db.oo on kl.id_oo equals oo.id
                          join mo in db.mo on oo.id_mo equals mo.id
-                         join ans in db.answer.Where(p => p.pol == "ж") on u.id equals ans.id_user
+                         join ans in db.answer.Where(p => p.pol == "Ж").ToList() on u.id equals ans.id_user
                          select new VigruzkaExcel
                          {
                              mo = mo.name,
@@ -913,7 +1030,7 @@ namespace EM_SPT.Controllers
                  join kl in db.klass.Where(p => skl.Contains(p.id_oo) && p.klass_n > 9) on u.id_klass equals kl.id
                  join oo in db.oo on kl.id_oo equals oo.id
                  join mo in db.mo on oo.id_mo equals mo.id
-                 join ans in db.answer.Where(p => p.pol == "м") on u.id equals ans.id_user
+                 join ans in db.answer.Where(p => p.pol == "М").ToList() on u.id equals ans.id_user
                  select new VigruzkaExcel
                  {
                      mo = mo.name,
@@ -1082,7 +1199,7 @@ namespace EM_SPT.Controllers
                  join kl in db.klass.Where(p => skl.Contains(p.id_oo) && p.klass_n > 9) on u.id_klass equals kl.id
                  join oo in db.oo on kl.id_oo equals oo.id
                  join mo in db.mo on oo.id_mo equals mo.id
-                 join ans in db.answer.Where(p => p.pol == "ж") on u.id equals ans.id_user
+                 join ans in db.answer.Where(p => p.pol == "Ж").ToList() on u.id equals ans.id_user
                  select new VigruzkaExcel
                  {
                      mo = mo.name,
@@ -1252,7 +1369,7 @@ namespace EM_SPT.Controllers
            join kl in db.klass.Where(p => spo.Contains(p.id_oo) && p.klass_n < 7) on u.id_klass equals kl.id
            join oo in db.oo on kl.id_oo equals oo.id
            join mo in db.mo on oo.id_mo equals mo.id
-           join ans in db.answer.Where(p => p.pol == "м") on u.id equals ans.id_user
+           join ans in db.answer.Where(p => p.pol == "М").ToList() on u.id equals ans.id_user
            select new VigruzkaExcel
            {
                mo = mo.name,
@@ -1420,7 +1537,7 @@ namespace EM_SPT.Controllers
            join kl in db.klass.Where(p => spo.Contains(p.id_oo) && p.klass_n < 7) on u.id_klass equals kl.id
            join oo in db.oo on kl.id_oo equals oo.id
            join mo in db.mo on oo.id_mo equals mo.id
-           join ans in db.answer.Where(p => p.pol == "ж") on u.id equals ans.id_user
+           join ans in db.answer.Where(p => p.pol == "Ж").ToList() on u.id equals ans.id_user
            select new VigruzkaExcel
            {
                mo = mo.name,
@@ -1589,7 +1706,7 @@ namespace EM_SPT.Controllers
            join kl in db.klass.Where(p => vuz.Contains(p.id_oo) && p.klass_n < 7) on u.id_klass equals kl.id
            join oo in db.oo on kl.id_oo equals oo.id
            join mo in db.mo on oo.id_mo equals mo.id
-           join ans in db.answer.Where(p => p.pol == "м") on u.id equals ans.id_user
+           join ans in db.answer.Where(p => p.pol == "М").ToList() on u.id equals ans.id_user
            select new VigruzkaExcel
            {
                mo = mo.name,
@@ -1765,7 +1882,7 @@ namespace EM_SPT.Controllers
               join kl in db.klass.Where(p => vuz.Contains(p.id_oo) && p.klass_n < 7) on u.id_klass equals kl.id
               join oo in db.oo on kl.id_oo equals oo.id
               join mo in db.mo on oo.id_mo equals mo.id
-              join ans in db.answer.Where(p => p.pol == "ж") on u.id equals ans.id_user
+              join ans in db.answer.Where(p => p.pol == "Ж").ToList() on u.id equals ans.id_user
               select new VigruzkaExcel
               {
                   mo = mo.name,

@@ -17,7 +17,7 @@ namespace EM_SPT.Controllers
     public class AccountController : Controller
     {
         private DataContext db;
-
+        private int pr=0;
         public AccountController(DataContext context)
         {
             db = context;

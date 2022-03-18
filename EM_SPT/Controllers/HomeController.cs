@@ -30,6 +30,7 @@ namespace EM_SPT.Controllers
     [Authorize]
     public class HomeController :Controller
     {
+        private int pr2=1;
         private DataContext db = new DataContext();
 
         public class TimedHostedService : IHostedService, IDisposable
